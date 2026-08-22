@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>网络命令与诊断 · 零基础系统学习</title>
+<style>
+  :root{
+    --bg:#f5f7fb; --card:#ffffff; --ink:#1f2a44; --muted:#6b7790;
+    --line:#e6eaf2; --brand:#3b6ef5; --brand-soft:#eaf0ff;
+    --green:#16a34a; --green-soft:#e7f8ee; --red:#e23b3b; --red-soft:#fdecec;
+    --amber:#d98b00; --amber-soft:#fff4e0; --violet:#7c5cff; --violet-soft:#f1ecff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.7;font-size:15px}
+  header{background:linear-gradient(135deg,#3b6ef5,#7c5cff);color:#fff;padding:34px 20px;text-align:center}
+  header h1{margin:0 0 8px;font-size:24px}
+  header p{margin:0;opacity:.92;font-size:14px}
+  .wrap{max-width:920px;margin:0 auto;padding:18px}
+  nav{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);padding:10px 14px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+  nav a{font-size:13px;color:var(--brand);text-decoration:none;background:var(--brand-soft);
+    padding:5px 11px;border-radius:20px;white-space:nowrap}
+  nav a:hover{background:var(--brand);color:#fff}
+  section{background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:22px;margin:18px 0;box-shadow:0 4px 18px rgba(40,60,120,.05)}
+  h2{font-size:20px;margin:0 0 6px;display:flex;align-items:center;gap:10px}
+  h2 .num{background:var(--brand);color:#fff;width:30px;height:30px;border-radius:9px;
+    display:inline-flex;align-items:center;justify-content:center;font-size:15px;flex:0 0 auto}
+  h3{font-size:16px;margin:18px 0 8px;color:var(--brand)}
+  p{margin:8px 0}
+  .analogy{background:var(--brand-soft);border-left:4px solid var(--brand);border-radius:8px;
+    padding:10px 14px;margin:12px 0;font-size:14px;color:#2a3a66}
+  .analogy b{color:var(--brand)}
+  .kv{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
+  .kv th,.kv td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  .kv th{background:var(--brand-soft);color:#2a3a66}
+  .quiz{background:#fbfcfe;border:1px dashed var(--line);border-radius:10px;padding:12px 14px;margin:14px 0}
+  .quiz .q{font-weight:600}
+  .quiz .ans{display:inline-block;margin-top:8px;background:var(--green-soft);color:var(--green);
+    font-weight:700;padding:4px 12px;border-radius:8px;font-size:14px}
+  .toggle{cursor:pointer;color:var(--brand);font-size:13px;margin-top:8px;user-select:none;font-weight:600}
+  .analysis{display:none;margin-top:10px;border-top:1px dashed var(--line);padding-top:10px;font-size:14px}
+  .analysis.open{display:block}
+  .analysis .b{display:block;margin:6px 0;padding:8px 10px;border-radius:8px}
+  .a1{background:var(--green-soft)} .a2{background:var(--brand-soft)} .a3{background:var(--amber-soft)} .a4{background:var(--violet-soft)}
+  .figure{background:#fbfcff;border:1px solid var(--line);border-radius:12px;padding:14px;margin:14px 0;text-align:center}
+  .figure svg{width:100%;max-width:560px;height:auto}
+  .figure .cap{font-size:13px;color:var(--muted);margin-top:6px}
+  .trap{background:var(--red-soft);border-left:4px solid var(--red);border-radius:8px;
+    padding:10px 14px;margin:12px 0;font-size:14px;color:#7a1f1f}
+  .trap b{color:var(--red)}
+  #story .flow{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:14px 0}
+  #story .step{background:var(--brand-soft);border:1px solid #cfe0ff;color:#2a3a66;border-radius:12px;
+    padding:10px 12px;width:140px;text-align:center;font-size:13px}
+  #story .step b{display:block;color:var(--brand);font-size:15px;margin-bottom:3px}
+  #ref .card{background:#fbfcfe;border:1px solid var(--line);border-radius:12px;padding:14px;margin:12px 0}
+  #ref h3{margin-top:0}
+  #ref ul{margin:6px 0;padding-left:20px}
+  #ref li{margin:4px 0}
+  .practice .toolbar{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+  .practice button{background:var(--brand);color:#fff;border:none;padding:8px 16px;border-radius:9px;cursor:pointer;font-size:14px}
+  .practice button.ghost{background:var(--brand-soft);color:var(--brand)}
+  .item{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0;background:#fff}
+  .item .q{font-weight:600;font-size:14.5px}
+  .item .meta{font-size:12px;color:var(--muted);margin-top:4px}
+  .item .ans{display:inline-block;margin-top:8px;background:var(--green-soft);color:var(--green);
+    font-weight:700;padding:3px 10px;border-radius:7px;font-size:13px}
+  .item .dup{color:var(--amber);font-size:12px;margin-left:8px}
+  .item .edge{color:var(--violet);font-size:12px;margin-left:8px}
+  .item .analysis{margin-top:8px}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:6px 0}
+  .legend span b{color:var(--amber)} .legend span i{color:var(--violet);font-style:normal}
+  footer{text-align:center;color:var(--muted);font-size:13px;padding:24px}
+  @media(max-width:600px){.wrap{padding:10px}section{padding:16px}#story .step{width:46%}}
+</style>
+</head>
+<body>
+<header>
+  <h1>🛠 网络命令与诊断 · 零基础系统学习</h1>
+  <p>内容来源：题库「网络命令与诊断（23 题）」｜ 通俗类比 + 考点自测 + 23 题全解析</p>
+</header>
+
+<nav>
+  <a href="#story">📖 故事线</a>
+  <a href="#m1">① 诊断思路</a>
+  <a href="#m2">② ipconfig</a>
+  <a href="#m3">③ ping/arp</a>
+  <a href="#m4">④ 路由表</a>
+  <a href="#m5">⑤ DNS/Linux</a>
+  <a href="#m6">⑥ 安全命令</a>
+  <a href="#ref">🃏 速查卡</a>
+  <a href="#m7">⑦ 23题自测</a>
+</nav>
+
+<div class="wrap">
+
+<!-- 故事线 -->
+<section id="story">
+  <h2><span class="num">📖</span> 故事线：一次「上不了网」的排查之旅</h2>
+  <p>把全部命令串成一条排查线，零基础也能「长在一条线上」记住：</p>
+  <div class="flow">
+    <div class="step"><b>① 看自己</b>网卡有 IP 吗？DHCP 给了没 → ipconfig</div>
+    <div class="step"><b>② 验连通</b>网关通不通？邻居 MAC → ping / arp -a</div>
+    <div class="step"><b>③ 查路径</b>数据包往哪走 → route print / tracert</div>
+    <div class="step"><b>④ 解域名</b>DNS 工作不 → nslookup</div>
+    <div class="step"><b>⑤ 换系统</b>Linux 谁干这活 → ifconfig / netstat -nr</div>
+    <div class="step"><b>⑥ 上安全</b>门怎么守 → 防火墙/VPN/证书/cipher</div>
+  </div>
+</section>
+
+<!-- 模块一 -->
+<section class="module" id="m1">
+  <h2><span class="num">1</span> 模块一 为什么要用网络命令（诊断思路）</h2>
+  <h3>1.1 网络命令是「医生的听诊器」</h3>
+  <p>电脑上不了网，肉眼看不见网线里发生了什么。网络命令把系统内部看不见的网络状态（IP 地址、路由表、DNS、连接情况）变成<strong>文字输出</strong>，让我们能「看见」问题出在哪。</p>
+  <div class="analogy"><b>生活类比：</b>网络像人体血管系统——上不了网 = 某处「堵了」。医生不靠猜，用听诊器、验血、CT 逐项查；我们排查网络，也用 <code>ipconfig</code> 看「血压」、<code>ping</code> 测「心跳」、<code>route print</code> 看「路线图」。</div>
+
+  <h3>1.2 黄金顺序：先本机 → 再网关 → 再远端</h3>
+  <table class="kv">
+    <tr><th>步骤</th><th>看什么</th><th>命令</th></tr>
+    <tr><td>本机配置</td><td>网卡有没有 IP、DHCP 给了没</td><td>ipconfig</td></tr>
+    <tr><td>本地连通</td><td>网关通不通、邻居 MAC</td><td>ping / arp -a</td></tr>
+    <tr><td>路径路由</td><td>数据包走哪条路</td><td>route print / netstat -r</td></tr>
+    <tr><td>域名解析</td><td>DNS 服务器工作不</td><td>nslookup</td></tr>
+  </table>
+
+  <div class="quiz">
+    <div class="q">【自测1】当电脑「上不了网」时，第一步最该查的是（  ）</div>
+    A. 直接重装系统　B. 先看本机有没有拿到 IP 地址　C. 立刻换路由器　D. 拔掉所有网线
+    <div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div>
+    <div class="analysis">
+      <span class="b a1">🎯 答案解析：选 <b>B</b>。排查讲究「由近及远」，先确认本机 IP 配置。</span>
+      <span class="b a2">📚 知识点讲解：网络命令价值就是「先看清本机状态」。<code>ipconfig</code> 能立刻告诉我们 DHCP 有没有分配 IP——这是一切排查的起点。</span>
+      <span class="b a3">💡 解题思路：问「第一步」，按顺序本机优先，选 B。</span>
+      <span class="b a4">🧠 记忆口诀：「上网先查本机 IP，由近及远不抓瞎。」</span>
+    </div>
+  </div>
+</section>
+
+<!-- 模块二 -->
+<section class="module" id="m2">
+  <h2><span class="num">2</span> 模块二 Windows 基础查看命令（ipconfig）</h2>
+  <h3>2.1 ipconfig 是干什么的</h3>
+  <p><code>ipconfig</code>（IP Configuration）是 Windows 下查看<strong>本机网络配置</strong>最常用命令：本机 IP、子网掩码、默认网关、是否 DHCP 分配、DNS 服务器地址。 <strong>关键考点（第 9、22 题）：</strong>在 Windows 中可通过 <code>ipconfig</code> 查看 <strong>DHCP 服务器分配给本机的 IP 地址</strong>。</p>
+  <div class="analogy"><b>生活类比：</b><code>ipconfig</code> 像你家「门牌号登记表」。IP = 门牌号，子网掩码 = 范围归谁管，默认网关 = 出小区的门。DHCP 是物业自动发的门牌，<code>ipconfig</code> 就是去物业查「我的门牌号是几」。</div>
+
+  <h3>2.2 常用用法与易混点</h3>
+  <table class="kv">
+    <tr><th>命令</th><th>作用</th></tr>
+    <tr><td>ipconfig</td><td>显示基本 IP 配置</td></tr>
+    <tr><td>ipconfig /all</td><td>全部详细信息（含 MAC、DHCP 服务器、租约时间）</td></tr>
+  </table>
+  <div class="trap"><b>⚠ 易混点：</b><code>ipconfig /all</code> 能看到 MAC，但<strong>由 IP 查 MAC 要用 <code>arp -a</code></strong>（模块三）。<code>ipconfig</code> 是「看自己」、<code>arp</code> 是「看邻居」。</div>
+
+  <div class="quiz">
+    <div class="q">【自测2】在 Windows 中，查看 DHCP 分配给本机的 IP 地址，应使用（  ）</div>
+    A. nslookup　B. ifconfig　C. ipconfig　D. tracert
+    <div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div>
+    <div class="analysis">
+      <span class="b a1">🎯 答案解析：选 <b>C</b>。<code>ipconfig</code> 显示本机 IP 配置，含 DHCP 分配地址。</span>
+      <span class="b a2">📚 知识点讲解：<code>ipconfig</code> 是 Windows 专属「本机配置查看器」；<code>ifconfig</code> 是 Linux 的（模块五）。</span>
+      <span class="b a3">💡 解题思路：关键词「Windows + DHCP 分配 IP」 → ipconfig。</span>
+      <span class="b a4">🧠 记忆口诀：「Windows 看本机，ipconfig 最行。」</span>
+    </div>
+  </div>
+</section>
+
+<!-- 模块三 -->
+<section class="module" id="m3">
+  <h2><span class="num">3</span> 模块三 连通性与地址解析（ping / arp -a / IP 安全策略）</h2>
+  <h3>3.1 ping：测「通不通」</h3>
+  <p><code>ping</code> 向目标发 ICMP 回显请求，看对方是否回应，是最基础的连通性测试工具。</p>
+  <div class="analogy"><b>生活类比：</b><code>ping</code> 像对着山谷喊「喂——」看有没有回声。有回声说明路通；没回声可能是对方不在、路断、或对方「捂耳朵不听」（被防火墙/安全策略禁了）。</div>
+
+  <h3>3.2 arp -a：由 IP 查 MAC</h3>
+  <p><code>arp -a</code>（Address Resolution Protocol）显示 <strong>IP ↔ MAC 映射表</strong>，是<strong>由 IP 查 MAC 的 Windows 命令</strong>（第 7、20 题）。</p>
+  <div class="analogy"><b>生活类比：</b><code>arp</code> 表像公司「花名册」——只知道工号（IP）就查花名册知座位（MAC）。<code>arp -a</code> 翻出整本看「谁对应谁」。</div>
+
+  <h3>3.3 IP 安全策略：能「禁 ping」</h3>
+  <p><strong>第 11 题（判断）：</strong>启用本机 <strong>IP 安全策略（IPSec）</strong> 可<strong>禁止</strong>其它系统对本机 PING。→ <strong>正确</strong>。IPSec 能过滤 ICMP 包，把「回声」堵上。</p>
+  <div class="trap"><b>⚠ 反直觉：</b>很多人以为「禁 ping 是错的」——其实 IP 安全策略就是本机包过滤，能精准禁掉 ICMP，此题为<strong>正确</strong>。</div>
+
+  <div class="quiz">
+    <div class="q">【自测3】在 Windows 中，由 IP 地址查询 MAC 地址，应使用（  ）</div>
+    A. tracert　B. arp -a　C. ipconfig /all　D. netstat -s
+    <div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div>
+    <div class="analysis">
+      <span class="b a1">🎯 答案解析：选 <b>B</b>。<code>arp -a</code> 显示 IP↔MAC 映射，是由 IP 查 MAC 的命令。</span>
+      <span class="b a2">📚 知识点讲解：ARP 协议负责「已知 IP 求 MAC」；<code>arp -a</code> 列出当前缓存映射。</span>
+      <span class="b a3">💡 解题思路：关键词「IP 查 MAC」 → arp -a（不是 ipconfig）。</span>
+      <span class="b a4">🧠 记忆口诀：「IP 查 MAC，arp -a 它。」</span>
+    </div>
+  </div>
+</section>
+
+<!-- 模块四 -->
+<section class="module" id="m4">
+  <h2><span class="num">4</span> 模块四 路由与路径查看（route print / netstat -r / tracert）</h2>
+  <h3>4.1 路由表与 route print</h3>
+  <p>路由表是系统决定「数据包下一跳去哪」的地图。<strong>第 10、23 题：</strong><code>route print</code> 可查看本机路由表。</p>
+  <div class="analogy"><b>生活类比：</b>路由表像手机「导航收藏夹」——去公司走 A 路、去机场走 B 路。<code>route print</code> 就是把这张「导航图」打印出来。</div>
+
+  <h3>4.2 route print = netstat -r（等价命令，高频考点！）</h3>
+  <p><strong>第 3、6、18、19 题</strong>反复考：<code>route print</code> 和 <code>netstat -r</code> <strong>功能完全相同</strong>，都显示路由表。</p>
+  <table class="kv">
+    <tr><th>命令</th><th>作用</th><th>备注</th></tr>
+    <tr><td>route print</td><td>显示路由表</td><td>Windows</td></tr>
+    <tr><td>netstat -r</td><td>显示路由表</td><td>与 route print <strong>等价</strong></td></tr>
+    <tr><td>tracert</td><td>显示到目标经过的每一跳</td><td>看「路径」不是看「表」</td></tr>
+  </table>
+  <div class="trap"><b>⚠ 反直觉陷阱：</b><code>netstat</code> 家族很多参数（-a 看连接、-s 看统计、-n 看数字），但<strong>只有 -r 才是「看路由表」</strong>。记住「r = route = 路由表」。</div>
+
+  <h3>4.3 Linux 下同功能：netstat -nr</h3>
+  <p><strong>第 8、21 题：</strong>Linux 中能显示本机网络路由信息的命令是 <code>netstat -nr</code>（-n 数字显示，-r 仍是路由表）。</p>
+  <div class="figure">
+    <svg viewBox="0 0 560 200" xmlns="http://www.w3.org/2000/svg">
+      <rect x="30" y="40" width="220" height="50" rx="8" fill="#eaf0ff" stroke="#3b6ef5"/>
+      <text x="140" y="70" text-anchor="middle" font-size="14" fill="#2a3a66">Windows: route print</text>
+      <rect x="310" y="40" width="220" height="50" rx="8" fill="#e7f8ee" stroke="#16a34a"/>
+      <text x="420" y="70" text-anchor="middle" font-size="14" fill="#14662f">Windows: netstat -r</text>
+      <text x="280" y="115" text-anchor="middle" font-size="13" fill="#7a1f1f">两者等价 = 都显示路由表</text>
+      <rect x="170" y="135" width="220" height="50" rx="8" fill="#fff4e0" stroke="#d98b00"/>
+      <text x="280" y="165" text-anchor="middle" font-size="14" fill="#8a5a00">Linux: netstat -nr</text>
+    </svg>
+    <div class="cap">图：route print ≡ netstat -r；Linux 下用 netstat -nr</div>
+  </div>
+
+  <div class="quiz">
+    <div class="q">【自测5】与 netstat -r 具有同等功能的命令是（  ）</div>
+    A. route print　B. ipconfig /all　C. arp -a　D. tracert -d
+    <div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div>
+    <div class="analysis">
+      <span class="b a1">🎯 答案解析：选 <b>A</b>。<code>netstat -r</code> 与 <code>route print</code> 等价，都看路由表。</span>
+      <span class="b a2">📚 知识点讲解：<code>netstat -r</code> 中 -r = routing，调出路由表，输出等同 route print。</span>
+      <span class="b a3">💡 解题思路：记住「r=route=路由表」，等价命令即 route print。</span>
+      <span class="b a4">🧠 记忆口诀：「netstat -r，route print 替。」</span>
+    </div>
+  </div>
+</section>
+
+<!-- 模块五 -->
+<section class="module" id="m5">
+  <h2><span class="num">5</span> 模块五 DNS 与 Linux 命令（nslookup / ifconfig）</h2>
+  <h3>5.1 nslookup：查 DNS 工作状态</h3>
+  <p><strong>第 5、17 题：</strong>采用 <code>nslookup</code> 查看<strong>域名服务器（DNS）工作状态</strong>。打不开网页时，用它看 DNS 能不能解析出 IP。</p>
+  <div class="analogy"><b>生活类比：</b>DNS 像「电话簿」把人名（域名）翻成号码（IP）。<code>nslookup</code> 就是翻开电话簿查「这个名字能不能查到号」。</div>
+
+  <h3>5.2 ifconfig：Linux 下的「ipconfig」</h3>
+  <p><strong>第 4、16 题：</strong>Linux 中 <code>ifconfig</code> 用来<strong>显示和设置网络接口配置信息</strong>——相当于 Windows 的 <code>ipconfig</code>。</p>
+  <table class="kv">
+    <tr><th>系统</th><th>看本机配置</th><th>看路由表</th></tr>
+    <tr><td>Windows</td><td>ipconfig</td><td>route print / netstat -r</td></tr>
+    <tr><td>Linux</td><td>ifconfig</td><td>netstat -nr</td></tr>
+  </table>
+  <div class="trap"><b>⚠ 易混点：</b><code>ifconfig</code>（Linux）≠ <code>ipconfig</code>（Windows），只差一个字母，分属不同系统。看题干说「Linux」还是「Windows」。</div>
+
+  <div class="quiz">
+    <div class="q">【自测6】在 Linux 中，用来显示和设置网络接口配置信息的命令是（  ）</div>
+    A. ifconfig　B. ipconfig　C. route　D. nslookup
+    <div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div>
+    <div class="analysis">
+      <span class="b a1">🎯 答案解析：选 <b>A</b>。<code>ifconfig</code> 是 Linux 下查看/设置网卡配置命令。</span>
+      <span class="b a2">📚 知识点讲解：<code>ifconfig</code> = interface config；<code>ipconfig</code> 是 Windows 版（差一个字母）。</span>
+      <span class="b a3">💡 解题思路：关键词「Linux + 网络接口配置」 → ifconfig。</span>
+      <span class="b a4">🧠 记忆口诀：「Linux 配接口，ifconfig 走。」</span>
+    </div>
+  </div>
+  <div class="quiz">
+    <div class="q">【自测7】查看域名服务器工作状态，应使用（  ）</div>
+    A. ipconfig　B. nslookup　C. netstat　D. route
+    <div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div>
+    <div class="analysis">
+      <span class="b a1">🎯 答案解析：选 <b>B</b>。<code>nslookup</code> 专查 DNS 解析。</span>
+      <span class="b a2">📚 知识点讲解：DNS 是域名解析系统，nslookup（name server lookup）即其诊断工具。</span>
+      <span class="b a3">💡 解题思路：关键词「域名服务器工作状态」 → nslookup。</span>
+      <span class="b a4">🧠 记忆口诀：「DNS 好不好，nslookup 查。」</span>
+    </div>
+  </div>
+</section>
+
+<!-- 模块六 -->
+<section class="module" id="m6">
+  <h2><span class="num">6</span> 模块六 安全与管理命令（防火墙 / VPN / 证书 / cipher / 活动目录）</h2>
+  <h3>6.1 防火墙：内外网之间的「门卫」</h3>
+  <p><strong>第 2 题：</strong>正确说法——<strong>防火墙是一个或一组在两个不同安全等级的网络之间执行访问控制策略的系统</strong>。错误项：A（应在边界非内网内部）、B（按策略控访问非单纯禁内网）、C（软硬皆可，非必须硬件）。</p>
+  <div class="analogy"><b>生活类比：</b>防火墙像小区大门保安，站在「小区（内网）」与「马路（外网）」之间按规矩放行/拦人。他不是小区住户，也不只拦住户出门。</div>
+
+  <h3>6.2 VPN / 证书 / 活动目录 / cipher</h3>
+  <table class="kv">
+    <tr><th>考点</th><th>要点</th></tr>
+    <tr><td>VPN（第12题·判断）</td><td>借 Internet 等公共网络与分支/他司建加密连接，安全通信 → 正确</td></tr>
+    <tr><td>证书导出（第13题）</td><td>工具 → Internet 选项 → <strong>内容</strong> → 证书</td></tr>
+    <tr><td>活动目录（第14题）</td><td>安装方法：「管理工具」/「配置服务器」</td></tr>
+    <tr><td>cipher（第15题）</td><td>创建<strong>数据恢复代理</strong>的证书和私钥（EFS 相关；CHKDSK/netstat/nslookup 均无关）</td></tr>
+  </table>
+  <div class="analogy"><b>生活类比：</b><code>cipher</code> 像保险柜「备用钥匙管理员」——生成的恢复代理证书等于给管理员一把开所有人保险柜的「万能备用钥匙」（用于员工离职后恢复加密文件）。</div>
+  <div class="trap"><b>⚠ 边角题（了解即可）：</b>第 1 题问「Linux 下的开发环境」，答案 A（原题 OCR 严重乱码，原意为 GCC）。Linux 下用 GCC 编译，记住即可，不必纠结损坏选项。</div>
+
+  <div class="quiz">
+    <div class="q">【自测8】关于防火墙，下列说法正确的是（  ）</div>
+    A. 防火墙通常处于企业局域网内部　B. 防火墙用于禁止局域网内用户访问 Internet　C. 必须要有专用的硬件支持　D. 防火墙是一个或一组在两个不同安全等级的网络之间执行访问控制策略的系统
+    <div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div>
+    <div class="analysis">
+      <span class="b a1">🎯 答案解析：选 <b>D</b>。防火墙本质是在不同安全等级网络间做访问控制的系统。</span>
+      <span class="b a2">📚 知识点讲解：A/B/C 都是常见错误描述。防火墙位于<strong>边界</strong>，按策略控访问，软硬皆可。</span>
+      <span class="b a3">💡 解题思路：找「正确」的——只有 D 是防火墙标准定义。</span>
+      <span class="b a4">🧠 记忆口诀：「防火墙守边界，访问控制它裁决。」</span>
+    </div>
+  </div>
+  <div class="quiz">
+    <div class="q">【自测9】在 Windows 中，创建用于数据恢复代理的证书和私钥，使用（  ）命令。</div>
+    A. CHKDSK　B. Cipher　C. netstat　D. nslookup
+    <div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div>
+    <div class="analysis">
+      <span class="b a1">🎯 答案解析：选 <b>B</b>。<code>cipher</code> 用于 EFS 相关证书（含恢复代理）。</span>
+      <span class="b a2">📚 知识点讲解：<code>cipher</code> 管理加密文件系统；CHKDSK 查磁盘、netstat 看网络、nslookup 查 DNS，均无关。</span>
+      <span class="b a3">💡 解题思路：关键词「数据恢复代理证书」 → cipher。</span>
+      <span class="b a4">🧠 记忆口诀：「恢复代理证书，cipher 生。」</span>
+    </div>
+  </div>
+</section>
+
+<!-- 速查卡 -->
+<section id="ref">
+  <h2><span class="num">🃏</span> 速查卡与反直觉陷阱</h2>
+  <div class="card">
+    <h3>速查卡</h3>
+    <table class="kv">
+      <tr><th>命令</th><th>系统</th><th>作用</th><th>易混提醒</th></tr>
+      <tr><td>ipconfig</td><td>Windows</td><td>看本机 IP/DHCP/DNS</td><td>/all 看全量含 MAC</td></tr>
+      <tr><td>ifconfig</td><td>Linux</td><td>看/设网络接口</td><td>比 ipconfig 少一个 o</td></tr>
+      <tr><td>ping</td><td>通用</td><td>测连通（ICMP）</td><td>能被 IP 安全策略禁</td></tr>
+      <tr><td>arp -a</td><td>Windows</td><td>由 IP 查 MAC</td><td>不是 ipconfig</td></tr>
+      <tr><td>route print</td><td>Windows</td><td>看路由表</td><td>≡ netstat -r</td></tr>
+      <tr><td>netstat -r</td><td>通用</td><td>看路由表</td><td>= route print</td></tr>
+      <tr><td>netstat -nr</td><td>Linux</td><td>看路由表（数字）</td><td>Linux 版</td></tr>
+      <tr><td>tracert</td><td>Windows</td><td>追踪每一跳</td><td>看路径非看表</td></tr>
+      <tr><td>nslookup</td><td>通用</td><td>查 DNS</td><td>域名服务器专属</td></tr>
+      <tr><td>cipher</td><td>Windows</td><td>恢复代理证书</td><td>EFS 相关非磁盘检查</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h3>反直觉陷阱（最容易选反）</h3>
+    <ul>
+      <li><b>netstat -r = route print</b>：netstat 不只是看连接，-r 是看路由表，与 route print 一毛一样。</li>
+      <li><b>ipconfig ≠ 由 IP 查 MAC</b>：看自己用 ipconfig，由 IP 查邻居 MAC 用 arp -a。</li>
+      <li><b>ifconfig（Linux）≠ ipconfig（Windows）</b>：差一个字母，分属两系统。</li>
+      <li><b>防火墙在边界不在内网内部</b>，且不必须硬件。</li>
+      <li><b>tracert ≠ route print</b>：一个动态追路径，一个静态看表。</li>
+      <li><b>IP 安全策略能禁 PING</b>：正确，别当错。</li>
+      <li><b>VPN 借 Internet 建安全连接</b>：正确。</li>
+      <li><b>第 1 题了解即可</b>：Linux 下编译环境为 GCC（选项 OCR 损坏）。</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 练习题 -->
+<section class="practice" id="m7">
+  <h2><span class="num">⑦</span> 练习题（题库 23 题全）</h2>
+  <p>完整收录题库「网络命令与诊断」23 题，点击每题展开四要素解析。重复题已标注，边角题标「了解即可」。</p>
+  <div class="legend">
+    <span><b>橙色=与前面重复</b></span><span><i>紫色=了解即可（选项 OCR 损坏）</i></span>
+  </div>
+  <div class="toolbar">
+    <button onclick="expandAll()">展开全部解析</button>
+    <button class="ghost" onclick="collapseAll()">收起全部解析</button>
+  </div>
+  <div id="items"></div>
+</section>
+
+</div>
+
+<footer>网络命令与诊断 · 零基础系统学习 ｜ 来源：题库「网络命令与诊断（23 题）」</footer>
+
+<script>
+const QA = [["1", "下面（  ）环境，是 Linux 系统下使用的。", "A. GCC（原题 OCR 损坏，原意为 GCC）  B. VC++  C. V++.NET  D. Builder6", "A", "🎯 答案解析：选 A。Linux 下常用 GCC 编译环境；本题原始选项 OCR 严重乱码，了解即可。｜📚 知识点讲解：GCC 是 Linux 平台主流编译器；VC++、V++.NET、Builder 多为 Windows 开发工具。｜💡 解题思路：认“Linux 对应 GCC”即可，不必纠结损坏选项。｜🧠 记忆口诀：“Linux 编译靠 GCC。”", "edge"], ["2", "以下关于防火墙说法正确的是（  ）。", "A. 防火墙通常处于企业局域网内部  B. 防火墙用于禁止局域网内用户访问 Internet  C. 必须要有专用的硬件支持  D. 防火墙是一个或一组在两个不同安全等级的网络之间执行访问控制策略的系统", "D", "🎯 答案解析：选 D。防火墙是在不同安全等级网络间执行访问控制策略的系统。｜📚 知识点讲解：A 错（在边界不在内网内部）；B 错（按策略控访问非单纯禁内网）；C 错（软硬皆可）。｜💡 解题思路：找标准定义，仅 D 正确。｜🧠 记忆口诀：“防火墙守边界，访问控制它裁决。”"], ["3", "与 netstat -r 具有同等功能的命令是（  ）。", "A. route print  B. ipconfig /all  C. arp -a  D. tracert -d", "A", "🎯 答案解析：选 A。netstat -r 与 route print 等价，都显示路由表。｜📚 知识点讲解：-r 即 routing，netstat 用它调出路由表，输出等同 route print。｜💡 解题思路：记住“r=route=路由表”，等价命令即 route print。｜🧠 记忆口诀：“netstat -r，route print 替。”"], ["4", "在 Linux 命令中，（  ）用来显示和设置网络接口的配置信息。", "A. ifconfig  B. ipconfig  C. route  D. nslookup", "A", "🎯 答案解析：选 A。ifconfig 是 Linux 下查看/设置网卡配置命令。｜📚 知识点讲解：ifconfig = interface config；对应 Windows 的 ipconfig。｜💡 解题思路：题干“Linux + 网络接口配置” → ifconfig。｜🧠 记忆口诀：“Linux 配接口，ifconfig 走。”"], ["5", "采用命令（  ）查看域名服务器工作状态。", "A. ipconfig  B. nslookup  C. netstat  D. route", "B", "🎯 答案解析：选 B。nslookup 专查 DNS 解析状态。｜📚 知识点讲解：DNS 负责域名→IP，nslookup（name server lookup）即其诊断工具。｜💡 解题思路：关键词“域名服务器工作状态” → nslookup。｜🧠 记忆口诀：“DNS 好不好，nslookup 查。”"], ["6", "与 route print 命令功能相同的命令是（  ）。", "A. netstat -r  B. ping  C. ipconfig /all  D. nslookup", "A", "🎯 答案解析：选 A。route print 等价于 netstat -r。｜📚 知识点讲解：两者都是调出本机路由表，输出一致。｜💡 解题思路：route print 的等价写法就是 netstat -r。｜🧠 记忆口诀：“route print，netstat -r 同。”"], ["7", "由 IP 地址查询 MAC 地址的 Windows 命令是（  ）。", "A. tracert  B. arp -a  C. ipconfig /all  D. netstat -s", "B", "🎯 答案解析：选 B。arp -a 显示 IP↔MAC 映射表，是由 IP 查 MAC。｜📚 知识点讲解：ARP 协议负责已知 IP 求 MAC；arp -a 列出缓存映射。｜💡 解题思路：关键词“IP 查 MAC” → arp -a。｜🧠 记忆口诀：“IP 查 MAC，arp -a 它。”"], ["8", "在 Linux 操作系统中，能够显示本机网络路由信息的命令是（  ）。", "A. ifconfig -a  B. netstat -nr  C. ls -l  D. route print", "B", "🎯 答案解析：选 B。netstat -nr 在 Linux 下显示路由表。｜📚 知识点讲解：-n 数字显示、-r 路由表；Linux 版等价 route print。｜💡 解题思路：题干“Linux + 路由信息” → netstat -nr。｜🧠 记忆口诀：“Linux 看路由，netstat -nr。”"], ["9", "在 Windows 操作系统中可以通过（  ）命令查看 DHCP 服务器分配给本机的 IP 地址。", "A. nslookup  B. ifconfig  C. ipconfig  D. tracert", "C", "🎯 答案解析：选 C。ipconfig 显示本机 IP 配置，含 DHCP 分配地址。｜📚 知识点讲解：ipconfig 是 Windows 本机配置查看器；ifconfig 属 Linux。｜💡 解题思路：关键词“Windows + DHCP 分配 IP” → ipconfig。｜🧠 记忆口诀：“Windows 看本机，ipconfig 最行。”"], ["10", "（  ）命令可查看本机路由表。", "A. arp -a  B. ping  C. route print  D. tracert", "C", "🎯 答案解析：选 C。route print 显示本机路由表。｜📚 知识点讲解：路由表是数据包转发地图；arp -a 查 MAC、ping 测连通、tracert 追路径，均非看表。｜💡 解题思路：关键词“查看本机路由表” → route print。｜🧠 记忆口诀：“看路由表，route print 到。”"], ["11", "通过启用本机的 IP 安全策略可以禁止其它系统对本机的 PING 操作。（  ）", "A. 正确  B. 错误", "正确", "🎯 答案解析：选 正确。IPSec 策略可过滤 ICMP，从而禁 ping。｜📚 知识点讲解：PING 基于 ICMP，IP 安全策略能针对性拦截实现“隐形”。｜💡 解题思路：IP 安全策略=本机包过滤，能禁特定流量 → 正确。｜🧠 记忆口诀：“IP 安全策略上，PING 进不来。”"], ["12", "VPN 支持企业通过 Internet 等公共因特网与分支机构或其它公司建立连接，进行安全的通信。（  ）", "A. 正确  B. 错误", "正确", "🎯 答案解析：选 正确。VPN 在公共网络上建立加密隧道实现安全通信。｜📚 知识点讲解：VPN 借 Internet 建加密专线，隔离公众、保障机密。｜💡 解题思路：VPN 核心即“公网上的安全连接” → 正确。｜🧠 记忆口诀：“VPN 借公网，加密连分支。”"], ["13", "证书导出的基本步骤为：在浏览器中依次点击：工具 → Internet 选项 →（  ）→ 证书。", "A. 内容  B. 常规  C. 隐私  D. 安全", "A", "🎯 答案解析：选 A。证书在“内容”选项卡管理。｜📚 知识点讲解：Internet 选项里“内容”页含证书、SSL、个性化等管理入口。｜💡 解题思路：证书管理入口是“内容” → A。｜🧠 记忆口诀：“证书在内容，点开就能导。”"], ["14", "通过哪种方法安装活动目录（  ）。", "A. “管理工具”/“配置服务器”  B. “管理工具”/“计算机管理”  C. “管理工具”/“Internet 服务管理器”  D. 以上都不是", "A", "🎯 答案解析：选 A。安装活动目录走“管理工具 → 配置服务器”。｜📚 知识点讲解：活动目录（AD）是 Windows 域集中管理服务，配置入口在“配置服务器”。｜💡 解题思路：AD 安装入口即“配置服务器” → A。｜🧠 记忆口诀：“装活动目录，配置服务器。”"], ["15", "在 Windows 系统中，使用（  ）命令可以创建用于数据恢复代理的证书和私钥。", "A. CHKDSK  B. Cipher  C. netstat  D. nslookup", "B", "🎯 答案解析：选 B。cipher 用于 EFS 相关证书（含恢复代理）。｜📚 知识点讲解：cipher 管理加密文件系统；CHKDSK 查磁盘、netstat 看网络、nslookup 查 DNS，均无关。｜💡 解题思路：关键词“数据恢复代理证书” → cipher。｜🧠 记忆口诀：“恢复代理证书，cipher 生。”"], ["16", "在 Linux 命令中，（  ）用来显示和设置网络接口的配置信息。", "A. ifconfig  B. ipconfig  C. route  D. nslookup", "A", "🎯 答案解析：选 A。同第 4 题，ifconfig 配置 Linux 网络接口。｜📚 知识点讲解：Linux 下 interface config 命令，对应 Windows 的 ipconfig。｜💡 解题思路：重复题，巩固“Linux → ifconfig”。｜🧠 记忆口诀：“Linux 配接口，ifconfig 走。”", "dup"], ["17", "采用命令（  ）查看域名服务器工作状态。", "A. ipconfig  B. nslookup  C. netstat  D. route", "B", "🎯 答案解析：选 B。同第 5 题，nslookup 查 DNS。｜📚 知识点讲解：DNS 诊断专属工具。｜💡 解题思路：重复题，巩固“DNS → nslookup”。｜🧠 记忆口诀：“DNS 好不好，nslookup 查。”", "dup"], ["18", "与 netstat -r 具有同等功能的命令是（  ）。", "A. route print  B. ipconfig /all  C. arp -a  D. tracert -d", "A", "🎯 答案解析：选 A。同第 3 题，等价关系 route print。｜📚 知识点讲解：netstat -r ≡ route print。｜💡 解题思路：重复题，巩固等价关系。｜🧠 记忆口诀：“netstat -r，route print 替。”", "dup"], ["19", "与 route print 命令功能相同的命令是（  ）。", "A. netstat -r  B. ping  C. ipconfig /all  D. nslookup", "A", "🎯 答案解析：选 A。同第 6 题。｜📚 知识点讲解：route print ≡ netstat -r。｜💡 解题思路：重复题，巩固等价关系。｜🧠 记忆口诀：“route print，netstat -r 同。”", "dup"], ["20", "由 IP 地址查询 MAC 地址的 Windows 命令是（  ）。", "A. tracert  B. arp -a  C. ipconfig /all  D. netstat -s", "B", "🎯 答案解析：选 B。同第 7 题，arp -a 由 IP 查 MAC。｜📚 知识点讲解：ARP 映射表。｜💡 解题思路：重复题，巩固“IP 查 MAC → arp -a”。｜🧠 记忆口诀：“IP 查 MAC，arp -a 它。”", "dup"], ["21", "在 Linux 操作系统中，能够显示本机网络路由信息的命令是（  ）。", "A. ifconfig -a  B. netstat -nr  C. ls -l  D. route print", "B", "🎯 答案解析：选 B。同第 8 题，netstat -nr 显示路由表。｜📚 知识点讲解：Linux 版路由查看。｜💡 解题思路：重复题，巩固“Linux 路由 → netstat -nr”。｜🧠 记忆口诀：“Linux 看路由，netstat -nr。”", "dup"], ["22", "在 Windows 操作系统中可以通过（  ）命令查看 DHCP 服务器分配给本机的 IP 地址。", "A. nslookup  B. ifconfig  C. ipconfig  D. tracert", "C", "🎯 答案解析：选 C。同第 9 题，ipconfig 显示 DHCP 分配 IP。｜📚 知识点讲解：Windows 本机配置查看器。｜💡 解题思路：重复题，巩固“Windows + DHCP IP → ipconfig”。｜🧠 记忆口诀：“Windows 看本机，ipconfig 最行。”", "dup"], ["23", "（  ）命令可查看本机路由表。", "A. arp -a  B. ping  C. route print  D. tracert", "C", "🎯 答案解析：选 C。同第 10 题，route print 看路由表。｜📚 知识点讲解：路由表查看命令。｜💡 解题思路：重复题，巩固“查看路由表 → route print”。｜🧠 记忆口诀：“看路由表，route print 到。”", "dup"]];
+
+const box=document.getElementById('items');
+QA.forEach((q)=>{
+  const num=q[0], stem=q[1], opts=q[2], ans=q[3];
+  const analysisRaw = q[4];
+  const tag = (q.length===6) ? q[5] : '';
+  const isSpecial = analysisRaw.indexOf('⚠')===0 || ans.indexOf('题库标注')>=0;
+  let tagHtml = tag==='dup' ? '<span class="dup">（与前面重复）</span>'
+              : tag==='edge' ? '<span class="edge">（了解即可）</span>'
+              : tag==='dupedge' ? '<span class="dup">（与前面重复）</span><span class="edge">（了解即可）</span>'
+              : isSpecial ? '<span class="edge">（存疑·见解析）</span>' : '';
+  const ansHtml = '<span class="ans">答案：'+ans+'</span>';
+  let ana;
+  if(isSpecial){
+    ana = '<div class="analysis"><span class="b a2">'+analysisRaw+'</span></div>';
+  } else {
+    const parts = analysisRaw.split('｜');
+    const cls=['a1','a2','a3','a4'];
+    ana = '<div class="analysis">'+parts.map((p,k)=>'<span class="b '+cls[k]+'">'+(p||'')+'</span>').join('')+'</div>';
+  }
+  const div=document.createElement('div');
+  div.className='item';
+  div.innerHTML='<div class="q">'+num+'. '+stem+'</div>'
+    +'<div class="meta">'+tagHtml+'</div>'
+    +'<div style="font-size:13.5px;color:#556">选项：'+opts.replace(/｜.*/,'')+'</div>'
+    + ansHtml
+    +'<div class="toggle" onclick="this.nextElementSibling.classList.toggle(\'open\')">▸ 显示解析</div>'
+    + ana;
+  box.appendChild(div);
+});
+function expandAll(){document.querySelectorAll('.item .analysis').forEach(e=>e.classList.add('open'));}
+function collapseAll(){document.querySelectorAll('.item .analysis').forEach(e=>e.classList.remove('open'));}
+</script>
+</body>
+</html>

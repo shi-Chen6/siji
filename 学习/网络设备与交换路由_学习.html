@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>网络设备与交换路由 · 零基础系统学习</title>
+<style>
+  :root{
+    --bg:#f5f7fb; --card:#ffffff; --ink:#1f2a44; --muted:#6b7790;
+    --line:#e6eaf2; --brand:#3b6ef5; --brand-soft:#eaf0ff;
+    --green:#16a34a; --green-soft:#e7f8ee; --red:#e23b3b; --red-soft:#fdecec;
+    --amber:#d98b00; --amber-soft:#fff4e0; --violet:#7c5cff; --violet-soft:#f1ecff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.7;font-size:15px}
+  header{background:linear-gradient(135deg,#3b6ef5,#7c5cff);color:#fff;padding:34px 20px;text-align:center}
+  header h1{margin:0 0 8px;font-size:24px}
+  header p{margin:0;opacity:.92;font-size:14px}
+  .wrap{max-width:920px;margin:0 auto;padding:18px}
+  nav{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);padding:10px 14px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+  nav a{font-size:13px;color:var(--brand);text-decoration:none;background:var(--brand-soft);
+    padding:5px 11px;border-radius:20px;white-space:nowrap}
+  nav a:hover{background:var(--brand);color:#fff}
+  section{background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:22px;margin:18px 0;box-shadow:0 4px 18px rgba(40,60,120,.05)}
+  h2{font-size:20px;margin:0 0 6px;display:flex;align-items:center;gap:10px}
+  h2 .num{background:var(--brand);color:#fff;width:30px;height:30px;border-radius:9px;
+    display:inline-flex;align-items:center;justify-content:center;font-size:15px;flex:0 0 auto}
+  h3{font-size:16px;margin:18px 0 8px;color:var(--brand)}
+  p{margin:8px 0}
+  .analogy{background:var(--brand-soft);border-left:4px solid var(--brand);border-radius:8px;
+    padding:10px 14px;margin:12px 0;font-size:14px;color:#2a3a66}
+  .analogy b{color:var(--brand)}
+  .kv{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
+  .kv th,.kv td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  .kv th{background:var(--brand-soft);color:#2a3a66}
+  .quiz{background:#fbfcfe;border:1px dashed var(--line);border-radius:10px;padding:12px 14px;margin:14px 0}
+  .quiz .q{font-weight:600}
+  .quiz .ans{display:inline-block;margin-top:8px;background:var(--green-soft);color:var(--green);
+    font-weight:700;padding:4px 12px;border-radius:8px;font-size:14px}
+  .toggle{cursor:pointer;color:var(--brand);font-size:13px;margin-top:8px;user-select:none;font-weight:600}
+  .analysis{display:none;margin-top:10px;border-top:1px dashed var(--line);padding-top:10px;font-size:14px}
+  .analysis.open{display:block}
+  .analysis .b{display:block;margin:6px 0;padding:8px 10px;border-radius:8px}
+  .a1{background:var(--green-soft)} .a2{background:var(--brand-soft)} .a3{background:var(--amber-soft)} .a4{background:var(--violet-soft)}
+  .figure{background:#fbfcff;border:1px solid var(--line);border-radius:12px;padding:14px;margin:14px 0;text-align:center}
+  .figure svg{width:100%;max-width:560px;height:auto}
+  .figure .cap{font-size:13px;color:var(--muted);margin-top:6px}
+  .trap{background:var(--red-soft);border-left:4px solid var(--red);border-radius:8px;
+    padding:10px 14px;margin:12px 0;font-size:14px;color:#7a1f1f}
+  .trap b{color:var(--red)}
+  #story .flow{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:14px 0}
+  #story .step{background:var(--brand-soft);border:1px solid #cfe0ff;color:#2a3a66;border-radius:12px;
+    padding:10px 12px;width:140px;text-align:center;font-size:13px}
+  #story .step b{display:block;color:var(--brand);font-size:15px;margin-bottom:3px}
+  #ref .card{background:#fbfcfe;border:1px solid var(--line);border-radius:12px;padding:14px;margin:12px 0}
+  #ref h3{margin-top:0}
+  #ref ul{margin:6px 0;padding-left:20px}
+  #ref li{margin:4px 0}
+  .practice .toolbar{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+  .practice button{background:var(--brand);color:#fff;border:none;padding:8px 16px;border-radius:9px;cursor:pointer;font-size:14px}
+  .practice button.ghost{background:var(--brand-soft);color:var(--brand)}
+  .item{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0;background:#fff}
+  .item .q{font-weight:600;font-size:14.5px}
+  .item .meta{font-size:12px;color:var(--muted);margin-top:4px}
+  .item .ans{display:inline-block;margin-top:8px;background:var(--green-soft);color:var(--green);
+    font-weight:700;padding:3px 10px;border-radius:7px;font-size:13px}
+  .item .dup{color:var(--amber);font-size:12px;margin-left:8px}
+  .item .edge{color:var(--violet);font-size:12px;margin-left:8px}
+  .item .analysis{margin-top:8px}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:6px 0}
+  .legend span b{color:var(--amber)} .legend span i{color:var(--violet);font-style:normal}
+  footer{text-align:center;color:var(--muted);font-size:13px;padding:24px}
+  @media(max-width:600px){.wrap{padding:10px}section{padding:16px}#story .step{width:46%}}
+</style>
+</head>
+<body>
+<header>
+  <h1>📡 网络设备与交换路由 · 零基础系统学习</h1>
+  <p>内容来源：题库「网络设备与交换路由（119 题）」｜ 通俗类比 + 考点自测 + 119 题全解析</p>
+</header>
+
+<nav>
+  <a href="#story">📖 故事线</a>
+  <a href="#m1">① 设备总览</a>
+  <a href="#m2">② 交换机</a>
+  <a href="#m3">③ VLAN</a>
+  <a href="#m4">④ 路由器</a>
+  <a href="#m5">⑤ 路由协议</a>
+  <a href="#m6">⑥ 聚合·安全</a>
+  <a href="#ref">🃏 速查卡</a>
+  <a href="#m7">⑦ 119题自测</a>
+</nav>
+
+<div class="wrap">
+
+<!-- 故事线 -->
+<section id="story">
+  <h2><span class="num">📖</span> 故事线：从零搭一张公司网</h2>
+  <p>把全部知识点串成一条逻辑线，零基础也能"长在一条线上"记住：</p>
+  <div class="flow">
+    <div class="step"><b>① 认设备</b>分清交换机/路由器/集线器/网关在哪层</div>
+    <div class="step"><b>② 布内网</b>交换机按 MAC 派件，每口一冲突域</div>
+    <div class="step"><b>③ 划部门</b>VLAN 逻辑隔广播，同 VLAN 才互通</div>
+    <div class="step"><b>④ 连外网</b>路由器按 IP 跨网投递，隔离广播</div>
+    <div class="step"><b>⑤ 学路由</b>RIP/OSPF/BGP 交换"怎么走最近"</div>
+    <div class="step"><b>⑥ 加安全</b>聚合提带宽、防火墙挡攻击、IDS 抓异常</div>
+  </div>
+</section>
+
+<!-- 模块一 -->
+<section class="module" id="m1">
+  <h2><span class="num">1</span> 模块一 网络设备总览与 OSI 分层</h2>
+  <h3>1.1 常见设备与它们"在哪一层干活"</h3>
+  <p>网络设备按 OSI 分层，记住"越低层越傻、越高层越聪明"：</p>
+  <table class="kv">
+    <tr><th>设备</th><th>工作的层</th><th>一句话定位</th></tr>
+    <tr><td>中继器 / 集线器</td><td>物理层（第1层）</td><td>只放大复制信号，所有口共享一条总线，整机一个冲突域</td></tr>
+    <tr><td>网桥 / 交换机</td><td>数据链路层（第2层）</td><td>按 MAC 地址精准派件，每端口一个冲突域</td></tr>
+    <tr><td>路由器</td><td>网络层（第3层）</td><td>按 IP 地址跨网络投递，隔离广播域</td></tr>
+    <tr><td>网关</td><td>传输层及以上</td><td>连接两个"语言不通"的异构系统</td></tr>
+  </table>
+  <div class="analogy"><b>生活类比：</b>把 OSI 想成快递公司 departments——物理层是"搬运工"（只把包裹从 A 搬到 B），数据链路层是"本市分拣员"（按门牌 MAC 派件），网络层是"跨市邮局"（按邮编 IP 投递），网关是"翻译官"（把中文快递单翻成英文交给外国公司）。</div>
+  <div class="figure">
+    <svg viewBox="0 0 560 220" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="20" width="540" height="40" rx="8" fill="#eaf0ff"/>
+      <text x="280" y="45" text-anchor="middle" font-size="14" fill="#2a3a66">OSPF/应用 — 网关（传输层以上）</text>
+      <rect x="10" y="70" width="540" height="40" rx="8" fill="#e7f8ee"/>
+      <text x="280" y="95" text-anchor="middle" font-size="14" fill="#14662f">路由器 — 网络层（第3层·按 IP）</text>
+      <rect x="10" y="120" width="540" height="40" rx="8" fill="#fff4e0"/>
+      <text x="280" y="145" text-anchor="middle" font-size="14" fill="#8a5a00">交换机 / 网桥 — 数据链路层（第2层·按 MAC）</text>
+      <rect x="10" y="170" width="540" height="40" rx="8" fill="#fdecec"/>
+      <text x="280" y="195" text-anchor="middle" font-size="14" fill="#7a1f1f">集线器 / 中继器 — 物理层（第1层·放大信号）</text>
+    </svg>
+    <div class="cap">图：设备分层——越低层越"傻"（只搬信号），越高层越"聪明"（看懂内容）</div>
+  </div>
+
+  <h3>1.2 冲突域与广播域</h3>
+  <p><b>冲突域</b>：同一时间只能一台设备发数据、否则"撞车"的范围。集线器所有口共享一个冲突域；交换机<b>每个端口一个冲突域</b>。<b>广播域</b>：广播帧能到达的范围。交换机<b>整机是一个广播域</b>；路由器<b>不转发广播</b>，能分隔广播域。</p>
+  <div class="analogy"><b>生活类比：</b>冲突域像"一条单行道"——两辆车同时上就撞；广播域像"一个广播喇叭覆盖范围"。交换机给每户单独开一条道（分冲突），但喇叭声整栋都听得见（不分广播）；路由器像隔音墙，喇叭声过不去（分广播）。</div>
+
+  <div class="quiz">
+    <div class="q">【自测1】下面关于网桥和交换机的论述，正确的是（  ）</div>
+    A. 网桥端口比交换机少所以转发快　B. 交换机是多端口网桥，网桥通常只有两个端口　C. 交换机不转发广播帧而网桥转发　D. 都增加冲突域大小
+    <div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div>
+    <div class="analysis">
+      <span class="b a1">🎯 答案解析：选 <b>B</b>。交换机本质就是"多端口的网桥"。</span>
+      <span class="b a2">📚 知识点讲解：网桥和交换机都工作在第二层，都靠 MAC 转发、都分割冲突域；区别只在"口多少"。两者都转发广播帧，也都不增大冲突域。</span>
+      <span class="b a3">💡 解题思路：A 错（快慢不取决于口少）；C 错（都转发广播）；D 错（是分割而非增大）；仅 B 对。</span>
+      <span class="b a4">🧠 记忆口诀："交换机 = 多口网桥；广播都转发，冲突都分割。"</span>
+    </div>
+  </div>
+  <div class="quiz">
+    <div class="q">【自测2】一个 48 端口交换机，冲突域和广播域个数分别是（  ）</div>
+    A. 1,1　B. 48,48　C. 48,1　D. 1,48
+    <div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div>
+    <div class="analysis">
+      <span class="b a1">🎯 答案解析：选 <b>C</b>。冲突域 48（每口一个），广播域 1（整机一个）。</span>
+      <span class="b a2">📚 知识点讲解：交换机每端口独立处理冲突 → 48 个冲突域；广播帧泛洪到所有端口 → 整台同属一个广播域。</span>
+      <span class="b a3">💡 解题思路：交换机"分冲突、不分广播"，冲突域=端口数，广播域=1。</span>
+      <span class="b a4">🧠 记忆口诀："口数即冲突域，整机一个广播域。"</span>
+    </div>
+  </div>
+</section>
+
+<!-- 模块二 -->
+<section class="module" id="m2">
+  <h2><span class="num">2</span> 模块二 交换机工作原理</h2>
+  <h3>2.1 交换机怎么"派件"：MAC 地址与映射表</h3>
+  <p>交换机内部有"端口 ↔ MAC 地址映射表"，靠两种方式建立：<b>地址学习（动态）</b>——收到帧时记"来源 MAC + 入端口"；<b>手工添加</b>——管理员写静态表项。转发依据：<b>二层交换机根据 MAC 地址（不是 IP）转发</b>。端口还能<b>绑定 MAC 地址</b>做接入控制。</p>
+  <div class="analogy"><b>生活类比：</b>交换机像公司前台，记住"张三在 3 号工位（端口3）"。来包裹写"张三"，查表从 3 号口递进去；新人不认识就先广播"张三在哪"，记住后再精准投递。</div>
+
+  <h3>2.2 带宽、架构与图元</h3>
+  <p><b>最大带宽 = 所有端口带宽之和</b>（全双工下每口独享）；架构优点：箱体模块式（维修方便/配置灵活/高可靠→"以上都是"）、模块化（各模块分别规划扩展）；交换机图元含二/三/ATM 交换机，<b>电话交换机不算</b>。</p>
+
+  <h3>2.3 网线怎么接：直连线 vs 交叉线</h3>
+  <p><b>交叉线</b>（一端 568A、一端 568B）：接<b>同类设备</b>——PC↔PC、交换机↔交换机（非 Uplink）。<b>直连线</b>：接<b>异类设备</b>——PC↔交换机、PC↔路由器、交换机↔路由器。<b>级联特例</b>：下级有 Uplink 口时用直连线连上级普通口。</p>
+  <div class="figure">
+    <svg viewBox="0 0 560 200" xmlns="http://www.w3.org/2000/svg">
+      <rect x="40" y="70" width="90" height="60" rx="8" fill="#eaf0ff" stroke="#3b6ef5"/>
+      <text x="85" y="105" text-anchor="middle" font-size="13" fill="#2a3a66">PC</text>
+      <rect x="430" y="70" width="90" height="60" rx="8" fill="#eaf0ff" stroke="#3b6ef5"/>
+      <text x="475" y="105" text-anchor="middle" font-size="13" fill="#2a3a66">PC</text>
+      <line x1="130" y1="100" x2="430" y2="100" stroke="#e23b3b" stroke-width="4" stroke-dasharray="8 6"/>
+      <text x="280" y="90" text-anchor="middle" font-size="13" fill="#e23b3b">交叉线（同类设备）</text>
+      <rect x="40" y="150" width="90" height="40" rx="8" fill="#e7f8ee" stroke="#16a34a"/>
+      <text x="85" y="175" text-anchor="middle" font-size="12" fill="#14662f">PC</text>
+      <rect x="430" y="150" width="90" height="40" rx="8" fill="#e7f8ee" stroke="#16a34a"/>
+      <text x="475" y="175" text-anchor="middle" font-size="12" fill="#14662f">交换机</text>
+      <line x1="130" y1="170" x2="430" y2="170" stroke="#16a34a" stroke-width="4"/>
+      <text x="280" y="160" text-anchor="middle" font-size="13" fill="#14662f">直连线（异类设备）</text>
+    </svg>
+    <div class="cap">图：同类设备用交叉线，异类设备用直连线；下级有 Uplink 口时用直连线</div>
+  </div>
+
+  <div class="quiz">
+    <div class="q">【自测3】以太网交换机根据（  ）转发数据包。</div>
+    A. IP 地址　B. MAC 地址　C. LLC 地址　D. PORT 地址
+    <div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div>
+    <div class="analysis">
+      <span class="b a1">🎯 答案解析：选 <b>B</b>。二层交换机看 MAC 地址转发。</span>
+      <span class="b a2">📚 知识点讲解：交换机是二层设备，转发决策基于帧里的目的 MAC；IP 是三层路由器才看。</span>
+      <span class="b a3">💡 解题思路：二层=MAC、三层=IP，交换机在二层 → 选 MAC。</span>
+      <span class="b a4">🧠 记忆口诀："二层交换机，认 MAC 不认 IP。"</span>
+    </div>
+  </div>
+  <div class="quiz">
+    <div class="q">【自测4】采用交叉双绞线连接的设备组合是（  ）</div>
+    A. PC 与 PC　B. PC 与交换机　C. 交换机与路由器　D. PC 与路由器
+    <div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div>
+    <div class="analysis">
+      <span class="b a1">🎯 答案解析：选 <b>A</b>。交叉线接同类设备，PC 对 PC。</span>
+      <span class="b a2">📚 知识点讲解：交叉线把 1↔3、2↔6 对调，解决同类设备"说/听"脚一致问题；其余三项异类用直连线。</span>
+      <span class="b a3">💡 解题思路：记住"同类交叉、异类直通"，PC-PC 是同类 → 交叉线。</span>
+      <span class="b a4">🧠 记忆口诀："同交叉、异直通；PC 对 PC 用交叉。"</span>
+    </div>
+  </div>
+</section>
+
+<!-- 模块三 -->
+<section class="module" id="m3">
+  <h2><span class="num">3</span> 模块三 VLAN 虚拟局域网</h2>
+  <h3>3.1 什么是 VLAN</h3>
+  <p>VLAN 把<b>逻辑上</b>相关的一批用户/端口划成组，不一定物理连同一台设备。核心特征：是<b>同一广播域内的一组端口</b>；能<b>逻辑地划分网段</b>（最大优点）；建立 VLAN 主要<b>提高管理效率</b>。</p>
+  <div class="analogy"><b>生活类比：</b>同一栋楼，财务在 3 层、研发在 5 层，老板要"财务互发广播、别打扰研发"——VLAN 像给两部对讲机编到同一频道，物理位置不重要，逻辑分组才重要。</div>
+
+  <h3>3.2 VLAN 编号与 Trunk</h3>
+  <p><b>VLAN ID 范围 0–4095</b>：0 和 4095 保留，可用 1–4094。<b>vlan 1 是默认 VLAN 不能删</b>。跨交换机同 VLAN 互通靠 <b>Trunk 端口</b>，跨厂家标准是 <b>802.1q</b>。易错：Trunk 的 <b>PVID 可改</b>、且<b>并非所有帧都带 VLAN ID</b>（无标签帧打上 PVID）。</p>
+
+  <h3>3.3 交换机配置模式</h3>
+  <p>配置<b>管理地址</b>必须在 <code>Switch(config-if)#</code> 接口模式；同 VLAN 内主机通过广播互通。</p>
+  <div class="trap"><b>⚠ 反直觉陷阱：</b>很多人以为 vlan 随便删——<b>vlan 1 是默认 VLAN，绝对不能删</b>（no vlan 1 无法执行）。Trunk 上"无标签帧"不打 VLAN ID 也照传，别误以为"Trunk 上帧都带 ID"。</div>
+
+  <div class="quiz">
+    <div class="q">【自测5】下面选项中，属于 VLAN 的优点是（  ）</div>
+    A. 允许逻辑地划分网段　B. 减少了冲突域的数量　C. 增加了冲突域的大小　D. 减少了广播域的数量
+    <div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div>
+    <div class="analysis">
+      <span class="b a1">🎯 答案解析：选 <b>A</b>。VLAN 核心价值是"逻辑划分网段、方便管理"。</span>
+      <span class="b a2">📚 知识点讲解：VLAN 在一个广播域内部做逻辑分组，不减少广播域数量（广播域靠路由器分隔），也不改变冲突域。</span>
+      <span class="b a3">💡 解题思路：VLAN = "逻辑划网段"，其他三项均不符。</span>
+      <span class="b a4">🧠 记忆口诀："VLAN 优在逻辑划，不管冲突与广播。"</span>
+    </div>
+  </div>
+  <div class="quiz">
+    <div class="q">【自测6】不同厂家设备间实现 VLAN 互通的标准是（  ）</div>
+    A. 802.1q　B. 802.1x　C. 802.3　D. 802.11
+    <div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div>
+    <div class="analysis">
+      <span class="b a1">🎯 答案解析：选 <b>A（802.1q）</b>。判断题 Q45 明确跨厂家 VLAN 互通标准即 802.1q。</span>
+      <span class="b a2">📚 知识点讲解：802.1q 给以太网帧打 VLAN ID 标签，让不同厂商交换机都能识别。</span>
+      <span class="b a3">💡 解题思路：VLAN 标签标准记"802.1q"；802.1x 认证、802.3 以太网、802.11 无线。</span>
+      <span class="b a4">🧠 记忆口诀："跨厂 VLAN 互通，认准 802.1q。"</span>
+    </div>
+  </div>
+</section>
+
+<!-- 模块四 -->
+<section class="module" id="m4">
+  <h2><span class="num">4</span> 模块四 路由器与路由基础</h2>
+  <h3>4.1 路由器是干嘛的</h3>
+  <p>连接"逻辑上分开的<b>多个</b>网络"；是<b>网络层设备</b>（丰富接口、支持多种路由协议）；主要作用：实现多个局域网互联、实现内外网连接；不同网络层协议转换也靠路由器。因特网互连核心就是路由器。</p>
+
+  <h3>4.2 路由器的"缺点"与转发</h3>
+  <p><b>缺点</b>：可能成为<b>网络瓶颈</b>（转发差致卡滞）。转发依据<b>路由表</b>（查看网络地址），<b>IP 不合法直接丢弃</b>。</p>
+
+  <h3>4.3 默认路由（缺省路由）</h3>
+  <p>内部网络<b>对外只有一个出口</b>时最好配缺省路由。命令：<code>ip route 0.0.0.0 0.0.0.0 下一跳</code>。用路由器分段优点：<b>不转发广播帧，避免广播风暴</b>（但路由器并不更便宜/更快，也不"禁止所有广播"）。</p>
+  <div class="trap"><b>⚠ 反直觉陷阱：</b>路由器分段优点只有"隔离广播防风暴"是真话。选项里"路由器更便宜 / 更快 / 禁止所有广播"都是坑，别选。</div>
+
+  <div class="quiz">
+    <div class="q">【自测7】用路由器对网络进行分段，其优点有（  ）</div>
+    A. 路由器不转发广播帧避免网络风暴　B. 路由器比交换机便宜　C. 路由器更快　D. 路由器禁止所有广播
+    <div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div>
+    <div class="analysis">
+      <span class="b a1">🎯 答案解析：选 <b>A</b>。路由器三层设备不转发广播，能隔离广播域防风暴。</span>
+      <span class="b a2">📚 知识点讲解：路由器工作 IP 层，广播帧不过路由，分段后遏制广播泛滥。B/C 无依据；D 错在"禁止所有广播"。</span>
+      <span class="b a3">💡 解题思路：路由器分段核心价值 = "隔离广播防风暴"，仅 A 符合。</span>
+      <span class="b a4">🧠 记忆口诀："路由分段，广播不过、风暴不来。"</span>
+    </div>
+  </div>
+  <div class="quiz">
+    <div class="q">【自测8】配置默认路由器的命令是（  ）</div>
+    A. ip route 172.16.1.0 255.255.255.0 0.0.0.0　B. ip route 172.16.1.0 255.255.255.0 172.16.2.1　C. ip route 0.0.0.0 255.255.255.0 172.16.2.1　D. ip route 0.0.0.0 0.0.0.0 172.16.2.1
+    <div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div>
+    <div class="analysis">
+      <span class="b a1">🎯 答案解析：选 <b>D</b>。默认路由目的网络/掩码都是 0.0.0.0，指向出口下一跳。</span>
+      <span class="b a2">📚 知识点讲解：<code>0.0.0.0 0.0.0.0</code> 是"任意地址"通配符，代表"其他所有不知去向的包都交给这个下一跳"。</span>
+      <span class="b a3">💡 解题思路：默认路由 = "全零目的 + 全零掩码"，只有 D 满足。</span>
+      <span class="b a4">🧠 记忆口诀："默认路由全零配，不知去向它背锅。"</span>
+    </div>
+  </div>
+</section>
+
+<!-- 模块五 -->
+<section class="module" id="m5">
+  <h2><span class="num">5</span> 模块五 路由协议（RIP / OSPF / BGP / EIGRP）</h2>
+  <h3>5.1 静态路由与路由权值</h3>
+  <p><b>静态路由</b>由管理员手动配置；<b>路由权值（metric）</b>衡量"哪条路好"，可基于单/多属性，各协议算法不同；路由表含目的/下一站/距离等，<b>不含"时钟"</b>。</p>
+
+  <h3>5.2 RIP（距离矢量）</h3>
+  <p>按<b>跳数</b>算 metric；<b>最大 15 跳</b>（16 不可达）；<b>默认更新 30 秒</b>；<b>路由保持防环</b>；180 秒未更新变不可达；<b>RIP-1 不支持手工聚合</b>；只关心距离和方向。</p>
+  <div class="figure">
+    <svg viewBox="0 0 560 200" xmlns="http://www.w3.org/2000/svg">
+      <text x="280" y="30" text-anchor="middle" font-size="14" fill="#2a3a66">RIP 关键数字</text>
+      <g font-size="13" fill="#1f2a44">
+        <rect x="50" y="50" width="140" height="50" rx="8" fill="#eaf0ff"/><text x="120" y="80" text-anchor="middle">更新周期</text><text x="120" y="98" text-anchor="middle" fill="#3b6ef5"><b>30 秒</b></text>
+        <rect x="210" y="50" width="140" height="50" rx="8" fill="#e7f8ee"/><text x="280" y="80" text-anchor="middle">最大跳数</text><text x="280" y="98" text-anchor="middle" fill="#16a34a"><b>15 跳</b></text>
+        <rect x="370" y="50" width="140" height="50" rx="8" fill="#fff4e0"/><text x="440" y="80" text-anchor="middle">失效时间</text><text x="440" y="98" text-anchor="middle" fill="#d98b00"><b>180 秒</b></text>
+      </g>
+      <text x="280" y="140" text-anchor="middle" font-size="13" fill="#7a1f1f">metric = 跳数 ｜ RIP-1 不聚合 ｜ 保持机制防环</text>
+      <text x="280" y="170" text-anchor="middle" font-size="12" fill="#6b7790">距离矢量协议：只听邻居报"往哪走几跳"</text>
+    </svg>
+    <div class="cap">图：RIP 核心参数一览</div>
+  </div>
+
+  <h3>5.3 OSPF（链路状态）</h3>
+  <p><b>不是距离矢量，是链路状态协议</b>；<b>cost 范围 1–65535</b>；单区域<b>LSDB 相同、路由表不同</b>；<b>Full = 拓扑库同步</b>；<b>DR/BDR 选举：优先级 0 一定不参选</b>；接口类型 HDLC→P2P、ATM→NBMA；链路故障发 link-state update。</p>
+  <div class="trap"><b>⚠ 反直觉陷阱：</b>OSPF 是<b>链路状态</b>不是距离矢量（Q96 的 A 是错误说法）。单区域里<b>路由表各不相同</b>（虽然 LSDB 相同）。</div>
+
+  <h3>5.4 BGP 与 EIGRP</h3>
+  <p><b>BGP</b>：在 AS 之间传播路由；<b>公认属性</b> Origin / AS_PATH / Next_Hop / Local_Pref（<b>MED 非公认</b>）。<b>EIGRP</b>：思科专有。多路径复杂域间控路由用 BGP 最有效。</p>
+
+  <div class="quiz">
+    <div class="q">【自测9】在 RIP 协议中，默认的路由更新周期是（  ）秒。</div>
+    A. 30　B. 60　C. 90　D. 100
+    <div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div>
+    <div class="analysis">
+      <span class="b a1">🎯 答案解析：选 <b>A（30 秒）</b>。RIP 每 30 秒广播一次完整路由表。</span>
+      <span class="b a2">📚 知识点讲解：RIP 靠定时"喊话"同步路由，间隔固定 30 秒；180 秒没收到判定邻居挂了。</span>
+      <span class="b a3">💡 解题思路：RIP 周期记"30 更新、180 失效、240 刷新"，本题问更新 → 30。</span>
+      <span class="b a4">🧠 记忆口诀："RIP 三十秒，喊话报路由。"</span>
+    </div>
+  </div>
+  <div class="quiz">
+    <div class="q">【自测10】关于 OSPF 协议以下说法不正确的是（  ）</div>
+    A. OSPF 是一种距离矢量路由协议　B. OSPF 默认管理距离是…　C. OSPF 是内部网关协议　D. OSPF 是链路状态路由协议
+    <div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div>
+    <div class="analysis">
+      <span class="b a1">🎯 答案解析：选 <b>A</b>。OSPF 是链路状态协议，说它是距离矢量是错的。</span>
+      <span class="b a2">📚 知识点讲解：OSPF 洪泛链路状态、每台独立算最短路径（SPF），与 RIP 完全不同。C、D 正确。</span>
+      <span class="b a3">💡 解题思路：找"不正确"的——A 把 OSPF 说成距离矢量，明显错。</span>
+      <span class="b a4">🧠 记忆口诀："OSPF 链路状态，不是距离矢量。"</span>
+    </div>
+  </div>
+</section>
+
+<!-- 模块六 -->
+<section class="module" id="m6">
+  <h2><span class="num">6</span> 模块六 链路聚合 · 四层交换 · 安全</h2>
+  <h3>6.1 链路聚合</h3>
+  <p>把多条物理链路绑成一条逻辑链路：<b>增加带宽</b>、<b>负载均衡</b>、<b>提高可靠性</b>。注意<b>不能避免环路</b>（防环靠生成树 STP）。</p>
+  <div class="analogy"><b>生活类比：</b>原来单车道堵，现在并成三车道——更宽（带宽）、车流分摊（均衡）、一条施工还有两条能用（可靠）。</div>
+
+  <h3>6.2 四层交换</h3>
+  <p><b>第四层交换</b>：不仅看源/目的地址，还<b>根据数据包内容（端口/应用）决定策略</b>。二层看 MAC、三层看 IP、四层看端口/应用。</p>
+
+  <h3>6.3 安全设备与机制</h3>
+  <p><b>防火墙</b>：内外网间检查威胁、控访问抵御攻击；<b>嗅探器</b>：混杂模式收所有帧；<b>IDS</b>：需端口镜像；<b>防 IP 欺骗</b>：RPF 反查 + IP-MAC 绑定；<b>防病毒端口</b>：关 135/445/1433，<b>别关 22（SSH）</b>；<b>上网行为管理</b>：路由 > 网桥 > 旁路。</p>
+  <div class="trap"><b>⚠ 反直觉陷阱：</b>链路聚合<b>不防环</b>（防环是 STP 的事）。嗅探器混杂模式是"全收"不是"只收本机"。IDS 靠<b>端口镜像</b>而非端口映射/混杂模式。</div>
+
+  <div class="quiz">
+    <div class="q">【自测11】链路聚合的作用是（  ）</div>
+    A. 增加链路带宽　B. 实现数据负载均衡　C. 增加交换机间链路可靠性　D. 避免交换网环路
+    <div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div>
+    <div class="analysis">
+      <span class="b a1">🎯 答案解析：选 <b>ABC</b>。聚合增带宽、能均衡、提可靠；但<b>不能避免环路</b>（D 错）。</span>
+      <span class="b a2">📚 知识点讲解：聚合把多条链路当一条用，容量叠加、流量分摊、冗余备份；环路由 STP 解决。</span>
+      <span class="b a3">💡 解题思路：ABC 是扩容/冗余好处，D 是防环不属于聚合 → 选 ABC。</span>
+      <span class="b a4">🧠 记忆口诀："聚合三好：带宽、均衡、更可靠；防环另算。"</span>
+    </div>
+  </div>
+  <div class="quiz">
+    <div class="q">【自测12】网络嗅探器使网络接口处于混杂模式，此时接口（  ）</div>
+    A. 只收匹配本机 MAC 的帧　B. 只收本网段广播　C. 只收组播　D. 能接收流经接口的所有数据帧
+    <div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div>
+    <div class="analysis">
+      <span class="b a1">🎯 答案解析：选 <b>D</b>。混杂模式下网卡"来者不拒"，抓所有经过的帧。</span>
+      <span class="b a2">📚 知识点讲解：正常模式只收发给自己的帧；混杂模式关闭过滤全部收下——正是网络监听原理，也提醒我们加密通信的重要性。</span>
+      <span class="b a3">💡 解题思路："混杂"= 不挑不拣全收，对应 D。</span>
+      <span class="b a4">🧠 记忆口诀："混杂模式全收，嗅探窃听无忧（加密才防）。"</span>
+    </div>
+  </div>
+</section>
+
+<!-- 速查卡 -->
+<section id="ref">
+  <h2><span class="num">🃏</span> 速查卡与反直觉陷阱</h2>
+  <div class="card">
+    <h3>速查卡</h3>
+    <table class="kv">
+      <tr><th>主题</th><th>要点</th></tr>
+      <tr><td>设备分层</td><td>物理层=集线器/中继器；数据链路层=交换机/网桥；网络层=路由器；传输层以上=网关</td></tr>
+      <tr><td>冲突/广播域</td><td>交换机：每口一冲突域，整机一广播域；路由器分隔广播域</td></tr>
+      <tr><td>线序</td><td>同类交叉（PC-PC、交换机-交换机），异类直通；有 Uplink 用直连</td></tr>
+      <tr><td>VLAN</td><td>逻辑划网段、提管理效率；ID 1–4094；vlan1 不可删；跨厂 802.1q</td></tr>
+      <tr><td>默认路由</td><td>ip route 0.0.0.0 0.0.0.0 下一跳；单出口必配</td></tr>
+      <tr><td>RIP</td><td>距离矢量、跳数 metric、最大 15、更新 30s、防环 hold-down、RIP-1 不聚合</td></tr>
+      <tr><td>OSPF</td><td>链路状态、cost 1–65535、单区域 LSDB 同/路由表异、Full=同步、优先 0 不参选</td></tr>
+      <tr><td>BGP</td><td>AS 之间；公认属性 Origin/AS_PATH/Next_Hop/Local_Pref（MED 非公认）</td></tr>
+      <tr><td>EIGRP</td><td>思科专有</td></tr>
+      <tr><td>安全</td><td>防火墙挡内外威胁；嗅探=混杂全收；IDS=端口镜像；防骗=RPF+IP绑定；别关 22</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h3>反直觉陷阱（最容易选反）</h3>
+    <ul>
+      <li><b>交换机在第二层，不是第三层</b>（Q82 说"第三层易广播风暴"是错的）。</li>
+      <li><b>路由器分段优点只有"隔离广播"</b>，不是更便宜/更快（Q23 的 B/C/D 都是坑）。</li>
+      <li><b>vlan 1 不能删</b>（很多人以为随便删）。</li>
+      <li><b>Trunk 上并非所有帧都带 VLAN ID</b>（无标签帧打 PVID）。</li>
+      <li><b>RIP 最大 15 跳</b>，不是更大（16 跳即不可达）。</li>
+      <li><b>OSPF 是链路状态，不是距离矢量</b>（Q96 的 A 是错误说法）。</li>
+      <li><b>BGP 的 MED 不是公认属性</b>（Q49 公认属性不含 MED）。</li>
+      <li><b>Q98 存疑</b>：题库标"传输层以上互连设备"答案为 A 路由器，但<b>标准应为 C 网关</b>（网关才工作在传输层以上连接异构系统）。考试以题库为准，学习以正确概念为准。</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 练习题 -->
+<section class="practice" id="m7">
+  <h2><span class="num">⑦</span> 练习题（题库 119 题全）</h2>
+  <p>完整收录题库「网络设备与交换路由」119 题，点击每题展开四要素解析。重复题已标注，边角题标「了解即可」。</p>
+  <div class="legend">
+    <span><b>橙色=与前面重复</b></span><span><i>紫色=了解即可（操作系统/硬件/密码学等）</i></span>
+  </div>
+  <div class="toolbar">
+    <button onclick="expandAll()">展开全部解析</button>
+    <button class="ghost" onclick="collapseAll()">收起全部解析</button>
+  </div>
+  <div id="items"></div>
+</section>
+
+</div>
+
+<footer>网络设备与交换路由 · 零基础系统学习 ｜ 来源：题库「网络设备与交换路由（119 题）」</footer>
+
+<script>
+const QA = [
+["1", "以太网交换机上的每个端口可以绑定一个或多个（  ）。", "A. 网关地址  B. LLC 地址  C. MAC 地址  D. IP 地址", "C", "🎯 答案解析：选 C，交换机端口可绑定 MAC 地址做接入控制。｜📚 知识点讲解：二层交换机基于 MAC 地址工作，端口安全常把端口与特定 MAC 绑定。｜💡 解题思路：交换机认 MAC，绑定 MAC 顺理成章。｜🧠 记忆口诀：\"交换机绑 MAC，端口认主人。\""],
+["2", "使用 traceroute 命令测试网络可以（  ）。", "A. 检验链路协议是否运行正常  B. 检验目标网络是否在路由表中  C. 检验应用程序是否正常  D. 显示分组到达目标经过的各个路由器", "D", "🎯 答案解析：选 D，traceroute/tracert 显示数据包到目标途经的每一跳路由器。｜📚 知识点讲解：该命令利用 TTL 递增，让每一跳路由器返回\"超时\"消息，从而画出路径。｜💡 解题思路：trace=追踪路径，自然是\"显示经过的路由器\"。｜🧠 记忆口诀：\"traceroute 追路径，逐跳路由器现形。\"", "dup"],
+["3", "目前在企业内部网与外部网之间，检查网络传送的数据是否会对网络安全构成威胁的主要设备是（  ）。", "A. 路由器  B. 防火墙  C. 交换机  D. 网关", "B", "🎯 答案解析：选 B，防火墙专职在内外网边界做访问控制与安全审查。｜📚 知识点讲解：防火墙是按安全策略在内外网间\"放行/拦截\"的系统，路由器主要管转发不是安全。｜💡 解题思路：问\"是否构成威胁的主要设备\" → 防火墙。｜🧠 记忆口诀：\"内外网之间，防火墙把关。\""],
+["4", "（  ）是因特网中最重要的设备，它是网络与网络连接的桥梁。", "A. 路由器  B. 中继站  C. 集线器  D. 服务器", "A", "🎯 答案解析：选 A，路由器连接不同网络，是因特网互联核心。｜📚 知识点讲解：因特网 = \"网络的网络\"，靠路由器把无数子网连起来。｜💡 解题思路：\"网络与网络连接的桥梁\" → 路由器。｜🧠 记忆口诀：\"网络连网络，全靠路由器。\""],
+["5", "以太网交换机根据（  ）转发数据包。", "A. IP 地址  B. MAC 地址  C. LLC 地址  D. PORT 地址", "B", "🎯 答案解析：选 B，二层交换机据 MAC 地址转发。｜📚 知识点讲解：交换机在数据链路层，查 MAC 映射表转发。｜💡 解题思路：二层=MAC。｜🧠 记忆口诀：\"交换机认 MAC。\""],
+["6", "将双绞线制作成交叉线，该双绞线连接的两个设备可以是（  ）。", "A. 网卡与网卡  B. 网卡与交换机  C. 网卡与集线器  D. 交换机的以太口与下一级交换机的 UPLINK 口", "A", "🎯 答案解析：选 A，交叉线接同类设备（网卡对网卡=PC 对 PC）。｜📚 知识点讲解：交叉线把发送/接收脚对调，适合同类型设备直连。｜💡 解题思路：同类交叉 → PC-PC。｜🧠 记忆口诀：\"交叉连同类。\""],
+["7", "当两台交换机级联时，如果下级交换机有 Uplink 口，则可用（  ）连接到该端口上。", "A. 一端 586A 另一端 586B  B. 交叉双绞线(1、2 和 3、6 对端)  C. 交叉双绞线(3、5 对端)  D. 直连线", "D", "🎯 答案解析：选 D，下级有 Uplink 口时用直连线连上级普通口。｜📚 知识点讲解：Uplink 口内部已做交叉，配普通口正好\"异类直通\"。｜💡 解题思路：有 Uplink → 直连。｜🧠 记忆口诀：\"Uplink 在，直连线。\""],
+["8", "构建办公室网络（22 台主机+1 台服务器）并与公司交换网相连，性能最优的设计是（  ）。", "A. 24 口 10Mbps 集线器  B. 24 口 10Mbps 集线器（两口 10/100）  C. 24 口 10Mbps 交换机  D. 24 口 10Mbps 交换机（两口 10/100）", "D", "🎯 答案解析：选 D，交换机优于集线器，且上联口用 10/100 自适应接公司网。｜📚 知识点讲解：交换机分割冲突域、独享带宽；上联用高速口避免瓶颈。｜💡 解题思路：先选交换机（排 A/B），再选带高速上联口（D）。｜🧠 记忆口诀：\"要性能，交换机+高速上联。\""],
+["9", "典型局域网交换机允许 10Mbps 与 100Mbps 网卡共存，采用的技术是 10/100Mbps 的（  ）。", "A. 线路交换  B. 令牌控制  C. 自动侦测  D. 速率变换", "C", "🎯 答案解析：选 C，交换机自动侦测（auto-negotiation）对端速率。｜📚 知识点讲解：自动侦测让端口自适应 10/100，兼容不同网卡。｜💡 解题思路：\"共存/自适应\" → 自动侦测。｜🧠 记忆口诀：\"十百共存，自动侦测。\""],
+["10", "一个 48 端口的交换机的冲突域和广播域个数分别是（  ）。", "A. 1,1  B. 48,48  C. 48,1  D. 1,48", "C", "🎯 答案解析：选 C，冲突域 48（每口一个），广播域 1（整机一个）。｜📚 知识点讲解：交换机分冲突不分广播。｜💡 解题思路：口数=冲突域，整机=广播域。｜🧠 记忆口诀：\"口即冲突域，整机广播域。\""],
+["11", "下面关于网桥和交换机的论述中，正确的是（  ）。", "A. 网桥端口比交换机少所以快  B. 交换机是多端口网桥，网桥通常只有两个端口  C. 交换机不转发广播帧而网桥转发  D. 都增加冲突域大小", "B", "🎯 答案解析：选 B，交换机=多端口网桥。｜📚 知识点讲解：两者都转发广播、都分割冲突域，区别在端口数量。｜💡 解题思路：A/C/D 均错，仅 B 对。｜🧠 记忆口诀：\"交换机=多口网桥。\"", "dup"],
+["12", "在 Windows 中，使用 tracert 命令可以（  ）。", "A. 检验链路协议是否运行正常  B. 检验目标网络是否在路由表中  C. 检验应用程序是否正常  D. 显示分组到达目标经过的各个路由器", "D", "🎯 答案解析：选 D，traceroute/tracert 显示数据包到目标途经的每一跳路由器。｜📚 知识点讲解：该命令利用 TTL 递增，让每一跳路由器返回\"超时\"消息，从而画出路径。｜💡 解题思路：trace=追踪路径，自然是\"显示经过的路由器\"。｜🧠 记忆口诀：\"traceroute 追路径，逐跳路由器现形。\"", "dup"],
+["13", "采用交叉双绞线连接的设备组合是（  ）。", "A. PC 与 PC  B. PC 与交换机  C. 交换机与路由器  D. PC 与路由器", "A", "📚 知识点讲解：本题为边角了解题，记住答案即可。", "dup"],
+["14", "网络嗅探器使网络接口处于混杂状态，此时接口（  ）。", "A. 只收匹配本机 MAC 的帧  B. 只收本网段广播  C. 只收组播  D. 能接收流经接口的所有数据帧", "D", "📚 知识点讲解：本题为边角了解题，记住答案即可。", "dup"],
+["15", "下面选项中，属于 VLAN 的优点是（  ）。", "A. 允许逻辑地划分网段  B. 减少了冲突域的数量  C. 增加了冲突域的大小  D. 减少了广播域的数量", "A", "📚 知识点讲解：本题为边角了解题，记住答案即可。", "dup"],
+["16", "在 RIP 协议中，默认的路由更新周期是（  ）秒。", "A. 30  B. 60  C. 90  D. 100", "A", "📚 知识点讲解：本题为边角了解题，记住答案即可。", "dup"],
+["17", "处于\"Router(config-if)#\"模式，执行（  ）命令可切换至\"Router(config)#\"。", "A. end  B. exit  C. show  D. enable", "B", "🎯 答案解析：选 B，exit 退一级（接口→全局）；end 直接回特权模式。｜📚 知识点讲解：exit 逐层退出，end 一步到特权模式 #。｜💡 解题思路：从子模式退回上一级用 exit。｜🧠 记忆口诀：\"exit 退一级，end 回特权。\"", "dup"],
+["18", "交换机生成树优先级是 30480，提高一级应设为（  ）。", "A. 30479  B. 34576  D. 26384", "D", "🎯 答案解析：选 D（26384）。生成树优先级以 4096 为步长，30480−4096=26384。｜📚 知识点讲解：STP 优先级取值为 0/4096/8192…，每次\"提高一级\"减 4096。｜💡 解题思路：30480−4096=26384。｜🧠 记忆口诀：\"优先每级 4096，提高就减。\"", "dup"],
+["19", "某客户机访问页面出现乱码的原因可能是（  ）。", "A. 浏览器没安装相关插件  B. IP 地址设置错误  C. DNS 服务器设置错误  D. 默认网关设置错误", "A", "🎯 答案解析：选 A，缺插件导致页面解码异常出乱码。｜📚 知识点讲解：IP/DNS/网关错通常导致\"打不开\"而非\"乱码\"；乱码多是编码/插件问题。｜💡 解题思路：能打开但乱码 → 插件/编码，选 A。｜🧠 记忆口诀：\"能开却乱码，插件在捣乱。\"", "dup"],
+["20", "在交换机配置中，（  ）模式才可配置设备管理地址。", "A. Switch>  B. Switch#  C. Switch(config)#  D. Switch(config-if)#", "D", "🎯 答案解析：选 D，管理 IP 配在接口（如 VLAN 接口）下，需 config-if。｜📚 知识点讲解：设备管理地址常配在 interface vlan 下，属接口模式。｜💡 解题思路：配地址=接口模式 config-if。｜🧠 记忆口诀：\"管地址，进接口。\"", "dup"],
+["21", "配置交换机 VLAN 时，无法执行的删除命令是（  ）。", "A. no vlan 1  B. no vlan 2  C. no vlan 100", "A", "🎯 答案解析：选 A，vlan 1 是默认 VLAN 不可删。｜📚 知识点讲解：vlan 1 默认存在且不能删除，其余可删。｜💡 解题思路：默认 vlan 不能动 → no vlan 1 不行。｜🧠 记忆口诀：\"vlan1 是默认，删它不可能。\"", "dup"],
+["22", "配置默认路由器的命令是（  ）。", "A. ip route 172.16.1.0 255.255.255.0 0.0.0.0  B. ip route 172.16.1.0 255.255.255.0 172.16.2.1  C. ip route 0.0.0.0 255.255.255.0 172.16.2.1  D. ip route 0.0.0.0 0.0.0.0 172.16.2.1", "D", "📚 知识点讲解：本题为边角了解题，记住答案即可。", "dup"],
+["23", "用路由器对网络进行分段，其优点有（  ）。", "A. 路由器不转发广播帧避免网络风暴  B. 路由器比交换机便宜  C. 路由器更快  D. 禁止所有广播利于多媒体", "A", "📚 知识点讲解：本题为边角了解题，记住答案即可。", "dup"],
+["24", "SNMPv2 的 GetRequestPDU 与 v1 语法语义相同，差别是 v2 对应答的处理（  ）。", "A. 要么全返回要么全不返回  B. 能够部分地对 GetRequest 操作进行应答  C. 能够全部应答  D. 都不应答", "B", "🎯 答案解析：选 B，SNMPv2 支持\"部分应答\"（get-bulk 等）。｜📚 知识点讲解：v1 严格\"全有或全无\"，v2 允许返回能取到的部分。｜💡 解题思路：v2 改进点=可部分应答。｜🧠 记忆口诀：\"SNMPv2，部分也答。\"", "dupedge"],
+["25", "在 RIP 协议中，默认的路由更新周期是（  ）秒。", "A. 30  B. 60  C. 90  D. 100", "A（30）", "📚 知识点讲解：本题为边角了解题，记住答案即可。", "dup"],
+["26", "RIP 协议引入路由保持机制的作用是防止网络中形成路由环路。（  ）", "A. 正确　B. 错误", "正确", "📚 知识点讲解：本题为边角了解题，记住答案即可。", "dup"],
+["27", "路由器（Router）是用于联接逻辑上分开的（  ）网络。", "A. 无数个  B. 2 个  C. 1 个  D. 多个", "D", "🎯 答案解析：选 D，路由器连接多个逻辑分开的网络。｜📚 知识点讲解：路由器核心功能就是互联不同网络，数量上是\"多个\"。｜💡 解题思路：\"网络与网络连接\"→多个。｜🧠 记忆口诀：\"路由连多网。\""],
+["28", "会产生冲突的网络拓扑结构有（  ）。", "A. 集线器连接的星形  B. 总线形  C. 点—点全连接  D. 环形", "ABD", "🎯 答案解析：选 ABD。集线器共享介质、总线、环网都可能有冲突；全连接点对点不共享介质无冲突。｜📚 知识点讲解：冲突源于\"多设备共用同一传输介质\"，交换机点对点全连接每链独立无冲突。｜💡 解题思路：找\"共享介质\"拓扑 → 集线星形/总线/环。｜🧠 记忆口诀：\"共享介质才冲突，全连接免扰。\""],
+["29", "链路聚合的作用是（  ）。", "A. 增加链路带宽  B. 实现数据负载均衡  C. 增加链路可靠性  D. 避免交换网环路", "ABC", "🎯 答案解析：选 ABC，D（防环）不属于聚合。｜📚 知识点讲解：见模块六 6.1。｜💡 解题思路：ABC 是聚合三好，D 是 STP 的事。｜🧠 记忆口诀：\"聚合三好：带宽、均衡、更可靠。\""],
+["30", "下列关于操作系统的叙述，正确的有（  ）。", "A. 操作系统是系统软件核心  B. 是计算机与用户接口  C. 是硬件第一级扩充  D. 控制管理全部软硬件资源", "ABCD", "📚 知识点讲解：本题为边角了解题，记住答案即可。", "edge"],
+["31", "安全系统中重要资产包括边界路由器、核心交换机等网络设备，WEB/数据库服务器、用户终端及操作系统，但不包括运行其上的通用应用软件。（  ）", "A. 正确　B. 错误", "错误", "🎯 答案解析：选\"错误\"。重要资产也**包括**通用应用软件（应用也是保护对象）。｜📚 知识点讲解：资产识别要覆盖软硬件及应用，应用层同样关键。｜💡 解题思路：说\"不包括应用软件\"→错。｜🧠 记忆口诀：\"资产含应用，不止软硬件。\""],
+["32", "VLAN 是一些共享资源用户的集合，这些用户不一定连接在同一台网络设备上，它是用户与相关资源的逻辑组合。（  ）", "A. 正确　B. 错误", "正确", "📚 知识点讲解：本题为边角了解题，记住答案即可。"],
+["33", "如果一个内部网络对外的出口只有一个，那么最好配置缺省路由。（  ）", "A. 正确　B. 错误", "正确", "📚 知识点讲解：本题为边角了解题，记住答案即可。"],
+["34", "一般情况下，若因为路由器的原因导致网络中断，则最可能的原因是以太网的某个端口出现了故障。（  ）", "A. 正确　B. 错误", "正确", "🎯 答案解析：选\"正确\"。路由器故障多表现于端口（物理/逻辑）异常。｜📚 知识点讲解：端口是路由器对外连接点，端口 down 最常见。｜💡 解题思路：端口故障是路由器断网最常见原因→正确。｜🧠 记忆口诀：\"路由断网，先查端口。\""],
+["35", "能实现不同的网络层协议转换功能的互联设备是（  ）。", "A. 网桥  B. 交换机  C. 路由器  D. 集线器", "C", "🎯 答案解析：选 C，路由器在网络层做协议转换/互联。｜📚 知识点讲解：不同网络层协议（如不同路由域）互通靠三层路由器。｜💡 解题思路：\"网络层协议转换\"→路由器。｜🧠 记忆口诀：\"层三转换，路由器扛。\""],
+["36", "下列关于链路状态算法的说法不正确的是（  ）。", "A. 链路状态是对网络拓扑结构的描述  B. 链路状态是路由的描述  C. OSPF 和 RIP 都使用链路状态算法", "AC", "🎯 答案解析：选 AC。A 说\"链路状态不是拓扑描述\"错（它正是拓扑描述）；C 错（RIP 是距离矢量，非链路状态）。B 正确（链路状态描述路由/拓扑）。｜📚 知识点讲解：链路状态=全网拓扑图；OSPF 用、RIP 不用。｜💡 解题思路：找\"不正确\"——A、C 都错。｜🧠 记忆口诀：\"链路状态描拓扑，RIP 不用它。\""],
+["37", "路由器在局域网中的主要作用有哪些（  ）。", "A. 连通数据库  B. 划分局域网  C. 实现多个局域网互联  D. 实现内外网的连接", "CD", "📚 知识点讲解：本题为边角了解题，记住答案即可。"],
+["38", "如果 OSPF 链路故障，link-state update 包广播网络的变化。（  ）", "A. 正确　B. 错误", "正确", "📚 知识点讲解：本题为边角了解题，记住答案即可。"],
+["39", "建立 VLAN 能够（  ）。", "A. 提高路由速度  B. 提高网络速度  C. 提高交换速度  D. 提高管理效率", "D", "📚 知识点讲解：本题为边角了解题，记住答案即可。"],
+["40", "通过防火墙或交换机防止病毒攻击端口，下列不应该关闭的端口是（  ）。", "A. 135  B. 445  C. 22  D. 1433", "C", "🎯 答案解析：选 C，22 是 SSH 远程管理端口，关了没法运维；135/445/1433 是高危端口应关。｜📚 知识点讲解：445（SMB）、135（RPC）、1433（SQL）常被病毒利用；22（SSH）是管理必需。｜💡 解题思路：问\"不应关闭\"→保留管理口 22。｜🧠 记忆口诀：\"高危端口可关，22 管理留着。\""],
+["41", "路由器必须对 IP 合法性进行验证，如果 IP 数据包不合法，则（  ）。", "A. 不考虑  B. 接受但错误统计  C. 要求重发  D. 丢弃", "D", "🎯 答案解析：选 D，非法包直接丢弃。｜📚 知识点讲解：路由器做入口过滤，非法源/目的地址包丢弃防欺骗。｜💡 解题思路：不合法→丢弃。｜🧠 记忆口诀：\"IP 不合法，丢弃没商量。\""],
+["42", "下列路由协议中，不支持手工路由聚合的是（  ）。", "A. RIP-1  B. RIP-2  C. OSPF  D. BGP", "A", "🎯 答案解析：选 A，RIP-1 不支持手工聚合；RIP-2/OSPF/BGP 都支持。｜📚 知识点讲解：RIP-1 是有类协议、无掩码信息，无法聚合；RIP-2 起支持。｜💡 解题思路：最老最简的 RIP-1 不聚合。｜🧠 记忆口诀：\"RIP-1 老，不会聚合。\""],
+["43", "下列哪些是信息系统相关的信息图元（  ）。", "A. 存储设备  B. 光纤收发器  C. 服务器  D. 集线器", "AC", "📚 知识点讲解：本题为边角了解题，记住答案即可。", "edge"],
+["44", "RIP 协议的路由项在 180s 内没有更新会变为不可达。（  ）", "A. 正确　B. 错误", "正确", "📚 知识点讲解：本题为边角了解题，记住答案即可。"],
+["45", "不同厂家设备间实现 vlan 互通的标准是 802.1q。（  ）", "A. 正确　B. 错误", "正确", "📚 知识点讲解：本题为边角了解题，记住答案即可。"],
+["46", "为控制企业内部对外的访问以及抵御外部对内部网的攻击，最好的选择是（  ）。", "A. IDS  B. 杀毒软件  C. 防火墙  D. 路由器", "C", "📚 知识点讲解：本题为边角了解题，记住答案即可。"],
+["47", "根据《广西电网…核心/汇聚交换机作业指导书》，检查设备运行日志是否存在异常日志时，思科配置命令是（  ）。", "A. show logfile  B. dis  C. show …  D. dis log ip routing-table ip route logfile", "A", "🎯 答案解析：选 A，思科查看日志用 `show logfile`（或 `show logging`）。｜📚 知识点讲解：思科排障常 `show` 系列，`show log` 看日志。｜💡 解题思路：思科=show 开头。｜🧠 记忆口诀：\"思科查日志，show log 起。\"", "edge"],
+["48", "在以太网交换机端口中，Trunk 端口、链路的描述错误的是（  ）。", "A. Trunk 端口的 PVID 值不可以修改  B. Trunk 收到无 VLAN ID 帧时打上 PVID  C. Trunk 可承载不同 VLAN ID 帧  D. Trunk 上传送的数据帧都是带 VLAN ID 的", "AD", "🎯 答案解析：选 AD。A 错（PVID 可改）；D 错（无标签帧不打 VLAN ID 也传，或打 PVID）。｜📚 知识点讲解：Trunk 允许带/不带标签帧，无标签帧按 PVID 处理；PVID 默认可配。｜💡 解题思路：找\"错误描述\"→A、D。｜🧠 记忆口诀：\"Trunk 能改 PVID，帧未必带 ID。\""],
+["49", "以下哪些 BGP 属性属于公认属性（  ）。", "A. Origin  B. AS_PATH  C. Next_Hop  D. MED  E. Local_Pref", "ABCE", "🎯 答案解析：选 ABCE。公认必遵/公认自由属性含 Origin、AS_PATH、Next_Hop、Local_Pref；**MED 是可选非传递，非公认**。｜📚 知识点讲解：公认属性所有 BGP 实现必须识别；MED 用于选路但非公认。｜💡 解题思路：排除 MED → ABCE。｜🧠 记忆口诀：\"BGP 公认四件套，MED 不在列。\""],
+["50", "上网行为管理系统工作模式对设备功能支持程度由大到小排序为路由模式>网桥模式>旁路模式。（  ）", "A. 正确　B. 错误", "正确", "📚 知识点讲解：本题为边角了解题，记住答案即可。", "edge"],
+["51", "路由器的缺点是（  ）。", "A. 无法隔离广播  B. 不能进行局域网联接  C. 无法进行流量控制  D. 成为网络瓶颈", "D", "🎯 答案解析：选 D，路由器转发能力有限，高负载时易成瓶颈。｜📚 知识点讲解：路由器要查表/做策略，比交换机慢，繁忙时卡滞。｜💡 解题思路：路由器典型缺点=瓶颈。｜🧠 记忆口诀：\"路由虽强，瓶颈难扛。\""],
+["52", "如果 OSPF 接口采用 ATM 协议，那么缺省对应的网络类型是（  ）。", "A. Broadcast  B. NBMA  C. P2P  D. P2MP", "B", "🎯 答案解析：选 B，ATM/帧中继等缺省为 NBMA（非广播多路访问）。｜📚 知识点讲解：OSPF 按链路层协议推断网络类型，ATM 默认 NBMA 需手动指定邻居。｜💡 解题思路：ATM→NBMA。｜🧠 记忆口诀：\"ATM 默认 NBMA。\""],
+["53", "以下对 VLAN 描述正确的是（  ）。", "A. 一个可路由网络  B. 一个共享的物理介质  C. 在同一广播域内的一组端口  D. 一个共享的冲突域", "C", "📚 知识点讲解：本题为边角了解题，记住答案即可。"],
+["54", "以太网交换机的最大带宽为（  ）。", "A. 大于端口带宽总和  B. 小于端口带宽总和  C. 等于端口带宽  D. 等于端口带宽总和", "D", "🎯 答案解析：选 D，全双工下每端口独享带宽，总带宽=各口之和。｜📚 知识点讲解：交换机是矩阵交换，各口并发不争抢。｜💡 解题思路：总和=各口带宽相加。｜🧠 记忆口诀：\"交换总带宽，各口相加和。\""],
+["55", "防范 IP 欺骗的技术包括（  ）。", "A. 反查路径 RPF（源 IP 反查路由表）  B. 目的 IP 查路由表  C. IP 与 MAC 绑定  D. 部署入侵检测系统", "AC", "📚 知识点讲解：本题为边角了解题，记住答案即可。"],
+["56", "以下说法正确的是（  ）。", "A. 路由权值可基于单一或多种属性计算  B. 多协议找到同一目标最佳路由都会加入路由表  C. 动态路由按权值判好坏且各协议方法不同  D. 路由优先级与权值计算一致", "AC", "📚 知识点讲解：本题为边角了解题，记住答案即可。"],
+["57", "ATX 主板电源接口插座为单排 20 针。（  ）", "A. 正确　B. 错误", "错误", "📚 知识点讲解：ATX 为主板 20/24 针，但\"单排 20 针\"描述不准确，实际为双排；按题库判错误", "edge"],
+["58", "如果 OSPF 接口采用 HDLC 协议，那么对应的网络类型是（  ）。", "A. Broadcast  B. NBMA  C. P2P  D. P2MP", "C", "🎯 答案解析：选 C，HDLC/PPP 等点到点链路缺省为 P2P。｜📚 知识点讲解：点到点串行链路对应 OSPF 网络类型 P2P。｜💡 解题思路：HDLC=点到点→P2P。｜🧠 记忆口诀：\"HDLC 点对点，P2P 相见。\""],
+["59", "以下工作于 OSI 参考模型数据链路层的设备是（  ）。", "A. 路由器  B. 集线器  C. 广域网交换机  D. 中继器", "C", "📚 知识点讲解：本题为边角了解题，记住答案即可。"],
+["60", "RIP 的最大 HOP 数为（  ）。", "A. 3  B. 15  C. 7  D. 31", "B", "🎯 答案解析：选 B，RIP 最大 15 跳，16 跳不可达。｜📚 知识点讲解：跳数限制是 RIP 防环与规模限制手段。｜💡 解题思路：RIP 上限 15。｜🧠 记忆口诀：\"RIP 十五跳，十六算断。\""],
+["61", "在一台路由器配置 OSPF，必须手动进行配置的有（  ）。", "A. 配置 Route-ID  B. 开启 OSPF 进程  C. 创建 OSPF 区域  D. 指定每个区域中所包含的网段", "BCD", "📚 知识点讲解：本题为边角了解题，记住答案即可。"],
+["62", "RFC 文档详细描述了各种网络协议和接口，因此 RFC 文档就是网络标准。（  ）", "A. 正确　B. 错误", "错误", "📚 知识点讲解：RFC 是征求意见稿，并非所有都成标准", "edge"],
+["63", "在 RIP 协议中，如果判定路由的去向，依据的参数是路由跳数。（  ）", "A. 正确　B. 错误", "正确", "📚 知识点讲解：本题为边角了解题，记住答案即可。"],
+["64", "路由表一般包括目的地址、下一站地址、距离和时钟。（  ）", "A. 正确　B. 错误", "错误", "📚 知识点讲解：路由表无\"时钟\"字段"],
+["65", "程序默认应对所有输入信息进行验证，不能通过验证的数据应被拒绝，以下输入需要进行验证的是（  ）。", "A. 不可信来源文件  B. HTTP 请求消息  C. 临时文件  D. 第三方接口数据", "ABCD", "📚 知识点讲解：本题为边角了解题，记住答案即可。", "edge"],
+["66", "代理是不透明的，因此即使合法的出站用户通过应用网关，也会给网关带来很大的开销。（  ）", "A. 正确　B. 错误", "正确", "📚 知识点讲解：本题为边角了解题，记住答案即可。", "edge"],
+["67", "可以将硬盘传统的 4Pin 电源和 SATA 电源接口都与电源连接。（  ）", "A. 正确　B. 错误", "错误", "📚 知识点讲解：同一硬盘不可同时接两种电源", "edge"],
+["68", "桌面终端标准化管理系统的配置、策略、审计等数据信息保存在数据库（  ）文件内。", "A. vrvpolicy.xml  B. vrveis.ldf  C. Script.sql  D. vrveis.mdf", "D", "📚 知识点讲解：本题为边角了解题，记住答案即可。", "edge"],
+["69", "运行单区域的 OSPF 网络中，对于 LSDB 和路由表，下列描述正确的是（  ）。", "A. 每台路由器的 LSDB 相同  B. LSDB 不同  C. 每台路由器路由表不同  D. 路由表相同", "AC", "🎯 答案解析：选 AC。单区域 OSPF 所有路由器 LSDB 一致（都收到相同 LSA），但因位置不同算出路由表不同。｜📚 知识点讲解：LSDB 同步是 OSPF 特点；路由表由各自 SPF 计算，视角不同结果异。｜💡 解题思路：LSDB 同、路由表异。｜🧠 记忆口诀：\"OSPF 库同表异。\""],
+["70", "下列哪些是网络交换机设备的信息图元（  ）。", "A. 三层交换机  B. 二层交换机  C. ATM 交换机  D. 电话交换机", "ABC", "🎯 答案解析：选 ABC，电话交换机属电信设备不算数据网络交换机图元。｜📚 知识点讲解：信息网络图元含二/三层/ATM 交换机。｜💡 解题思路：排除电话交换机。｜🧠 记忆口诀：\"交换图元三兄弟：二、三、ATM。\""],
+["71", "显示器的输出接口主要有（  ）。", "A. VGA  B. DVI  C. HDMI  D. 1394", "ABC", "📚 知识点讲解：本题为边角了解题，记住答案即可。", "edge"],
+["72", "EIGRP 路由协议是思科专有协议。（  ）", "A. 正确　B. 错误", "正确", "📚 知识点讲解：本题为边角了解题，记住答案即可。"],
+["73", "BGP 是在自治系统 AS 之间传播路由的协议。（  ）", "A. 正确　B. 错误", "正确", "📚 知识点讲解：本题为边角了解题，记住答案即可。"],
+["74", "RIP 协议引入路由保持机制的作用是防止网络中形成路由环路。（  ）", "A. 正确　B. 错误", "正确", "📚 知识点讲解：本题为边角了解题，记住答案即可。", "dup"],
+["75", "交换机、路由器等网络设备在日常巡查时需要定时进行运行检测，而（  ）。", "A. 正确　B. 错误", "错误", "📚 知识点讲解：据来源题，意为\"不需要定时检测\"的说法错误，实际需要定时检测"],
+["76", "某网络拓扑复杂，核心和分部间多条路径，为控制路由、有效利用带宽、降低维护成本，最有效措施是（  ）。", "A. RIP 调优先级  B. BGP 调优先级  C. IPSec 加密路由报文  D. NAT", "B", "🎯 答案解析：选 B，跨自治系统/复杂域间路由用 BGP 调优先级最有效。｜📚 知识点讲解：BGP 擅长域间路由策略控制，适合核心—分部多路径场景。｜💡 解题思路：\"核心-分部、控路由、降成本\"→BGP。｜🧠 记忆口诀：\"域间控路由，BGP 出手。\""],
+["77", "关于 OSPF 协议中的 DR/BDR 选举原则，以下说法正确的是（  ）。", "A. 优先级最高一定当选 DR  B. 接口 IP 最大一定当选  C. Router ID 最大一定当选  D. 优先级为 0 的路由器一定不参加选举", "D", "🎯 答案解析：选 D，优先级 0 表示放弃参选，铁律。｜📚 知识点讲解：A/B/C 都有例外（如优先级 0、已选举稳定等），唯\"优先级 0 不参选\"绝对成立。｜💡 解题思路：找绝对正确项→D。｜🧠 记忆口诀：\"优先 0，不参选，铁律不变。\""],
+["78", "以太网交换机的箱体模块式架构的优点是（  ）。", "A. 维修方便  B. 系统集成和配置灵活  C. 高可靠性  D. 以上都是", "D", "📚 知识点讲解：本题为边角了解题，记住答案即可。"],
+["79", "模块化网络架构的优点是（  ）。", "A. 动态调用 IT 资源  B. 共享数据参与流程  C. 取代层级模型  D. 对各模块分别规划部署，增删模块扩展功能", "D", "📚 知识点讲解：本题为边角了解题，记住答案即可。"],
+["80", "交换机利用\"端口/MAC 地址映射表\"交换数据，动态建立维护该表的方法是（  ）。", "A. 地址学习  B. 人工建立  C. 操作系统建立  D. 轮询", "A", "📚 知识点讲解：本题为边角了解题，记住答案即可。"],
+["81", "VRP 命令非常多，使用什么快捷键能减少对命令的记忆量（  ）。", "A. ctrl+c  B. Tab  C. 问号  D. ctrl+b", "BC", "🎯 答案解析：选 BC。Tab 补全命令、? 查看帮助，降低记忆负担。｜📚 知识点讲解：VRP（华为）中 Tab 补全长命令、? 提示可用命令。｜💡 解题思路：补全+帮助=Tab 与 ?。｜🧠 记忆口诀：\"Tab 补全，问号帮。\"", "edge"],
+["82", "交换机技术工作在第三层上，当网络站点很多时，容易形成网络上的广播风暴，导致网络性能下降以至瘫痪。（  ）", "A. 正确　B. 错误", "错误", "📚 知识点讲解：交换机在二层，且能分割冲突域；广播风暴多与二层环路有关，非\"三层\""],
+["83", "在 RIP 协议中，路由跳数是计算 metric 值的参数。（  ）", "A. 正确　B. 错误", "正确", "📚 知识点讲解：本题为边角了解题，记住答案即可。"],
+["84", "静态路由需要网络管理员手动配置。（  ）", "A. 正确　B. 错误", "正确", "📚 知识点讲解：本题为边角了解题，记住答案即可。"],
+["85", "IDS 部署在交换环境下，需要（  ）对交换机配置。", "A. 端口映射  B. 端口镜像  C. 隐蔽模式  D. 混杂模式", "B", "🎯 答案解析：选 B，IDS 需端口镜像把流量复制过去分析。｜📚 知识点讲解：交换机默认不广播所有流量，靠端口镜像（SPAN）把指定口流量拷给 IDS 口。｜💡 解题思路：IDS 抓全流量→端口镜像。｜🧠 记忆口诀：\"IDS 要镜像，流量才能看。\""],
+["86", "在网络中（  ）实现网络互连功能。", "A. 路由器  B. 中继器  C. 交换机  D. 集线器", "A", "📚 知识点讲解：本题为边角了解题，记住答案即可。"],
+["87", "H3C 路由器上，当 PPP 接口的状态为 serial number is …（  ）。", "A. 物理链路有问题  B. 接口被管理员 shutdown 了  C. PAP 参数配置不正确  D. 一端配认证另一端没配  E. 没连线缆", "B", "📚 知识点讲解：据来源题，状态显示 administratively down 即被 shutdown"],
+["88", "下列关于路由器特点的描述，正确的是（  ）。", "A. 提供丰富的接口类型  B. 是网络层设备  C. 根据链路层信息进行路由转发  D. 可以支持多种路由协议", "ABD", "🎯 答案解析：选 ABD。路由器是网络层设备，按**网络层/IP** 信息转发（C 说\"链路层\"错）。｜📚 知识点讲解：路由器特征=多层接口、三层转发、多协议支持。｜💡 解题思路：排除\"链路层转发\"的 C。｜🧠 记忆口诀：\"路由三层转，接口多协议广。\""],
+["89", "交换机上的以太帧交换依靠 MAC 地址映射表，这个表可以通过（  ）来建立。", "A. 交换机自行学习  B. 手工添加映射表项  C. 交换机间交换位置信息  D. 生成树协议交互学习", "AB", "📚 知识点讲解：本题为边角了解题，记住答案即可。"],
+["90", "关于虚拟交换机 vlan，下列说法正确的是（  ）。", "A. 端口 ID 是 0 表示不传递与 vlan 关联的流量  B. 端口 ID 可从 0 到 4095  C. 端口选择全部表示可传任意 vlan 流量  D. 端口 ID 在 1 到 4094 间用对应 ID 标记流量", "ABCD", "📚 知识点讲解：本题为边角了解题，记住答案即可。"],
+["91", "如下哪种路由协议只关心到达目的网段的距离和方向（  ）。", "A. RIPv1  B. RIPv2  C. IGP  D. OSPF", "AB", "🎯 答案解析：选 AB。RIP（v1/v2）是距离矢量，只看\"距离+方向\"；OSPF 是链路状态看拓扑。｜📚 知识点讲解：距离矢量协议特点=听邻居报\"往哪走几跳\"；链路状态协议掌握全网图。｜💡 解题思路：\"只关心距离和方向\"=距离矢量=RIP。｜🧠 记忆口诀：\"RIP 看距离方向，OSPF 看全景。\""],
+["92", "OSPF 接口 metric 的范围在 1 到 65535 之间。（  ）", "A. 正确　B. 错误", "正确", "📚 知识点讲解：本题为边角了解题，记住答案即可。"],
+["93", "OSPF 邻接的状态\"full\"意味着 OSPF 拓扑数据库已经被同步。（  ）", "A. 正确　B. 错误", "正确", "📚 知识点讲解：本题为边角了解题，记住答案即可。"],
+["94", "相同的 vlan 需要通过广播互通。（  ）", "A. 正确　B. 错误", "正确", "📚 知识点讲解：本题为边角了解题，记住答案即可。"],
+["95", "采用 USB 接口方式连接打印机时，USB 线的长度没有限制。（  ）", "A. 正确　B. 错误", "错误", "📚 知识点讲解：USB 有长度限制，一般数米", "edge"],
+["96", "关于 OSPF 路由协议以下说法不正确的是（  ）。", "A. OSPF 是一种距离矢量路由协议  B. OSPF 默认管理距离是…  C. OSPF 是一种内部网关协议  D. OSPF 是一种链路状态路由协议", "A", "📚 知识点讲解：本题为边角了解题，记住答案即可。"],
+["97", "关于 salt 以下说法正确的是（  ）。", "A. salt 明文与密文存放，防预计算攻击  B. salt 明文与密文存放，增加加解密过程  C. salt 密文与明文存放，防预计算  D. salt 密文与明文存放，增加加解密", "B", "📚 知识点讲解：salt 以明文与密文/哈希一同存储，主要作用是抵御字典/预计算攻击；按题库 B", "edge"],
+["98", "（  ）是传输层以上实现两个异构系统互连的设备。", "A. 路由器  B. 网桥  C. 网关  D. 集线器", "A（题库标注）", "⚠️ **特别说明**：本题题库标注答案为 A（路由器），但**标准网络知识中，工作在传输层以上、连接两个异构系统的设备是 C（网关）**。网关负责协议转换（如邮件网关、应用网关），路由器工作在网络层。考试若以本题库为准选 A；学习时请以\"网关=传输层以上异构互连\"为准，避免概念混淆。"],
+["99", "下列哪个不属于病毒防范安全措施（  ）。", "A. 不轻易打开附件中文件  Ｂ. 不直接运行附件  C. 安装最新的 Service Pack  D. 卸载 Scripting Host", "C", "📚 知识点讲解：安装补丁是系统加固，非\"病毒防范\"直接措施；按题库 C", "edge"],
+["100", "下列关于交换机和路由表的说法错误的是（  ）。", "A. 广域网中交换机称分组/包交换机  B. 每个交换机有一张路由表  C. 路由表中的路由数都是固定不变的  D. 交换机端口有两种（连计算机低速、连其他交换机…）", "C", "🎯 答案解析：选 C，路由表的路由会随网络变化动态增减，并非固定不变。｜📚 知识点讲解：路由表由路由协议动态维护，拓扑变了路由就变。｜💡 解题思路：找\"错误\"→C（路由会变）。｜🧠 记忆口诀：\"路由表会变，非固定不变。\""],
+["101", "目前大多数网吧采用（  ）路由器作为核心安全控制设备。", "A. 核心  B. 智能流控  C. 多级  D. 三层", "B", "🎯 答案解析：选 B，网吧常用智能流控路由器做带宽/安全管控。｜📚 知识点讲解：智能流控路由器能按应用分配带宽、过滤，适合网吧场景。｜💡 解题思路：网吧场景关键词\"流控\"。｜🧠 记忆口诀：\"网吧流控，智能当家。\""],
+["102", "（  ）的制定是为了在数据包传输中，不仅依据源/目的地址，还需根据数据包内容决定传输策略。", "A. 第二层交换  B. 第一层交换  C. 第三层交换  D. 第四层交换", "D", "🎯 答案解析：选 D，四层交换看端口/应用内容做策略。｜📚 知识点讲解：二层 MAC、三层 IP、四层端口/应用，逐层\"看得更深\"。｜💡 解题思路：\"依据内容决定策略\"→四层。｜🧠 记忆口诀：\"四层看内容，策略随心定。\""],
+["103", "若路由器转发能力差，极易引起网络速度卡滞。（  ）", "A. 正确　B. 错误", "正确", "📚 知识点讲解：本题为边角了解题，记住答案即可。"],
+["104", "下面关于网桥和交换机的论述中，正确的是（  ）。", "A. 网桥端口比交换机少所以快  B. 交换机是多端口网桥，网桥通常只有两个端口  C. 交换机不转发广播帧而网桥转发  D. 都增加冲突域大小", "B", "🎯 答案解析：选 B，交换机=多端口网桥。｜📚 知识点讲解：两者都转发广播、都分割冲突域，区别在端口数量。｜💡 解题思路：A/C/D 均错，仅 B 对。｜🧠 记忆口诀：\"交换机=多口网桥。\"", "dup"],
+["105", "在 Windows 网络管理命令中，使用 tracert 命令可以（  ）。", "A. 检验链路协议是否运行正常  B. 检验目标网络是否在路由表中  C. 检验应用程序是否正常  D. 显示分组到达目标经过的各个路由器", "D", "🎯 答案解析：选 D，traceroute/tracert 显示数据包到目标途经的每一跳路由器。｜📚 知识点讲解：该命令利用 TTL 递增，让每一跳路由器返回\"超时\"消息，从而画出路径。｜💡 解题思路：trace=追踪路径，自然是\"显示经过的路由器\"。｜🧠 记忆口诀：\"traceroute 追路径，逐跳路由器现形。\"", "dup"],
+["106", "采用交叉双绞线连接的设备组合是（  ）。", "A. PC 与 PC  B. PC 与交换机  C. 交换机与路由器  D. PC 与路由器", "A", "📚 知识点讲解：本题为边角了解题，记住答案即可。", "dup"],
+["107", "网络嗅探器使网络接口处于混杂状态，此时接口（  ）。", "A. 只收匹配本机 MAC 的帧  B. 只收本网段广播  C. 只收组播  D. 能接收流经接口的所有数据帧", "D", "📚 知识点讲解：本题为边角了解题，记住答案即可。", "dup"],
+["108", "下面选项中，属于 VLAN 的优点是（  ）。", "A. 允许逻辑地划分网段  B. 减少了冲突域的数量  C. 增加了冲突域的大小  D. 减少了广播域的数量", "A", "📚 知识点讲解：本题为边角了解题，记住答案即可。", "dup"],
+["109", "在 RIP 协议中，默认的路由更新周期是（  ）秒。", "A. 30  B. 60  C. 90  D. 100", "A（30）", "📚 知识点讲解：本题为边角了解题，记住答案即可。", "dup"],
+["110", "处于\"Router(config-if)#\"模式，执行（  ）命令可切换至\"Router(config)#\"。", "A. end  B. exit  C. show  D. enable", "B（exit）", "🎯 答案解析：选 B，exit 退一级（接口→全局）；end 直接回特权模式。｜📚 知识点讲解：exit 逐层退出，end 一步到特权模式 #。｜💡 解题思路：从子模式退回上一级用 exit。｜🧠 记忆口诀：\"exit 退一级，end 回特权。\"", "dup"],
+["111", "交换机生成树优先级 30480，提高一级应设为（  ）。", "A. 30479  B. 34576  D. 26384", "D（26384）", "🎯 答案解析：选 D（26384）。生成树优先级以 4096 为步长，30480−4096=26384。｜📚 知识点讲解：STP 优先级取值为 0/4096/8192…，每次\"提高一级\"减 4096。｜💡 解题思路：30480−4096=26384。｜🧠 记忆口诀：\"优先每级 4096，提高就减。\"", "dup"],
+["112", "某客户机访问页面出现乱码的原因可能是（  ）。", "A. 浏览器没安装相关插件  B. IP 地址设置错误  C. DNS 服务器设置错误  D. 默认网关设置错误", "A", "🎯 答案解析：选 A，缺插件导致页面解码异常出乱码。｜📚 知识点讲解：IP/DNS/网关错通常导致\"打不开\"而非\"乱码\"；乱码多是编码/插件问题。｜💡 解题思路：能打开但乱码 → 插件/编码，选 A。｜🧠 记忆口诀：\"能开却乱码，插件在捣乱。\"", "dup"],
+["113", "在交换机配置中，（  ）模式才可配置设备管理地址。", "A. Switch>  B. Switch#  C. Switch(config)#  D. Switch(config-if)#", "D（Switch(config-if)#）", "🎯 答案解析：选 D，管理 IP 配在接口（如 VLAN 接口）下，需 config-if。｜📚 知识点讲解：设备管理地址常配在 interface vlan 下，属接口模式。｜💡 解题思路：配地址=接口模式 config-if。｜🧠 记忆口诀：\"管地址，进接口。\"", "dup"],
+["114", "配置交换机 VLAN 时，无法执行的删除命令是（  ）。", "A. no vlan 1  B. no vlan 2  C. no vlan 100", "A（no vlan 1）", "🎯 答案解析：选 A，vlan 1 是默认 VLAN 不可删。｜📚 知识点讲解：vlan 1 默认存在且不能删除，其余可删。｜💡 解题思路：默认 vlan 不能动 → no vlan 1 不行。｜🧠 记忆口诀：\"vlan1 是默认，删它不可能。\"", "dup"],
+["115", "配置默认路由器的命令是（  ）。", "A. ip route 172.16.1.0 255.255.255.0 0.0.0.0  B. ip route 172.16.1.0 255.255.255.0 172.16.2.1  C. ip route 0.0.0.0 255.255.255.0 172.16.2.1  D. ip route 0.0.0.0 0.0.0.0 172.16.2.1", "D（ip route 0.0.0.0 0.0.0.0 下一跳）", "📚 知识点讲解：本题为边角了解题，记住答案即可。", "dup"],
+["116", "用路由器对网络进行分段，其优点有（  ）。", "A. 路由器不转发广播帧避免网络风暴  B. 路由器比交换机便宜  C. 路由器更快  D. 禁止所有广播利于多媒体", "A", "📚 知识点讲解：本题为边角了解题，记住答案即可。", "dup"],
+["117", "SNMP v2 的 GetRequestPDU 与 v1 相同，差别是 v2 对应答的处理（  ）。", "A. 要么全返回要么全不返回  B. 能够部分地对 GetRequest 操作进行应答  C. 能够全部应答  D. 都不应答", "B（部分应答）", "🎯 答案解析：选 B，SNMPv2 支持\"部分应答\"（get-bulk 等）。｜📚 知识点讲解：v1 严格\"全有或全无\"，v2 允许返回能取到的部分。｜💡 解题思路：v2 改进点=可部分应答。｜🧠 记忆口诀：\"SNMPv2，部分也答。\"", "dup"],
+["118", "在 RIP 协议中，默认的路由更新周期是（  ）秒。", "A. 30  B. 60  C. 90  D. 100", "A（30）", "📚 知识点讲解：本题为边角了解题，记住答案即可。", "dup"],
+["119", "RIP 协议引入路由保持机制的作用是防止网络中形成路由环路。（  ）", "A. 正确　B. 错误", "正确", "📚 知识点讲解：本题为边角了解题，记住答案即可。", "dup"]
+];
+
+const box=document.getElementById('items');
+QA.forEach((q)=>{
+  const num=q[0], stem=q[1], opts=q[2], ans=q[3];
+  const analysisRaw = q[4];                 // 解析文本（含 ｜ 分隔的四要素）
+  const tag = (q.length===6) ? q[5] : '';  // dup / edge / special
+  const isSpecial = analysisRaw.indexOf('⚠')===0 || ans.indexOf('题库标注')>=0;
+  let tagHtml = tag==='dup' ? '<span class="dup">（与前面重复）</span>'
+              : tag==='edge' ? '<span class="edge">（了解即可）</span>'
+              : tag==='dupedge' ? '<span class="dup">（与前面重复）</span><span class="edge">（了解即可）</span>'
+              : isSpecial ? '<span class="edge">（存疑·见解析）</span>' : '';
+  const ansHtml = '<span class="ans">答案：'+ans+'</span>';
+  let ana;
+  if(isSpecial){
+    ana = '<div class="analysis"><span class="b a2">'+analysisRaw+'</span></div>';
+  } else {
+    const parts = analysisRaw.split('｜');
+    const cls=['a1','a2','a3','a4'];
+    ana = '<div class="analysis">'+parts.map((p,k)=>'<span class="b '+cls[k]+'">'+(p||'')+'</span>').join('')+'</div>';
+  }
+  const div=document.createElement('div');
+  div.className='item';
+  div.innerHTML='<div class="q">'+num+'. '+stem+'</div>'
+    +'<div class="meta">'+tagHtml+'</div>'
+    +'<div style="font-size:13.5px;color:#556">选项：'+opts.replace(/｜.*/,'')+'</div>'
+    + ansHtml
+    +'<div class="toggle" onclick="this.nextElementSibling.classList.toggle(\'open\')">▸ 显示解析</div>'
+    + ana;
+  box.appendChild(div);
+});
+function expandAll(){document.querySelectorAll('.item .analysis').forEach(e=>e.classList.add('open'));}
+function collapseAll(){document.querySelectorAll('.item .analysis').forEach(e=>e.classList.remove('open'));}
+</script>
+</body>
+</html>

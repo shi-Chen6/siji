@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>局域网与传输介质 · 零基础系统学习</title>
+<style>
+  :root{
+    --bg:#f7f9fc; --card:#ffffff; --ink:#1f2937; --muted:#6b7280;
+    --line:#e5e7eb; --accent:#2563eb; --accent-soft:#eff6ff;
+    --green:#16a34a; --green-soft:#ecfdf5; --amber:#d97706; --amber-soft:#fffbeb;
+    --purple:#7c3aed; --red:#dc2626;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.75;font-size:16px}
+  header.hero{background:linear-gradient(135deg,#2563eb,#1e40af);color:#fff;padding:36px 24px}
+  header.hero h1{margin:0 0 8px;font-size:28px}
+  header.hero p{margin:0;opacity:.92;max-width:820px}
+  .wrap{max-width:960px;margin:0 auto;padding:0 18px 60px}
+  nav.toc{position:sticky;top:0;z-index:20;background:rgba(247,249,252,.92);
+    backdrop-filter:blur(6px);border-bottom:1px solid var(--line);padding:10px 0;margin-bottom:24px}
+  nav.toc ul{list-style:none;display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0 18px;max-width:960px;margin:0 auto}
+  nav.toc a{font-size:13px;text-decoration:none;color:var(--accent);background:var(--accent-soft);
+    padding:5px 11px;border-radius:999px;border:1px solid #dbeafe;white-space:nowrap}
+  nav.toc a:hover{background:#dbeafe}
+  section.module{background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:22px 24px;margin:22px 0;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+  section.module > h2{margin:0 0 6px;font-size:21px;color:var(--accent);display:flex;align-items:center;gap:10px}
+  section.module > h2 .badge{background:var(--accent);color:#fff;font-size:13px;border-radius:8px;padding:2px 9px}
+  .kp{margin:22px 0;padding:18px;border:1px solid var(--line);border-left:5px solid var(--accent);border-radius:10px;background:#fcfdff}
+  .kp h3{margin:0 0 10px;font-size:18px}
+  .one-liner{background:var(--accent-soft);border-radius:8px;padding:10px 14px;margin:10px 0;font-weight:600;color:#1e3a8a}
+  .analogy{background:var(--amber-soft);border-left:4px solid var(--amber);border-radius:8px;padding:10px 14px;margin:12px 0}
+  .analogy b{color:var(--amber)}
+  .table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14.5px}
+  .table th,.table td{border:1px solid var(--line);padding:8px 10px;text-align:left}
+  .table th{background:#f1f5f9}
+  .quiz{border:1px dashed #cbd5e1;background:#f8fafc;border-radius:10px;padding:14px;margin:14px 0}
+  .quiz .qtag{display:inline-block;font-size:12px;font-weight:700;color:#fff;background:var(--purple);
+    padding:2px 8px;border-radius:6px;margin-bottom:6px}
+  .quiz .opts{margin:6px 0 0;padding-left:18px}
+  .quiz .opts li{margin:3px 0}
+  details.ans{margin-top:10px;border:1px solid var(--green);border-radius:8px;background:var(--green-soft);overflow:hidden}
+  details.ans > summary{cursor:pointer;padding:9px 14px;font-weight:700;color:var(--green);list-style:none}
+  details.ans > summary::-webkit-details-marker{display:none}
+  details.ans > summary::before{content:"▸ "; }
+  details.ans[open] > summary::before{content:"▾ ";}
+  .ans-body{padding:0 16px 14px}
+  .ans-body p{margin:8px 0}
+  .ans-body .lab{font-weight:700}
+  .l-jg{color:var(--green)} .l-zs{color:var(--accent)} .l-st{color:var(--amber)} .l-kj{color:var(--purple)}
+  .practice .item{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:14px 0;background:#fff}
+  .practice .item h4{margin:0 0 6px;font-size:15.5px}
+  .practice .meta{font-size:13px;color:var(--muted);margin-top:8px}
+  .ans-key{color:var(--green);font-weight:700}
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 4px}
+  .toolbar button{font-size:13px;padding:7px 14px;border:1px solid var(--accent);background:var(--accent);
+    color:#fff;border-radius:8px;cursor:pointer}
+  .toolbar button.ghost{background:#fff;color:var(--accent)}
+  .note{font-size:13px;color:var(--muted);background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 12px;margin:8px 0}
+  footer{text-align:center;color:var(--muted);font-size:13px;padding:24px}
+  .figure{margin:14px 0;text-align:center}
+  .figure svg{max-width:100%;height:auto;border-radius:10px;background:#fff;border:1px solid var(--line)}
+  .figure .cap{font-size:12.5px;color:var(--muted);margin-top:6px}
+  .trap{background:#fef2f2;border:1px solid #fecaca;border-left:5px solid var(--red);border-radius:8px;padding:10px 14px;margin:12px 0}
+  .trap b{color:var(--red)}
+  .trap .tt{font-weight:700;color:var(--red);display:block;margin-bottom:3px}
+  .flow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:14px 0}
+  .flow .step{background:var(--accent-soft);border:1px solid #dbeafe;color:#1e3a8a;border-radius:8px;padding:7px 11px;font-size:13px;font-weight:600}
+  .flow .arrow{color:var(--muted);font-weight:700}
+  .refcard{background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:14px 0}
+  .refcard h4{margin:0 0 8px;color:var(--accent);font-size:16px}
+  .story-hero{background:linear-gradient(135deg,#0ea5e9,#2563eb);color:#fff;border-radius:14px;padding:22px 24px;margin:0 0 22px}
+  .story-hero h2{margin:0 0 8px;font-size:22px}
+  .story-hero p{margin:0;opacity:.95}
+</style>
+</head>
+<body>
+<header class="hero">
+  <h1>局域网与传输介质 · 零基础系统学习</h1>
+  <p>配套题库章节「局域网与传输介质（49 题）」。按 6 大模块从基础概念逐步进阶，每节配生活类比 + 考点自测（可展开解析）。学完即可轻松拿下题库练习题。</p>
+</header>
+
+<div class="wrap">
+<nav class="toc">
+  <ul>
+    <li><a href="#m1">① 基础</a></li>
+    <li><a href="#m2">② 双绞线</a></li>
+    <li><a href="#m3">③ 光纤</a></li>
+    <li><a href="#m4">④ 无线</a></li>
+    <li><a href="#m5">⑤ 综合布线</a></li>
+    <li><a href="#m6">⑥ 安全进阶</a></li>
+    <li><a href="#story">📖 故事线</a></li>
+    <li><a href="#ref">🃏 速查卡</a></li>
+    <li><a href="#m7">⑦ 49题自测</a></li>
+  </ul>
+</nav>
+
+<!-- 故事线 -->
+<section class="story-hero" id="story">
+  <h2>📖 故事线：从零给一家公司搭网络</h2>
+  <p>把所有知识点串成一条线——你不是孤立背概念，而是在「盖一栋楼的网络」。跟着故事走一遍，逻辑会自己长出来。</p>
+  <div class="flow">
+    <span class="step">① 规划范围：这栋楼/公司用局域网（LAN）</span><span class="arrow">→</span>
+    <span class="step">② 楼内布线：选双绞线（CAT5e/6），定线序与避雷净距</span><span class="arrow">→</span>
+    <span class="step">③ 拉远一点：用光纤（全反射/单多模/收发器）连不同楼</span><span class="arrow">→</span>
+    <span class="step">④ 无线覆盖：WLAN（AP+加密）让手机笔记本也能上</span><span class="arrow">→</span>
+    <span class="step">⑤ 按标准验收：综合布线国标/国际/北美 + 光纤测试</span><span class="arrow">→</span>
+    <span class="step">⑥ 安全防护：加密防监听 + 防火墙守门 + 排查隐患</span>
+  </div>
+  <p style="margin-top:10px;opacity:.95">每一步对应一个学习模块，遇到概念卡壳就点对应模块回去补。学完 6 步，49 题就是「顺手的事」。</p>
+</section>
+
+<!-- 模块一 -->
+<section class="module" id="m1">
+  <h2><span class="badge">模块一</span> 网络与局域网基础</h2>
+
+  <div class="kp">
+    <h3>1.1　什么是网络？局域网、城域网、广域网怎么分？</h3>
+    <div class="one-liner">一句话：按「覆盖范围（距离）」把网络分成三兄弟——局域、城域、广域。</div>
+    <table class="table">
+      <tr><th>类型</th><th>英文</th><th>覆盖范围</th><th>生活类比</th></tr>
+      <tr><td>局域网</td><td>LAN</td><td>一栋楼/一个公司/校园内</td><td>公司内部内部电话网</td></tr>
+      <tr><td>城域网</td><td>MAN</td><td>一座城市</td><td>全市公交调度系统</td></tr>
+      <tr><td>广域网</td><td>WAN</td><td>跨城市/跨国/全球（互联网最大）</td><td>全球移动电话网</td></tr>
+    </table>
+    <div class="analogy"><b>生活类比：</b>局域网=小区群（人少、秒回）；城域网=全市业主大群；广域网=微信（全球、靠运营商中转）。题库原话「以接入计算机之间的距离来定义」——正确。</div>
+    <div class="figure">
+      <svg viewBox="0 0 360 200" role="img" aria-label="局域网城域网广域网范围对比">
+        <circle cx="180" cy="100" r="140" fill="#f8fafc" stroke="#93c5fd" stroke-width="2"/>
+        <circle cx="180" cy="100" r="92" fill="#eff6ff" stroke="#60a5fa" stroke-width="2"/>
+        <circle cx="180" cy="100" r="46" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+        <text x="180" y="104" text-anchor="middle" font-size="13" fill="#1e3a8a" font-weight="700">局域网</text>
+        <text x="180" y="42" text-anchor="middle" font-size="12" fill="#1d4ed8">城域网</text>
+        <text x="180" y="18" text-anchor="middle" font-size="12" fill="#2563eb">广域网</text>
+      </svg>
+      <div class="cap">范围由小到大：局域网 ⊂ 城域网 ⊂ 广域网（按接入计算机的距离划分）</div>
+    </div>
+    <div class="quiz">
+      <span class="qtag">考点自测</span>
+      <div>【多选】按照网络覆盖范围划分，可以分为（　）。<br>A.城域网　B.局域网　C.全球网　D.广域网</div>
+      <div>【判断】区分局域网、城域网和广域网是以接入的计算机之间的距离来定义的。（　）</div>
+      <div>【单选】下列不属于有线传输的是（　）。<br>A.双绞线　B.光纤　C.超五类双绞线　D.电磁波</div>
+      <details class="ans"><summary>展开解析</summary><div class="ans-body">
+        <p><span class="lab l-jg">🎯 答案解析：</span>Q24 <span class="ans-key">ABD</span>（标准分类是局域/城域/广域，无「全球网」）；Q40 <span class="ans-key">正确</span>；Q42 <span class="ans-key">D</span>（电磁波是无线传输）。</p>
+        <p><span class="lab l-zs">📚 知识点讲解：</span>网络按覆盖范围分 LAN/MAN/WAN；传输介质分「有线」（双绞线、同轴电缆、光纤）和「无线」（电磁波）。</p>
+        <p><span class="lab l-st">💡 解题思路：</span>排除法——「全球网」非规范术语，排除 C；电磁波靠空气传播，明显不是「有线」。</p>
+        <p><span class="lab l-kj">🧠 记忆口诀：</span>「局城广，按距离；有线线，无线波。」</p>
+      </div></details>
+    </div>
+  </div>
+
+  <div class="kp">
+    <h3>1.2　局域网有什么特点？</h3>
+    <div class="one-liner">一句话：局域网是「小圈子高速网」——地方小、速度快、出错少、单位自己建。</div>
+    <div class="analogy"><b>生活类比：</b>像公司食堂内部广播：范围只在大楼（地域小）、喊一声立刻听见（高速低误码）、公司自己装（单位自建）。</div>
+    <div class="quiz">
+      <span class="qtag">考点自测</span>
+      <div>【多选】属于局域网的特点有（　）。<br>A.较少的地域范围　B.高传输速率和低误码率　C.一般侧重共享位置准确无误及传输的安全　D.一般为一个单位所建</div>
+      <details class="ans"><summary>展开解析</summary><div class="ans-body">
+        <p><span class="lab l-jg">🎯 答案解析：</span><span class="ans-key">ABD</span>。</p>
+        <p><span class="lab l-zs">📚 知识点讲解：</span>局域网三特征 = 地域小 + 高速低误码 + 单位自建。</p>
+        <p><span class="lab l-st">💡 解题思路：</span>C 说「位置准确、传输安全」是特定系统要求，不是局域网普遍特点，排除。</p>
+        <p><span class="lab l-kj">🧠 记忆口诀：</span>「局域三特征：地小、速高、自己建。」</p>
+      </div></details>
+    </div>
+  </div>
+
+  <div class="kp">
+    <h3>1.3　传输介质总览：有线 vs 无线</h3>
+    <div class="one-liner">一句话：传输介质=数据走的「路」。有线是实实在在的线，无线是空气里的电磁波。</div>
+    <div class="analogy"><b>生活类比：</b>双绞线=拧在一起的电话线；同轴电缆=早年有线电视粗线；光纤=玻璃「光管」；电磁波=看不见的无线电（WiFi、手机信号）。</div>
+    <div class="quiz">
+      <span class="qtag">考点自测</span>
+      <div>【多选】局域网的传输介质主要包括哪些？（　）<br>A.光纤　B.数据线　C.双绞线　D.同轴电缆</div>
+      <details class="ans"><summary>展开解析</summary><div class="ans-body">
+        <p><span class="lab l-jg">🎯 答案解析：</span><span class="ans-key">ACD</span>。</p>
+        <p><span class="lab l-zs">📚 知识点讲解：</span>局域网三大有线介质 = 双绞线、同轴电缆、光纤；「数据线」不是标准术语。</p>
+        <p><span class="lab l-st">💡 解题思路：</span>B 太宽泛、不专业，排除；其余三个是教材标准答案。</p>
+        <p><span class="lab l-kj">🧠 记忆口诀：</span>「局域介质三兄弟：双绞、同轴、光纤。」</p>
+      </div></details>
+    </div>
+  </div>
+</section>
+
+<!-- 模块二 -->
+<section class="module" id="m2">
+  <h2><span class="badge">模块二</span> 双绞线（最常用有线介质）</h2>
+
+  <div class="kp">
+    <h3>2.1　双绞线的类别与速率（CAT3/4/5/5e/6）</h3>
+    <div class="one-liner">一句话：双绞线按「等级（CAT）」分，等级越高跑得越快。</div>
+    <table class="table">
+      <tr><th>类别</th><th>最高速率</th><th>说明</th></tr>
+      <tr><td>CAT3</td><td>10 Mbps</td><td>老式电话/早期网络</td></tr>
+      <tr><td>CAT4</td><td>16 Mbps</td><td>较少用</td></tr>
+      <tr><td><b>CAT5</b></td><td><b>100 Mbps</b></td><td>常见百兆网（考点）</td></tr>
+      <tr><td>CAT5e（超五类）</td><td>1000 Mbps</td><td>千兆，主流</td></tr>
+      <tr><td>CAT6（六类）</td><td>1000 Mbps+</td><td>性能更好</td></tr>
+    </table>
+    <div class="analogy"><b>生活类比：</b>CAT3=乡道（10码）、CAT5=双向两车道省道（100码）、CAT6=高速公路（1000码）。等级越高路越宽、车跑越快。</div>
+    <div class="quiz">
+      <span class="qtag">考点自测</span>
+      <div>【单选】最大传输速率能达到 100 Mb/s 的双绞线是（　）。<br>A.CAT3　B.CAT4　C.CAT5　D.CAT6</div>
+      <div>【判断】5 类双绞线（CAT5）的最高传输速率为 100 Mbit/s。（　）</div>
+      <details class="ans"><summary>展开解析</summary><div class="ans-body">
+        <p><span class="lab l-jg">🎯 答案解析：</span>单选 <span class="ans-key">C</span>；判断 <span class="ans-key">正确</span>。</p>
+        <p><span class="lab l-zs">📚 知识点讲解：</span>CAT5=百兆（100M）；CAT5e/CAT6=千兆；CAT3 只有 10M。</p>
+        <p><span class="lab l-st">💡 解题思路：</span>问「能达到100M」的，CAT5 正好卡在 100M；CAT6 虽也能跑 100M 但它是千兆线，考点要「百兆代表=CAT5」。</p>
+        <p><span class="lab l-kj">🧠 记忆口诀：</span>「CAT5 上百兆，CAT6 上千兆。」</p>
+      </div></details>
+    </div>
+  </div>
+
+  <div class="kp">
+    <h3>2.2　双绞线线序：568A / 568B 与「交叉线」</h3>
+    <div class="one-liner">一句话：网线 8 根线有固定颜色顺序；两台电脑直接连，线序要「交叉」才能通。</div>
+    <div class="analogy"><b>生活类比：</b>像对讲机——A 的「说」要接 B 的「听」。电脑的「发」脚（1、2）必须接对方的「收」脚（3、6），所以把 1↔3、2↔6 对调，这就是交叉线。</div>
+    <div class="figure">
+      <svg viewBox="0 0 420 150" role="img" aria-label="交叉线接线示意">
+        <rect x="20" y="30" width="160" height="40" fill="#eff6ff" stroke="#2563eb"/>
+        <text x="100" y="55" text-anchor="middle" font-size="13" fill="#1e3a8a" font-weight="700">电脑A（发 1,2）</text>
+        <rect x="240" y="30" width="160" height="40" fill="#ecfdf5" stroke="#16a34a"/>
+        <text x="320" y="55" text-anchor="middle" font-size="13" fill="#166534" font-weight="700">电脑B（收 3,6）</text>
+        <line x1="100" y1="72" x2="320" y2="72" stroke="#dc2626" stroke-width="2"/>
+        <text x="210" y="92" text-anchor="middle" font-size="12" fill="#dc2626">A 的发送(1,2) ──交叉──▶ B 的接收(3,6)</text>
+        <text x="210" y="116" text-anchor="middle" font-size="12" fill="#6b7280">交叉线核心：1↔3、2↔6 对调，发对接收才通</text>
+      </svg>
+      <div class="cap">两台电脑直连要用「交叉线」：把 A 的发送脚接到 B 的接收脚</div>
+    </div>
+    <div class="quiz">
+      <span class="qtag">考点自测</span>
+      <div>【单选】EIA/TIA 568A 规定的线序为（　）。<br>A.橙白橙绿白蓝蓝白绿棕白棕　B.蓝白蓝绿白绿橙白橙棕白棕　C.绿白绿橙白蓝蓝白橙棕白棕　D.绿白绿橙白橙蓝白蓝棕白棕</div>
+      <div>【单选】如果要将两计算机通过双绞线直接连接，正确的线序是（　）。<br>A.1--1、2--2…8--8　B.1--3、2--6、3--1、4--4、5--5、6--2、7--7、8--8　C.1--2、2--1、3--6…　D.两计算机不能通过双绞线直接连接</div>
+      <details class="ans"><summary>展开解析</summary><div class="ans-body">
+        <p><span class="lab l-jg">🎯 答案解析：</span>Q23 <span class="ans-key">D</span>（568A=绿白绿橙白蓝蓝白橙棕白棕）；Q11 <span class="ans-key">B</span>（交叉线 1↔3、2↔6）。</p>
+        <p><span class="lab l-zs">📚 知识点讲解：</span>568A 以「绿」开头；两台电脑直连需交叉线（发对接收）。</p>
+        <p><span class="lab l-st">💡 解题思路：</span>568A 第一根是「绿白」，直接排除 A/B/C；交叉线核心 1-3、2-6 对调，锁定 B。</p>
+        <p><span class="lab l-kj">🧠 记忆口诀：</span>「568A 绿带头；电脑直连要交叉（1-3、2-6）。」</p>
+      </div></details>
+    </div>
+  </div>
+
+  <div class="kp">
+    <h3>2.3　双绞线布线系统与避雷净距</h3>
+    <div class="one-liner">一句话：实际工程分「五类/超五类/六类」布线；网线离避雷线至少隔 1 米。</div>
+    <div class="analogy"><b>生活类比：</b>网线像怕吵的人，避雷线像打雷时的「大喇叭」。两者不能贴着走，至少隔开 1 米。</div>
+    <div class="quiz">
+      <span class="qtag">考点自测</span>
+      <div>【多选】目前在网络布线方面，主要有几种双绞线布线系统在应用，即（　）。<br>A.五类布线系统　B.超五类布线系统　C.四类布线系统　D.六类布线系统</div>
+      <div>【单选】双绞线与避雷引下线之间的最小平行净距为（　）。<br>A.1000mm　B.400mm　C.800mm　D.600mm</div>
+      <details class="ans"><summary>展开解析</summary><div class="ans-body">
+        <p><span class="lab l-jg">🎯 答案解析：</span>Q38 <span class="ans-key">ABD</span>；Q31 <span class="ans-key">A</span>。</p>
+        <p><span class="lab l-zs">📚 知识点讲解：</span>主流布线=五类/超五类/六类；避雷净距=1米（1000mm）。</p>
+        <p><span class="lab l-st">💡 解题思路：</span>四类早已不用，排除 C；避雷净距「最小 1 米」，选最大的 A。</p>
+        <p><span class="lab l-kj">🧠 记忆口诀：</span>「布线五四六（5/5e/6）；避雷隔开一米（1000）。」</p>
+      </div></details>
+    </div>
+  </div>
+</section>
+
+<!-- 模块三 -->
+<section class="module" id="m3">
+  <h2><span class="badge">模块三</span> 光纤（高速长距离介质）</h2>
+
+  <div class="kp">
+    <h3>3.1　光纤通信原理：光的全反射</h3>
+    <div class="one-liner">一句话：光在光纤里一直「撞壁反弹」往前走，因为发生了「全反射」。</div>
+    <div class="analogy"><b>生活类比：</b>把光纤想象成「全镜面的弯水管」：光从一头打进去，在水管壁上来回反弹前进，永远跑不出管壁，直到另一头出来——这就是全反射。</div>
+    <div class="figure">
+      <svg viewBox="0 0 400 130" role="img" aria-label="光纤全反射示意">
+        <rect x="20" y="35" width="360" height="60" fill="#e0f2fe" stroke="#0ea5e9" stroke-width="2"/>
+        <line x1="20" y1="35" x2="380" y2="35" stroke="#0369a1" stroke-width="2"/>
+        <line x1="20" y1="95" x2="380" y2="95" stroke="#0369a1" stroke-width="2"/>
+        <polyline points="35,90 95,42 155,90 215,42 275,90 335,42 375,80" fill="none" stroke="#dc2626" stroke-width="3"/>
+        <polygon points="375,80 362,76 368,88" fill="#dc2626"/>
+        <text x="200" y="122" text-anchor="middle" font-size="12" fill="#0369a1">光在纤芯-包层界面不断「全反射」，被关在光纤里一路向前</text>
+      </svg>
+      <div class="cap">全反射：光不跑出管壁，沿光纤弹射前进</div>
+    </div>
+    <div class="quiz">
+      <span class="qtag">考点自测</span>
+      <div>【单选】光纤通信的原理主要基于光的（　）。<br>A.折射原理　B.散射原理　C.全反射原理　D.透视原理</div>
+      <details class="ans"><summary>展开解析</summary><div class="ans-body">
+        <p><span class="lab l-jg">🎯 答案解析：</span><span class="ans-key">C</span>（全反射）。</p>
+        <p><span class="lab l-zs">📚 知识点讲解：</span>光纤靠「光在纤芯-包层界面全反射」把光锁在纤芯里传输。</p>
+        <p><span class="lab l-st">💡 解题思路：</span>折射是拐弯、散射是散开、透视是看穿——只有「全反射」能解释光为啥不跑掉，选 C。</p>
+        <p><span class="lab l-kj">🧠 记忆口诀：</span>「光纤传光靠全反射，光壁反弹不跑掉。」</p>
+      </div></details>
+    </div>
+  </div>
+
+  <div class="kp">
+    <h3>3.2　单模 vs 多模：纤芯粗细与传输距离</h3>
+    <div class="one-liner">一句话：单模「细管子、跑得远」；多模「粗管子、跑得近」。</div>
+    <table class="table">
+      <tr><th></th><th>单模（SMF）</th><th>多模（MMF）</th></tr>
+      <tr><td>纤芯粗细</td><td>很细（约 9μm）</td><td>较粗（50/62.5μm）</td></tr>
+      <tr><td>光源</td><td>激光</td><td>发光二极管 LED</td></tr>
+      <tr><td>传输距离</td><td>远（单模可达 5000m）</td><td>近（约 550m）</td></tr>
+    </table>
+    <div class="analogy"><b>生活类比：</b>单模像细吸管吸远距离的水（集中有力）；多模像粗水管（近处流量大但送不远）。</div>
+    <div class="figure">
+      <svg viewBox="0 0 400 170" role="img" aria-label="单模与多模对比">
+        <circle cx="100" cy="60" r="40" fill="#fff" stroke="#2563eb" stroke-width="2"/>
+        <circle cx="100" cy="60" r="8" fill="#2563eb"/>
+        <text x="100" y="120" text-anchor="middle" font-size="12" fill="#1e3a8a">单模：纤芯细(~9μm)</text>
+        <text x="100" y="138" text-anchor="middle" font-size="12" fill="#2563eb">传输远(5000m)</text>
+        <circle cx="300" cy="60" r="40" fill="#fff" stroke="#16a34a" stroke-width="2"/>
+        <circle cx="300" cy="60" r="22" fill="#16a34a"/>
+        <text x="300" y="120" text-anchor="middle" font-size="12" fill="#166534">多模：纤芯粗(~50μm)</text>
+        <text x="300" y="138" text-anchor="middle" font-size="12" fill="#16a34a">传输近(550m)</text>
+      </svg>
+      <div class="cap">单模＝细管子跑得远；多模＝粗管子跑得近（反直觉：单模纤芯更细！）</div>
+    </div>
+    <div class="trap"><span class="tt">⚠ 反直觉陷阱</span>很多人以为「跑得远=管子粗」，但光纤正相反：<b>单模纤芯更细（约 9μm）、却传得更远</b>。Q27、Q35 都是拿这个挖坑，记住「单模细而远，多模粗而近」。</div>
+    <div class="quiz">
+      <span class="qtag">考点自测</span>
+      <div>【判断】单模光纤收发器传输距离远，需要的光纤纤芯稍微比多模的粗。（　）</div>
+      <div>【判断】多模光纤收发器传输距离远比单模式远。（　）</div>
+      <div>【多选】光纤传输距离正确的是（　）。<br>A.1000BASE-LX 单模 550 米　B.1000BASE-LX 多模 5000 米　C.1000BASE-LX 单模 5000 米　D.1000BASE-LX 多模 550 米</div>
+      <details class="ans"><summary>展开解析</summary><div class="ans-body">
+        <p><span class="lab l-jg">🎯 答案解析：</span>Q27 <span class="ans-key">错误</span>；Q35 <span class="ans-key">错误</span>；Q29 <span class="ans-key">CD</span>。</p>
+        <p><span class="lab l-zs">📚 知识点讲解：</span>单模纤芯更细、距离更远（千兆单模 5000m）；多模纤芯粗、距离近（约 550m）。</p>
+        <p><span class="lab l-st">💡 解题思路：</span>记住「单模细而远，多模粗而近」，两个判断都说反了；距离题里单模配 5000、多模配 550 才对。</p>
+        <p><span class="lab l-kj">🧠 记忆口诀：</span>「单模细远，多模粗近；LX 单模五千米，多模五百五。」</p>
+      </div></details>
+    </div>
+  </div>
+
+  <div class="kp">
+    <h3>3.3　光纤的优缺点：怕水</h3>
+    <div class="one-liner">一句话：光纤优点一堆（细、轻、抗干扰、带宽大），缺点是「怕水」。</div>
+    <div class="analogy"><b>生活类比：</b>光纤像「怕潮的精密仪器」：别的好处都占全了，就是不能泡水里，一进水就容易坏。</div>
+    <div class="trap"><span class="tt">⚠ 反直觉陷阱</span>光纤又细又轻、还<b>不怕电磁干扰</b>（光信号嘛），优点一大把；唯一要记的弱点是<b>怕水</b>——水会导致氢损、强度下降。Q43 问「缺点」，别被「成本高」带偏，标准答案选<b>怕水</b>。</div>
+    <div class="quiz">
+      <span class="qtag">考点自测</span>
+      <div>【单选】光纤的缺点有（　）。<br>A.体积大　B.怕水　C.成本高　D.抗电磁干扰能力弱</div>
+      <details class="ans"><summary>展开解析</summary><div class="ans-body">
+        <p><span class="lab l-jg">🎯 答案解析：</span><span class="ans-key">B</span>（怕水）。</p>
+        <p><span class="lab l-zs">📚 知识点讲解：</span>光纤细、轻、抗干扰强（排除 A、D）；本题标准答案选「怕水」这一典型物理弱点。</p>
+        <p><span class="lab l-st">💡 解题思路：</span>先排错项：体积大 ❌、抗干扰弱 ❌；再在 B/C 中按题库标准选 B 怕水。</p>
+        <p><span class="lab l-kj">🧠 记忆口诀：</span>「光纤样样好，就怕水来泡。」</p>
+      </div></details>
+    </div>
+  </div>
+
+  <div class="kp">
+    <h3>3.4　光纤配线架（ODF）的功能</h3>
+    <div class="one-liner">一句话：光纤配线架是机房里「管理光纤」的架子：固定、存储、灵活配接。</div>
+    <div class="analogy"><b>生活类比：</b>像电话总机的接线板——线插上去固定住、多余长度卷起存好、需要通哪台就跳线接哪台。</div>
+    <div class="quiz">
+      <span class="qtag">考点自测</span>
+      <div>【多选】光纤配线架的基本功能有哪些？（　）<br>A.光纤固定　B.光纤熔接　C.光纤存储　D.光纤配接</div>
+      <details class="ans"><summary>展开解析</summary><div class="ans-body">
+        <p><span class="lab l-jg">🎯 答案解析：</span><span class="ans-key">ACD</span>。</p>
+        <p><span class="lab l-zs">📚 知识点讲解：</span>ODF 三大基本功能=固定、存储、配接；熔接是独立工序。</p>
+        <p><span class="lab l-st">💡 解题思路：</span>熔接（B）是「接光纤」不是「配线架功能」，排除；其余三个都是「管理光纤」的基本动作。</p>
+        <p><span class="lab l-kj">🧠 记忆口诀：</span>「配线架三动作：固定、存、配接。」</p>
+      </div></details>
+    </div>
+  </div>
+
+  <div class="kp">
+    <h3>3.5　光纤收发器：光电转换的小盒子</h3>
+    <div class="one-liner">一句话：光纤收发器（光电转换器）把「电信号 ↔ 光信号」互相翻译，让普通网线借光纤传远。</div>
+    <ul>
+      <li>本质是光电转换，也称光电转换器 ✓（Q13）</li>
+      <li>工作波长一般 1310nm 或 1550nm；波长越大频率<b>越低</b>（λ=c/f），故「数值越大频率越高」✗（Q17）</li>
+      <li>双纤<b>要区分</b>收发，不能说「不需要区分」✗（Q26）</li>
+      <li>距离超标称可用 2 台背对背中继延长 ✓（Q7）</li>
+      <li>光口灯亮只说明收到光，≠收发都正常 ✗（Q19）</li>
+      <li>是透明传输设备，<b>不控制</b>带宽 ✗（Q30）</li>
+      <li>「只接一台电脑以太网口不会产生冲突」✗（Q8，仍处冲突域，说法绝对化）</li>
+    </ul>
+    <div class="analogy"><b>生活类比：</b>收发器像「翻译官」：中文（电）进翻成外语（光）走光纤，另一头翻回来。两个翻译官「背对背」接力（中继）传更远。但翻译官不管你说话快慢（不控带宽），也不保证对方一定听清（灯亮≠双向通）。</div>
+    <div class="trap"><span class="tt">⚠ 反直觉陷阱</span>波长(λ)和频率(f)是<b>反比</b>关系（λ=c/f）：1310nm、1550nm 里，<b>1550 波长更大，但频率更低</b>。Q17 说「数值越大频率越高」是错的，别掉坑。</div>
+    <div class="quiz">
+      <span class="qtag">考点自测</span>
+      <div>【判断】光纤收发器是一种将电信号和光信号进行互换的以太网传输媒体转换单元，也称光电转换器。（　）</div>
+      <div>【判断】光纤收发器工作波长一般是 1310nm 或 1550nm，数值越大表示频率越高。（　）</div>
+      <div>【判断】双纤的光纤收发器在接纤时不需要区分两条纤。（　）</div>
+      <div>【判断】传输距离超过光纤收发器的标称距离时，可采用 2 台收发器背对背进行中继。（　）</div>
+      <div>【判断】光纤收发器光口工作指示灯亮时，说明光纤收发都正常。（　）</div>
+      <div>【判断】光纤收发器可以控制用户上网带宽。（　）</div>
+      <details class="ans"><summary>展开解析</summary><div class="ans-body">
+        <p><span class="lab l-jg">🎯 答案解析：</span>Q13 <span class="ans-key">正确</span>；Q17 <span class="ans-key">错误</span>；Q26 <span class="ans-key">错误</span>；Q7 <span class="ans-key">正确</span>；Q19 <span class="ans-key">错误</span>；Q30 <span class="ans-key">错误</span>。</p>
+        <p><span class="lab l-zs">📚 知识点讲解：</span>收发器=光电翻译器；波长 1310/1550nm；双纤分收发；可背对背中继；灯亮≠全通；不控带宽。</p>
+        <p><span class="lab l-st">💡 解题思路：</span>抓住「翻译官」本质——只转换不控制（带宽❌）、要分收发（区分✓）、灯亮只证收到（≠收发都好）。波长越大频率越小是物理常识。</p>
+        <p><span class="lab l-kj">🧠 记忆口诀：</span>「收发器：电光互转；双纤分收发；灯亮非全通；不控带宽；波长越大频越低。」</p>
+      </div></details>
+    </div>
+  </div>
+
+  <div class="kp">
+    <h3>3.6　千兆以太网标准：1000BASE-CX / T / LX / SX</h3>
+    <div class="one-liner">一句话：「1000BASE-XXX」是千兆以太网不同物理层标准，后缀代表「用什么介质、跑多远」。</div>
+    <table class="table">
+      <tr><th>标准</th><th>介质</th><th>距离</th><th>说明</th></tr>
+      <tr><td>1000BASE-T</td><td>非屏蔽双绞线</td><td>约 100m</td><td>普通网线上千兆</td></tr>
+      <tr><td>1000BASE-CX</td><td>铜缆（双轴）</td><td>约 25m</td><td>短距离、非无线</td></tr>
+      <tr><td>1000BASE-SX</td><td>多模光纤</td><td>约 550m</td><td>短波、多模</td></tr>
+      <tr><td>1000BASE-LX</td><td>单模/多模光纤</td><td>单模可达 5000m</td><td>长波、<b>支持 &gt;550m</b></td></tr>
+    </table>
+    <div class="analogy"><b>生活类比：</b>千兆以太网像四种快递：T=普通货车（网线100m）、CX=摩托（25m）、SX=省内大巴（多模550m）、LX=跨省高铁（单模5000m，最远）。</div>
+    <div class="figure">
+      <svg viewBox="0 0 400 170" role="img" aria-label="千兆以太网标准距离对比">
+        <rect x="120" y="20" width="30" height="14" fill="#2563eb"/>
+        <text x="115" y="31" text-anchor="end" font-size="11" fill="#1e3a8a">T 100m</text>
+        <rect x="120" y="50" width="12" height="14" fill="#60a5fa"/>
+        <text x="115" y="61" text-anchor="end" font-size="11" fill="#1e3a8a">CX 25m</text>
+        <rect x="120" y="80" width="80" height="14" fill="#16a34a"/>
+        <text x="115" y="91" text-anchor="end" font-size="11" fill="#166534">SX 550m</text>
+        <rect x="120" y="110" width="250" height="14" fill="#dc2626"/>
+        <text x="115" y="121" text-anchor="end" font-size="11" fill="#dc2626">LX 5000m</text>
+        <text x="200" y="155" text-anchor="middle" font-size="11" fill="#6b7280">条越长=传得越远；只有 LX(单模) 支持 &gt;550m</text>
+      </svg>
+      <div class="cap">千兆四标准距离对比：LX 单模最远，SX 多模封顶 550m</div>
+    </div>
+    <div class="quiz">
+      <span class="qtag">考点自测</span>
+      <div>【单选】下面的标准中，支持大于 550 米距离光纤以太网的是（　）。<br>A.1000Base-CX　B.1000Base-T　C.1000Base-LX　D.1000Base-SX</div>
+      <div>【多选】关于千兆以太网物理层标准的描述中，正确的有（　）。<br>A.1000BASE-T 支持非屏蔽双绞线　B.1000BASE-CX 支持无线传输介质　C.1000BASE-LX 支持单模光纤　D.1000BASE-SX 支持多模光纤</div>
+      <details class="ans"><summary>展开解析</summary><div class="ans-body">
+        <p><span class="lab l-jg">🎯 答案解析：</span>Q6/Q49 <span class="ans-key">C</span>（LX 单模&gt;550m）；Q9 <span class="ans-key">ACD</span>。</p>
+        <p><span class="lab l-zs">📚 知识点讲解：</span>T=双绞线、CX=铜缆（非无线）、SX=多模、LX=单模且最远。</p>
+        <p><span class="lab l-st">💡 解题思路：</span>问「&gt;550m 的光纤」，SX 多模才 550m 封顶，只有 LX 单模能到几公里；多选里 B 说 CX 支持无线明显错（CX 是铜缆），排除。</p>
+        <p><span class="lab l-kj">🧠 记忆口诀：</span>「T 双绞、CX 铜、SX 多模、LX 单模最远。」</p>
+      </div></details>
+    </div>
+  </div>
+</section>
+
+<!-- 模块四 -->
+<section class="module" id="m4">
+  <h2><span class="badge">模块四</span> 无线传输</h2>
+
+  <div class="kp">
+    <h3>4.1　无线局域网 WLAN（WiFi）</h3>
+    <div class="one-liner">一句话：WLAN 用无线电代替网线，设备通过「接入点（AP）」上网，最典型就是 WiFi。</div>
+    <ul>
+      <li>标准：802.11 家族有 a/b/g 等；<b>802.11c 不是</b> WLAN 常用标准（Q32）</li>
+      <li>客户端进入多 AP 覆盖，按「信号强弱+误包率」自动选最好 AP ✓（Q18）</li>
+      <li>无线加密：<b>WEP、WPA、WPA2</b>（Q39）；MD5 是哈希算法不是加密方式</li>
+      <li>不用公共 WIFI 支付，因<b>存在个人信息泄露风险</b>（Q45）</li>
+    </ul>
+    <div class="analogy"><b>生活类比：</b>WLAN 像无线对讲网络：多个基站（AP）像中继台，手机自动连信号最好的；聊天要加密（WEP/WPA/WPA2），不然在公共频道说话被偷听——所以公共 WiFi 上别输密码付钱。</div>
+    <div class="quiz">
+      <span class="qtag">考点自测</span>
+      <div>【单选】下列哪一项不是 WLAN 无线通信技术的标准？（　）<br>A.802.11a　B.802.11b　C.802.11c　D.802.11g</div>
+      <div>【判断】当一个 WLAN 客户端进入多个接入点覆盖范围时，会根据信号强弱和误包率自动选择接入点连接。（　）</div>
+      <div>【多选】下面属于无线网络加密方式的是（　）。<br>A.WEP　B.WPA　C.MD5　D.WPA2</div>
+      <div>【单选】不使用公共 WIFI 进行支付操作，是因为什么（　）。<br>A.易断开　B.网速慢　C.存在个人信息泄露风险　D.连接复杂</div>
+      <details class="ans"><summary>展开解析</summary><div class="ans-body">
+        <p><span class="lab l-jg">🎯 答案解析：</span>Q32 <span class="ans-key">C</span>；Q18 <span class="ans-key">正确</span>；Q39 <span class="ans-key">ABD</span>；Q45 <span class="ans-key">C</span>。</p>
+        <p><span class="lab l-zs">📚 知识点讲解：</span>WLAN 标准 a/b/g；自动选最强 AP；加密 WEP/WPA/WPA2；公共 WiFi 有泄露风险。</p>
+        <p><span class="lab l-st">💡 解题思路：</span>802.11c 是桥接相关、不在 WLAN 常用标准里；MD5 是摘要算法不是加密方式；支付题直选「泄露风险」最合理。</p>
+        <p><span class="lab l-kj">🧠 记忆口诀：</span>「WLAN：a/b/g 标准；加密 WEP/WPA/WPA2；公共 WiFi 不付钱。」</p>
+      </div></details>
+    </div>
+  </div>
+
+  <div class="kp">
+    <h3>4.2　无线广域网 WWAN</h3>
+    <div class="one-liner">一句话：WWAN 是用手机蜂窝网络（4G/5G）让设备「大范围、还能移动」时上网。</div>
+    <div class="analogy"><b>生活类比：</b>WLAN=在家里用 WiFi（范围小、基本不动）；WWAN=在高铁上用 5G 上网（范围大、边走边用）。</div>
+    <div class="quiz">
+      <span class="qtag">考点自测</span>
+      <div>【单选】（　）使得笔记本在蜂窝网络覆盖范围内任何地方连接到互联网。<br>A.虚拟局域网　B.无线广域网　C.虚拟广域网　D.无线局域网</div>
+      <div>【单选】无线广域网的主要优点是（　）。<br>A.接入终端在大范围内快速移动（借助基站）　B.传输速度快　C.安全性高　D.抗干扰性强</div>
+      <details class="ans"><summary>展开解析</summary><div class="ans-body">
+        <p><span class="lab l-jg">🎯 答案解析：</span>Q41 <span class="ans-key">B</span>（WWAN）；Q44 <span class="ans-key">A</span>（大范围移动）。</p>
+        <p><span class="lab l-zs">📚 知识点讲解：</span>WWAN=蜂窝移动网络上网，最大优势是「移动中广覆盖」。</p>
+        <p><span class="lab l-st">💡 解题思路：</span>蜂窝网络→无线广域网，直接选 B；WWAN 卖点就是「边走边连」，选 A。</p>
+        <p><span class="lab l-kj">🧠 记忆口诀：</span>「WWAN 蜂窝网，走到哪连到哪。」</p>
+      </div></details>
+    </div>
+  </div>
+</section>
+
+<!-- 模块五 -->
+<section class="module" id="m5">
+  <h2><span class="badge">模块五</span> 综合布线系统工程</h2>
+
+  <div class="kp">
+    <h3>5.1　综合布线系统：概念、标准与设计</h3>
+    <div class="one-liner">一句话：「综合布线」是把楼里所有弱电线路用统一标准规划好，像给楼装「神经系统」。</div>
+    <ul>
+      <li>常用标准：<b>中国国标、国际标准、北美标准</b>；<b>日本标准不属于</b>（Q14）</li>
+      <li>《智能建筑设计标准》核心是<b>系统集成中心</b>（Q20）</li>
+      <li>用户需求分析基本要求：近期兼顾长远、确定工作区、制定方案；<b>「多方征求意见」不是必须</b>（Q21）</li>
+    </ul>
+    <div class="analogy"><b>生活类比：</b>像给大楼设计统一下水道：不管以后接洗衣机还是洗碗机，管道标准都通用。设计按国标/国际/北美规范，不必非按日本标准。</div>
+    <div class="quiz">
+      <span class="qtag">考点自测</span>
+      <div>【单选】以下标准中，哪项不属于综合布线系统工程常用的标准。（　）<br>A.中国国家标准　B.国际标准　C.日本标准　D.北美标准</div>
+      <div>【单选】我国标准《智能建筑设计标准》规范建筑智能化工程设计，核心是（　）。<br>A.通信自动化系统　B.综合布线系统　C.办公自动化系统　D.系统集成中心</div>
+      <div>【单选】下列哪项不是综合布线系统工程中，用户需求分析必须遵循的基本要求。（　）<br>A.多方征求意见　B.主要考虑近期需求兼顾长远　C.确定工作区数量和性质　D.制定详细设计方案</div>
+      <details class="ans"><summary>展开解析</summary><div class="ans-body">
+        <p><span class="lab l-jg">🎯 答案解析：</span>Q14 <span class="ans-key">C</span>；Q20 <span class="ans-key">D</span>；Q21 <span class="ans-key">A</span>。</p>
+        <p><span class="lab l-zs">📚 知识点讲解：</span>布线标准=国标/国际/北美（无日本）；智能建筑核心是系统集成中心；需求分析不必「多方征求意见」。</p>
+        <p><span class="lab l-st">💡 解题思路：</span>日本标准不在国际通用三套里，排除 C；智能建筑靠「系统集成中心」统筹，选 D；需求分析讲务实调研，「多方征求意见」非硬性，选 A。</p>
+        <p><span class="lab l-kj">🧠 记忆口诀：</span>「布线标准：中、国、北（中国/国际/北美），没有日本；智能建筑靠集成中心。」</p>
+      </div></details>
+    </div>
+  </div>
+
+  <div class="kp">
+    <h3>5.2　光纤布线测试指标</h3>
+    <div class="one-liner">一句话：光纤完工要「体检」，但「近端串扰」是测双绞线的，光纤不测这项。</div>
+    <div class="analogy"><b>生活类比：</b>光纤体检=量「波长对不对、反射厉不厉害、衰减大不大」；近端串扰像两根电话线串音，光纤没这毛病，所以不测。</div>
+    <div class="trap"><span class="tt">⚠ 易错点</span>「近端串扰（NEXT）」是<b>双绞线（铜缆）</b>的测试项——两根线挨太近会「串音」。光纤是光信号，根本不存在串扰，所以光纤测试指标<b>不含近端串扰</b>。Q3/Q46 就考这个「不包括」，直接选 B。</div>
+    <div class="quiz">
+      <span class="qtag">考点自测</span>
+      <div>【单选】在综合布线系统中，光纤布线系统的测试指标不包括（　）。<br>A.波长窗口参数　B.近端串扰　C.回波损耗　D.最大衰减</div>
+      <details class="ans"><summary>展开解析</summary><div class="ans-body">
+        <p><span class="lab l-jg">🎯 答案解析：</span><span class="ans-key">B</span>（近端串扰）。</p>
+        <p><span class="lab l-zs">📚 知识点讲解：</span>光纤测波长窗口、回波损耗、最大衰减；近端串扰是双绞线指标。</p>
+        <p><span class="lab l-st">💡 解题思路：</span>题干问「不包括」，光纤是光信号，不存在铜线「串扰」，直接选 B。</p>
+        <p><span class="lab l-kj">🧠 记忆口诀：</span>「光纤三测：波长、回波、衰减；近端串扰是双绞线的事。」</p>
+      </div></details>
+    </div>
+  </div>
+</section>
+
+<!-- 模块六 -->
+<section class="module" id="m6">
+  <h2><span class="badge">模块六</span> 安全与进阶</h2>
+
+  <div class="kp">
+    <h3>6.1　防御网络监听：信息加密</h3>
+    <div class="one-liner">一句话：怕别人偷听数据？把数据加密成乱码，截获也看不懂——最常用方法。</div>
+    <div class="analogy"><b>生活类比：</b>网络监听像有人偷听你打电话。最管用的不是换线路，而是说「暗语（加密）」——被听到也是乱码。</div>
+    <div class="quiz">
+      <span class="qtag">考点自测</span>
+      <div>【单选】为了防御网络监听，最常用的方法是（　）。<br>A.采用物理传输（非网络）　B.信息加密　C.无线网　D.使用专线传输</div>
+      <details class="ans"><summary>展开解析</summary><div class="ans-body">
+        <p><span class="lab l-jg">🎯 答案解析：</span><span class="ans-key">B</span>（信息加密）。</p>
+        <p><span class="lab l-zs">📚 知识点讲解：</span>防御监听=让截获者看不懂，加密是最常用手段。</p>
+        <p><span class="lab l-st">💡 解题思路：</span>A/D 换通道成本高且不通用；C 无线更易被监听；只有 B 加密公认最常用。</p>
+        <p><span class="lab l-kj">🧠 记忆口诀：</span>「防监听，加密最常用。」</p>
+      </div></details>
+    </div>
+  </div>
+
+  <div class="kp">
+    <h3>6.2　防火墙的功能与局限</h3>
+    <div class="one-liner">一句话：防火墙是「网络大门的保安」管进出流量，但<b>不能代替杀毒软件</b>。</div>
+    <div class="analogy"><b>生活类比：</b>防火墙像小区门卫：拦谁进谁出（流量）、按名单放行（策略）、守在小区和外面的交界（LAN/WAN 间）。但门卫不负责检查你包里的病毒文件——那是杀毒软件（安检仪）的活。</div>
+    <div class="quiz">
+      <span class="qtag">考点自测</span>
+      <div>【单选】关于防火墙的功能，说法错误的是（　）。<br>A.所有进出网络的通讯流必须经过防火墙　B.所有进出网络的通讯流必须有安全策略的确认和授权　C.防火墙通常设置在局域网和广域网之间　D.防火墙可以代替防病毒软件</div>
+      <details class="ans"><summary>展开解析</summary><div class="ans-body">
+        <p><span class="lab l-jg">🎯 答案解析：</span><span class="ans-key">D</span>（说法错误；原题缺答案，据知识点判定为 D）。</p>
+        <p><span class="lab l-zs">📚 知识点讲解：</span>防火墙管网络边界流量，杀毒软件管终端文件，二者不可替代。</p>
+        <p><span class="lab l-st">💡 解题思路：</span>A/B/C 都是防火墙正确职责，只有 D 把两件事混为一谈，是错误说法。</p>
+        <p><span class="lab l-kj">🧠 记忆口诀：</span>「防火墙守门，杀毒管文件；门卫不查包里毒。」</p>
+      </div></details>
+    </div>
+  </div>
+
+  <div class="kp">
+    <h3>6.3　公司安全隐患场景</h3>
+    <div class="one-liner">一句话：很多「图方便」的操作，其实都在给公司埋雷。</div>
+    <div class="analogy"><b>生活类比：</b>像把保险柜钥匙随便给外来维修工（C）、把测试假钱和真钱放一个抽屉（B）——「省事」中制造风险。</div>
+    <div class="quiz">
+      <span class="qtag">考点自测</span>
+      <div>【多选】下列情况（　）会给公司带来安全隐患。<br>A.某业务系统数据库审计功能未开启　B.为方便将开发测试环境和业务系统运行环境置于同一机房　C.外部技术支持人员私自接入信息内网　D.使用无线键盘处理涉案及敏感信息</div>
+      <details class="ans"><summary>展开解析</summary><div class="ans-body">
+        <p><span class="lab l-jg">🎯 答案解析：</span><span class="ans-key">ABCD</span>（全选）。</p>
+        <p><span class="lab l-zs">📚 知识点讲解：</span>审计缺失、环境混用、外员私接、无线泄密，都是典型隐患。</p>
+        <p><span class="lab l-st">💡 解题思路：</span>四个选项分别从可追溯性、隔离性、访问控制、传输保密四个安全维度埋雷，全部当选。</p>
+        <p><span class="lab l-kj">🧠 记忆口诀：</span>「隐患四连：无审计、混环境、私接入、无线泄。」</p>
+      </div></details>
+    </div>
+  </div>
+
+  <div class="kp">
+    <h3>6.4　光纤多路复用：WDM 波分复用</h3>
+    <div class="one-liner">一句话：用「波分复用（WDM）」让不同颜色（波长）的光同时跑，一根光纤当多根用。</div>
+    <div class="analogy"><b>生活类比：</b>WDM 像一根水管里同时流红、绿、蓝三种颜色的水，到头再分开——靠「颜色（波长）」区分不同数据流。</div>
+    <div class="quiz">
+      <span class="qtag">考点自测</span>
+      <div>【单选】应用于光纤的多路复用技术是（　）。<br>A.FDM　B.TDM　C.WDM　D.SDMA</div>
+      <details class="ans"><summary>展开解析</summary><div class="ans-body">
+        <p><span class="lab l-jg">🎯 答案解析：</span><span class="ans-key">C</span>（WDM 波分复用）。</p>
+        <p><span class="lab l-zs">📚 知识点讲解：</span>光纤靠不同波长（颜色）的光同时传输实现复用，即 WDM。</p>
+        <p><span class="lab l-st">💡 解题思路：</span>WDM 的 W=Wavelength（波长），专用于光纤；FDM/TDM 虽存在但不是光纤典型代表。</p>
+        <p><span class="lab l-kj">🧠 记忆口诀：</span>「光纤复用看波长，WDM 波分一根当多根。」</p>
+      </div></details>
+    </div>
+  </div>
+
+  <div class="kp">
+    <h3>6.5　高速局域网产品</h3>
+    <div class="one-liner">一句话：「高速局域网」指百兆及以上；10M 以太网不算高速。</div>
+    <div class="analogy"><b>生活类比：</b>高速局域网像高速路网：100M/1000M 是不同等级高速，FDDI 是早期光纤高速环网；10M 只是乡道。</div>
+    <div class="quiz">
+      <span class="qtag">考点自测</span>
+      <div>【多选】以下选项中，属于高速局域网产品的有（　）。<br>A.10Mbps 以太网　B.100Mbps 以太网　C.1000Mbps 以太网　D.FDDI 光纤网</div>
+      <details class="ans"><summary>展开解析</summary><div class="ans-body">
+        <p><span class="lab l-jg">🎯 答案解析：</span><span class="ans-key">BCD</span>。</p>
+        <p><span class="lab l-zs">📚 知识点讲解：</span>高速局域网=百兆及以上；10M 是低速，排除。</p>
+        <p><span class="lab l-st">💡 解题思路：</span>题干要「高速」，10Mbps 不够格，排除 A；其余百兆/千兆/FDDI 都算。</p>
+        <p><span class="lab l-kj">🧠 记忆口诀：</span>「高速局域网：百兆、千兆、FDDI；十兆不算。」</p>
+      </div></details>
+    </div>
+  </div>
+</section>
+
+<!-- 速查卡 -->
+<section class="module" id="ref">
+  <h2><span class="badge">速查</span> 易混点速查卡 & 反直觉陷阱</h2>
+
+  <div class="refcard">
+    <h4>① 单模 vs 多模</h4>
+    <table class="table">
+      <tr><th></th><th>单模 SMF</th><th>多模 MMF</th></tr>
+      <tr><td>纤芯</td><td>细（~9μm）</td><td>粗（50/62.5μm）</td></tr>
+      <tr><td>距离</td><td>远（千兆 5000m）</td><td>近（~550m）</td></tr>
+      <tr><td>口诀</td><td colspan="2">单模细而远，多模粗而近</td></tr>
+    </table>
+  </div>
+
+  <div class="refcard">
+    <h4>② 千兆以太网 1000BASE 四标准</h4>
+    <table class="table">
+      <tr><th>标准</th><th>介质</th><th>距离</th></tr>
+      <tr><td>T</td><td>非屏蔽双绞线</td><td>~100m</td></tr>
+      <tr><td>CX</td><td>铜缆（非无线）</td><td>~25m</td></tr>
+      <tr><td>SX</td><td>多模光纤</td><td>~550m</td></tr>
+      <tr><td>LX</td><td>单模光纤</td><td>可达 5000m（&gt;550m）</td></tr>
+    </table>
+  </div>
+
+  <div class="refcard">
+    <h4>③ 无线加密 & 介质分类</h4>
+    <p><b>无线加密：</b>WEP / WPA / WPA2（MD5 是哈希算法，不是加密方式）。</p>
+    <p><b>有线介质：</b>双绞线、同轴电缆、光纤；<b>无线：</b>电磁波（WiFi、蜂窝）。</p>
+  </div>
+
+  <div class="refcard">
+    <h4>④ 反直觉陷阱速记</h4>
+    <ul>
+      <li>波长越大 → 频率<b>越低</b>（λ=c/f），不是越高。</li>
+      <li>单模纤芯更<b>细</b>，却传得更<b>远</b>。</li>
+      <li>光纤<b>怕水</b>（不是体积大、也不是抗干扰弱）。</li>
+      <li>近端串扰只测<b>双绞线</b>，光纤不测。</li>
+      <li>防火墙<b>不能</b>代替杀毒软件。</li>
+      <li>光纤收发器灯亮 ≠ 收发都正常；且<b>不控</b>带宽。</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 模块七 练习题 -->
+<section class="module practice" id="m7">
+  <h2><span class="badge">模块七</span> 练习题（题库 49 题全）</h2>
+  <div class="toolbar">
+    <button onclick="openAll(true)">展开全部解析</button>
+    <button class="ghost" onclick="openAll(false)">收起全部解析</button>
+  </div>
+  <p class="note">建议先盖住答案自测，再展开解析对照。括号内为对应知识点讲解位置。</p>
+
+  <div class="item"><h4>1.【单选】为了防御网络监听，最常用的方法是（　）。</h4>
+    A.采用物理传输（非网络）　B.信息加密　C.无线网　D.使用专线传输
+    <div class="meta">答案：<span class="ans-key">B</span>　｜ 解析见 6.1</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>防御监听最常用方法是<b>信息加密</b>，让截获者看不懂。A/D 换通道成本高且不通用，C 无线更易被监听。</p></div></details>
+  </div>
+
+  <div class="item"><h4>2.【单选】关于防火墙的功能，说法错误的是（　）。</h4>
+    A.所有进出网络的通讯流必须经过防火墙　B.所有进出网络的通讯流必须有安全策略的确认和授权　C.防火墙通常设置在局域网和广域网之间　D.防火墙可以代替防病毒软件
+    <div class="meta">答案：<span class="ans-key">D</span>　｜ 解析见 6.2（原题缺答案，据知识点判定为 D）</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>A/B/C 都是防火墙正确职责；D 把「守门」和「杀毒」混为一谈，<b>防火墙不能代替防病毒软件</b>，是错误说法。</p></div></details>
+  </div>
+
+  <div class="item"><h4>3.【单选】在综合布线系统中，光纤布线系统的测试指标不包括（　）。</h4>
+    A.波长窗口参数　B.近端串扰　C.回波损耗　D.最大衰减
+    <div class="meta">答案：<span class="ans-key">B</span>　｜ 解析见 5.2</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>光纤测波长窗口、回波损耗、最大衰减；<b>近端串扰是双绞线指标</b>，光纤是光信号不存在此问题。</p></div></details>
+  </div>
+
+  <div class="item"><h4>4.【单选】应用于光纤的多路复用技术是（　）。</h4>
+    A.FDM　B.TDM　C.WDM　D.SDMA
+    <div class="meta">答案：<span class="ans-key">C</span>　｜ 解析见 6.4</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>光纤靠不同<b>波长</b>的光同时传输实现复用，即 <b>WDM（波分复用）</b>。W=Wavelength。</p></div></details>
+  </div>
+
+  <div class="item"><h4>5.【单选】最大传输速率能达到 100Mb/s 的双绞线是（　）。</h4>
+    A.CAT3　B.CAT4　C.CAT5　D.CAT6
+    <div class="meta">答案：<span class="ans-key">C</span>　｜ 解析见 2.1</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p><b>CAT5=百兆（100M）</b>；CAT3 仅 10M，CAT6 是千兆。考点要「百兆代表=CAT5」。</p></div></details>
+  </div>
+
+  <div class="item"><h4>6.【单选】下面的标准中，支持大于 550 米距离光纤以太网的是（　）。</h4>
+    A.1000Base-CX　B.1000Base-T　C.1000Base-LX　D.1000Base-SX
+    <div class="meta">答案：<span class="ans-key">C</span>　｜ 解析见 3.6</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p><b>1000BASE-LX</b> 单模光纤可达 5000m，支持&gt;550m；SX 多模仅约 550m 封顶。</p></div></details>
+  </div>
+
+  <div class="item"><h4>7.【判断】传输距离超过光纤收发器的标称距离时，条件允许的情况下，可采用 2 台收发器背对背进行中继。（　）</h4>
+    A.正确　B.错误
+    <div class="meta">答案：<span class="ans-key">正确</span>　｜ 解析见 3.5</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>两台收发器「背对背」接力（中继）可延长传输距离，说法正确。</p></div></details>
+  </div>
+
+  <div class="item"><h4>8.【判断】光纤收发器只接一台计算机，以太网口不会产生冲突。（　）</h4>
+    A.正确　B.错误
+    <div class="meta">答案：<span class="ans-key">错误</span>　｜ 解析见 3.5</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>以太网口仍处在一个冲突域，接 Hub 等多设备时仍可能冲突；「不会产生冲突」说法过于绝对，错误。</p></div></details>
+  </div>
+
+  <div class="item"><h4>9.【多选】关于千兆以太网物理层标准的描述中，正确的有（　）。</h4>
+    A.1000BASE-T 支持非屏蔽双绞线　B.1000BASE-CX 支持无线传输介质　C.1000BASE-LX 支持单模光纤　D.1000BASE-SX 支持多模光纤
+    <div class="meta">答案：<span class="ans-key">ACD</span>　｜ 解析见 3.6</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>T 支持双绞线✓、LX 支持单模✓、SX 支持多模✓；B 错（CX 是铜缆，非无线）。</p></div></details>
+  </div>
+
+  <div class="item"><h4>10.【多选】下列情况（　）会给公司带来安全隐患。</h4>
+    A.某业务系统数据库审计功能未开启　B.为方便将开发测试环境和业务系统运行环境置于同一机房　C.外部技术支持人员私自接入信息内网　D.使用无线键盘处理涉案及敏感信息
+    <div class="meta">答案：<span class="ans-key">ABCD</span>　｜ 解析见 6.3</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>四个选项分别从可追溯性、隔离性、访问控制、传输保密四个安全维度埋雷，全选。</p></div></details>
+  </div>
+
+  <div class="item"><h4>11.【单选】如果要将两计算机通过双绞线直接连接，正确的线序是（　）。</h4>
+    A.1--1、2--2…8--8　B.1--3、2--6、3--1、4--4、5--5、6--2、7--7、8--8　C.1--2、2--1、3--6…　D.两计算机不能通过双绞线直接连接
+    <div class="meta">答案：<span class="ans-key">B</span>　｜ 解析见 2.2</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>两台电脑直连用<b>交叉线</b>，发对接收，核心 1↔3、2↔6 对调，选 B。</p></div></details>
+  </div>
+
+  <div class="item"><h4>12.【多选】光纤配线架的基本功能有哪些？（　）</h4>
+    A.光纤固定　B.光纤熔接　C.光纤存储　D.光纤配接
+    <div class="meta">答案：<span class="ans-key">ACD</span>　｜ 解析见 3.4</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>ODF 三大基本功能=固定、存储、配接；熔接是独立工序，不选 B。</p></div></details>
+  </div>
+
+  <div class="item"><h4>13.【判断】光纤收发器是一种将电信号和光信号进行互换的以太网传输媒体转换单元，也称光电转换器。（　）</h4>
+    A.正确　B.错误
+    <div class="meta">答案：<span class="ans-key">正确</span>　｜ 解析见 3.5</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>描述正是光纤收发器（光电转换器）的本质，正确。</p></div></details>
+  </div>
+
+  <div class="item"><h4>14.【单选】以下标准中，哪项不属于综合布线系统工程常用的标准。（　）</h4>
+    A.中国国家标准　B.国际标准　C.日本标准　D.北美标准
+    <div class="meta">答案：<span class="ans-key">C</span>　｜ 解析见 5.1</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>常用标准=国标/国际/北美，<b>日本标准不属于</b>常用标准。</p></div></details>
+  </div>
+
+  <div class="item"><h4>15.【多选】光纤配线架的基本功能有哪些？（　）</h4>
+    A.光纤存储　B.光纤熔接　C.光纤配接　D.光纤固定
+    <div class="meta">答案：<span class="ans-key">ACD</span>　｜ 解析见 3.4（与 Q12 重复）</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>同 Q12：固定、存储、配接，不含熔接。</p></div></details>
+  </div>
+
+  <div class="item"><h4>16.【多选】以下选项中，属于高速局域网产品的有（　）。</h4>
+    A.10Mbps 以太网　B.100Mbps 以太网　C.1000Mbps 以太网　D.FDDI 光纤网
+    <div class="meta">答案：<span class="ans-key">BCD</span>　｜ 解析见 6.5</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>高速=百兆及以上；10M 是低速，排除 A。</p></div></details>
+  </div>
+
+  <div class="item"><h4>17.【判断】光纤收发器工作波长一般是 1310nm 或 1550nm，数值越大表示频率越高。（　）</h4>
+    A.正确　B.错误
+    <div class="meta">答案：<span class="ans-key">错误</span>　｜ 解析见 3.5（波长越大频率越低）</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>由 λ=c/f，波长越大频率越低，说法错误。</p></div></details>
+  </div>
+
+  <div class="item"><h4>18.【判断】当一个 WLAN 客户端进入一个或者多个接入点的覆盖范围时，它会根据信号的强弱和误包率自动选择一个接入点进行连接。（　）</h4>
+    A.正确　B.错误
+    <div class="meta">答案：<span class="ans-key">正确</span>　｜ 解析见 4.1</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>客户端按信号强弱+误包率自动选最优 AP，正确。</p></div></details>
+  </div>
+
+  <div class="item"><h4>19.【判断】光纤收发器光口工作指示灯亮时，说明光纤收发都正常。（　）</h4>
+    A.正确　B.错误
+    <div class="meta">答案：<span class="ans-key">错误</span>　｜ 解析见 3.5（灯亮仅表收到光）</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>灯亮只说明收到光信号，不代表收发双向都正常，错误。</p></div></details>
+  </div>
+
+  <div class="item"><h4>20.【单选】我国标准《智能建筑设计标准》是规范建筑智能化工程设计的准则，核心是（　）。</h4>
+    A.通信自动化系统　B.综合布线系统　C.办公自动化系统　D.系统集成中心
+    <div class="meta">答案：<span class="ans-key">D</span>　｜ 解析见 5.1</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>智能建筑靠<b>系统集成中心</b>统筹各子系统，选 D。</p></div></details>
+  </div>
+
+  <div class="item"><h4>21.【单选】下列哪项不是综合布线系统工程中，用户需求分析必须遵循的基本要求。（　）</h4>
+    A.多方征求意见　B.主要考虑近期需求，兼顾长远发展需要　C.确定工作区数量和性质　D.制定详细的设计方案
+    <div class="meta">答案：<span class="ans-key">A</span>　｜ 解析见 5.1</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>需求分析讲务实调研，「多方征求意见」并非必须遵循的基本要求，选 A。</p></div></details>
+  </div>
+
+  <div class="item"><h4>22.【单选】光纤通信的原理主要基于光的（　）。</h4>
+    A.折射原理　B.散射原理　C.全反射原理　D.透视原理
+    <div class="meta">答案：<span class="ans-key">C</span>　｜ 解析见 3.1</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>光纤靠光在纤芯-包层界面<b>全反射</b>把光锁在纤芯里传输。</p></div></details>
+  </div>
+
+  <div class="item"><h4>23.【单选】双绞线电缆中的 4 对线用不同的颜色来标识，EIA/TIA 568A 规定的线序为（　）。</h4>
+    A.橙白橙绿白蓝蓝白绿棕白棕　B.蓝白蓝绿白绿橙白橙棕白棕　C.绿白绿橙白蓝蓝白橙棕白棕　D.绿白绿橙白橙蓝白蓝棕白棕
+    <div class="meta">答案：<span class="ans-key">D</span>　｜ 解析见 2.2</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p><b>568A 以「绿」开头</b>：绿白、绿、橙白、蓝、蓝白、橙、棕白、棕，选 D。</p></div></details>
+  </div>
+
+  <div class="item"><h4>24.【多选】按照网络覆盖范围的大小来划分，可以分为（　）。</h4>
+    A.城域网　B.局域网　C.全球网　D.广域网
+    <div class="meta">答案：<span class="ans-key">ABD</span>　｜ 解析见 1.1</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>标准分类是局域/城域/广域，无「全球网」这种说法，排除 C。</p></div></details>
+  </div>
+
+  <p class="note">25.【多选】数据共享分为（　）、（　）、（　）三类。 A.无线共享　B.不可共享　C.无条件共享　D.有条件共享　—— 答案：<span class="ans-key">BCD</span>。本题属数据共享分类，与传输介质相关度低，按题库原样收录。</p>
+
+  <div class="item"><h4>26.【判断】双纤的光纤收发器在接纤时不需要区分两条纤。（　）</h4>
+    A.正确　B.错误
+    <div class="meta">答案：<span class="ans-key">错误</span>　｜ 解析见 3.5（需区分收发）</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>双纤要区分收纤/发纤，说法错误。</p></div></details>
+  </div>
+
+  <div class="item"><h4>27.【判断】单模光纤收发器传输距离远，需要的光纤纤芯稍微比多模的粗。（　）</h4>
+    A.正确　B.错误
+    <div class="meta">答案：<span class="ans-key">错误</span>　｜ 解析见 3.2（单模纤芯更细）</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p><b>单模纤芯更细</b>（约 9μm），说法错误。</p></div></details>
+  </div>
+
+  <div class="item"><h4>28.【多选】属于局域网的特点有（　）。</h4>
+    A.较少的地域范围　B.高传输速率和低误码率　C.一般侧重共享位置准确无误及传输的安全　D.一般为一个单位所建
+    <div class="meta">答案：<span class="ans-key">ABD</span>　｜ 解析见 1.2</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>局域网三特征=地域小+高速低误码+单位自建；C 非普遍特点，排除。</p></div></details>
+  </div>
+
+  <div class="item"><h4>29.【多选】光纤传输距离正确的是（　）。</h4>
+    A.1000BASE-LX 单模 550 米　B.1000BASE-LX 多模 5000 米　C.1000BASE-LX 单模 5000 米　D.1000BASE-LX 多模 550 米
+    <div class="meta">答案：<span class="ans-key">CD</span>　｜ 解析见 3.2</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>千兆单模可达 5000m、多模约 550m，选 C、D。</p></div></details>
+  </div>
+
+  <div class="item"><h4>30.【判断】光纤收发器可以控制用户上网带宽。（　）</h4>
+    A.正确　B.错误
+    <div class="meta">答案：<span class="ans-key">错误</span>　｜ 解析见 3.5</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>收发器是透明传输设备，<b>不控制</b>用户带宽，错误。</p></div></details>
+  </div>
+
+  <div class="item"><h4>31.【单选】双绞线与避雷引下线之间的最小平行净距为（　）。</h4>
+    A.1000mm　B.400mm　C.800mm　D.600mm
+    <div class="meta">答案：<span class="ans-key">A</span>　｜ 解析见 2.3</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>避雷净距最小 <b>1 米（1000mm）</b>，选 A。</p></div></details>
+  </div>
+
+  <div class="item"><h4>32.【单选】下列哪一项不是 WLAN 无线通信技术的标准？（　）</h4>
+    A.802.11a　B.802.11b　C.802.11c　D.802.11g
+    <div class="meta">答案：<span class="ans-key">C</span>　｜ 解析见 4.1</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p><b>802.11c 不是</b> WLAN 常用标准（属桥接相关），选 C。</p></div></details>
+  </div>
+
+  <div class="item"><h4>33.【单选】Win7 下无法找到网络打印机，下面说法错误的是（　）。</h4>
+    A.要查看网络是否连通，机器需正常连入网络并检查 IP 是否同一工作组　B.网络打印机查看 IP 地址，不能通过打印测试页查看测试页上打印的地址　C.IP 正确仍有问题可查网线/端口故障、替换网线　D.PING 打印机 IP，不通则查 IP 设置
+    <div class="meta">答案：<span class="ans-key">B</span></div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>网络打印机 IP <b>可以</b>通过打印测试页查看，故 B 说法错误，选 B。</p></div></details>
+  </div>
+
+  <div class="item"><h4>34.【多选】局域网的传输介质主要包括哪些？（　）</h4>
+    A.光纤　B.数据线　C.双绞线　D.同轴电缆
+    <div class="meta">答案：<span class="ans-key">ACD</span>　｜ 解析见 1.3</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>局域网三大有线介质=双绞线、同轴电缆、光纤；「数据线」非标准术语，排除 B。</p></div></details>
+  </div>
+
+  <div class="item"><h4>35.【判断】多模光纤收发器传输距离远比单模式远。（　）</h4>
+    A.正确　B.错误
+    <div class="meta">答案：<span class="ans-key">错误</span>　｜ 解析见 3.2（单模更远）</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p><b>单模更远</b>（可达几公里），多模仅几百米，说法错误。</p></div></details>
+  </div>
+
+  <div class="item"><h4>36.【判断】5 类双绞线（CAT5）的最高传输速率为 100Mbit/s。（　）</h4>
+    A.正确　B.错误
+    <div class="meta">答案：<span class="ans-key">正确</span>　｜ 解析见 2.1</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>CAT5=百兆（100M），正确。</p></div></details>
+  </div>
+
+  <div class="item"><h4>37.【单选】对于网络打印机说法正确的是（　）。</h4>
+    A.网络打印机只能通过网线接入网络　B.网络打印机都能打印 A3 纸　C.可以不直接连接网线使用　D.网络打印机都附有传真、扫描功能
+    <div class="meta">答案：<span class="ans-key">C</span></div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>网络打印机可经无线等方式使用，不一定直连网线；A/B/D 均绝对化错误，选 C。</p></div></details>
+  </div>
+
+  <div class="item"><h4>38.【多选】目前在网络布线方面，主要有几种双绞线布线系统在应用，即（　）。</h4>
+    A.五类布线系统　B.超五类布线系统　C.四类布线系统　D.六类布线系统
+    <div class="meta">答案：<span class="ans-key">ABD</span>　｜ 解析见 2.3</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>主流=五类/超五类/六类；四类已淘汰，排除 C。</p></div></details>
+  </div>
+
+  <div class="item"><h4>39.【多选】下面属于无线网络加密方式的是（　）。</h4>
+    A.WEP　B.WPA　C.MD5　D.WPA2
+    <div class="meta">答案：<span class="ans-key">ABD</span>　｜ 解析见 4.1（MD5 是哈希算法非加密方式）</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>无线加密=WEP/WPA/WPA2；MD5 是哈希摘要算法，不是加密方式，排除 C。</p></div></details>
+  </div>
+
+  <div class="item"><h4>40.【判断】区分局域网、城域网和广域网是以接入的计算机之间的距离来定义的。（　）</h4>
+    A.正确　B.错误
+    <div class="meta">答案：<span class="ans-key">正确</span>　｜ 解析见 1.1</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>按覆盖范围（距离）划分，正确。</p></div></details>
+  </div>
+
+  <div class="item"><h4>41.【单选】（　）使得笔记本电脑在蜂窝网络覆盖范围内可以在任何地方连接到互联网。</h4>
+    A.虚拟局域网　B.无线广域网　C.虚拟广域网　D.无线局域网
+    <div class="meta">答案：<span class="ans-key">B</span>　｜ 解析见 4.2</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>蜂窝网络→<b>无线广域网（WWAN）</b>，选 B。</p></div></details>
+  </div>
+
+  <div class="item"><h4>42.【单选】下列不属于有线传输的是（　）。</h4>
+    A.双绞线　B.光纤　C.超五类双绞线　D.电磁波
+    <div class="meta">答案：<span class="ans-key">D</span>　｜ 解析见 1.1</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>电磁波是<b>无线</b>传输，其余都是有线，选 D。</p></div></details>
+  </div>
+
+  <div class="item"><h4>43.【单选】光纤的缺点有（　）。</h4>
+    A.体积大　B.怕水　C.成本高　D.抗电磁干扰能力弱
+    <div class="meta">答案：<span class="ans-key">B</span>　｜ 解析见 3.3</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>光纤细、轻、抗干扰强（排除 A、D）；本题标准答案选<b>怕水</b>这一典型弱点。</p></div></details>
+  </div>
+
+  <div class="item"><h4>44.【单选】无线广域网的主要优点是（　）。</h4>
+    A.接入的终端在大范围内快速移动（借助基站）　B.传输速度快　C.安全性高　D.抗干扰性强
+    <div class="meta">答案：<span class="ans-key">A</span>　｜ 解析见 4.2</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>WWAN 最大优势是「大范围移动中保持连接」，选 A。</p></div></details>
+  </div>
+
+  <div class="item"><h4>45.【单选】不使用公共 WIFI 进行支付操作，是因为什么（　）。</h4>
+    A.公共无线易断开　B.公共无线网速慢　C.存在个人信息泄露的风险　D.公共无线连接复杂
+    <div class="meta">答案：<span class="ans-key">C</span>　｜ 解析见 4.1</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>公共 WiFi 易被监听，存在<b>个人信息泄露风险</b>，选 C。</p></div></details>
+  </div>
+
+  <div class="item"><h4>46.【单选】在综合布线系统中，光纤布线系统的测试指标不包括（　）。</h4>
+    A.波长窗口参数　B.近端串扰　C.回波损耗　D.最大衰减
+    <div class="meta">答案：<span class="ans-key">B</span>　｜ 解析见 5.2（与 Q3 重复）</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>同 Q3：近端串扰是双绞线指标，光纤不测。</p></div></details>
+  </div>
+
+  <div class="item"><h4>47.【单选】应用于光纤的多路复用技术是（　）。</h4>
+    A.FDM　B.TDM　C.WDM　D.SDMA
+    <div class="meta">答案：<span class="ans-key">C</span>　｜ 解析见 6.4（与 Q4 重复）</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>同 Q4：光纤典型复用是 WDM（波分复用）。</p></div></details>
+  </div>
+
+  <div class="item"><h4>48.【单选】最大传输速率能达到 100Mb/s 的双绞线是（　）。</h4>
+    A.CAT3　B.CAT4　C.CAT5　D.CAT6
+    <div class="meta">答案：<span class="ans-key">C</span>　｜ 解析见 2.1（与 Q5 重复）</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>同 Q5：CAT5=百兆。</p></div></details>
+  </div>
+
+  <div class="item"><h4>49.【单选】下面的标准中，支持大于 550 米距离光纤以太网的是（　）。</h4>
+    A.1000Base-CX　B.1000Base-T　C.1000Base-LX　D.1000Base-SX
+    <div class="meta">答案：<span class="ans-key">C</span>　｜ 解析见 3.6（与 Q6 重复）</div>
+    <details class="ans"><summary>解析</summary><div class="ans-body"><p>同 Q6：1000BASE-LX 单模支持&gt;550m。</p></div></details>
+  </div>
+
+  <p class="note" style="margin-top:18px">学习小结：先建立「网络按距离分 LAN/MAN/WAN、介质分有线无线」的框架，再逐个吃透双绞线、光纤、无线、综合布线、安全。按此顺序学完，49 题自测可轻松拿下。</p>
+</section>
+
+<footer>局域网与传输介质 · 零基础系统学习笔记　|　配套题库「局域网与传输介质（49 题）」</footer>
+</div>
+
+<script>
+function openAll(state){
+  document.querySelectorAll('#m7 details.ans').forEach(function(d){ d.open = state; });
+}
+</script>
+</body>
+</html>
