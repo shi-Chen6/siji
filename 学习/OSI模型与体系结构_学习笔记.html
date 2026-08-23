@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OSI 模型与体系结构 · 零基础系统学习</title>
+<style>
+:root{
+  --bg:#eef2f7; --card:#fff; --ink:#1f2933; --muted:#5b6b7b;
+  --line:#e1e8f0; --brand:#0f766e; --brand2:#2563eb; --accent:#0ea5a4;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Segoe UI",sans-serif;
+  line-height:1.8;font-size:16px}
+.topnav{position:sticky;top:0;z-index:50;background:linear-gradient(90deg,#0f766e,#2563eb);
+  padding:10px 16px;display:flex;flex-wrap:wrap;gap:8px;box-shadow:0 2px 10px rgba(0,0,0,.15)}
+.topnav a{color:#e6f1ff;text-decoration:none;font-size:13px;padding:4px 10px;border-radius:20px;
+  background:rgba(255,255,255,.12);transition:.15s;white-space:nowrap}
+.topnav a:hover{background:rgba(255,255,255,.28);color:#fff}
+.doc-head{background:linear-gradient(120deg,#0f766e,#0ea5a4);color:#fff;padding:30px 32px 24px;margin:0}
+.doc-head h1{margin:0 0 8px;font-size:30px;border:0}
+.doc-head blockquote{margin:6px 0 0;color:#d8f3ef;border:0;padding:0}
+.content{max-width:960px;margin:0 auto;padding:28px 22px 80px}
+.module{background:var(--card);border:1px solid var(--line);border-radius:16px;
+  padding:22px 26px;margin:22px 0;box-shadow:0 4px 16px rgba(15,23,42,.06)}
+.content h2{font-size:23px;margin:.2em 0 .8em;color:#0f172a;
+  padding-left:14px;border-left:6px solid var(--brand);scroll-margin-top:60px}
+.content h3{font-size:19px;margin:1.3em 0 .5em;color:#115e59;
+  background:linear-gradient(90deg,#ecfdf5,transparent);padding:6px 12px;border-radius:8px}
+.content h4{font-size:16px;color:var(--brand2);margin:1em 0 .3em}
+.content p{margin:.55em 0}
+.content ul,.content ol{padding-left:1.5em}
+.content li{margin:.3em 0}
+.content code{background:#eef2f7;color:#b91c1c;padding:1px 6px;border-radius:5px;
+  font-family:"Cascadia Code","Consolas",monospace;font-size:14px}
+.content pre{background:#0f172a;color:#e2e8f0;padding:16px;border-radius:12px;overflow:auto;font-size:13.5px}
+.content pre code{background:none;color:inherit;padding:0}
+.content table{border-collapse:collapse;width:100%;margin:1em 0;font-size:14.5px;
+  background:var(--card);box-shadow:0 2px 10px rgba(15,23,42,.06);border-radius:10px;overflow:hidden}
+.content th,.content td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
+.content th{background:#eafaf7;color:#0f172a;font-weight:700}
+.content tr:nth-child(even) td{background:#f7fbfd}
+.content blockquote{margin:1em 0;padding:12px 18px;border-radius:10px;
+  background:#effaf6;border-left:5px solid var(--accent);color:#134e4a}
+/* 类比框（蓝）/ 陷阱框（红） */
+.content .analogy{background:#eaf0ff;border-left:4px solid var(--brand2);border-radius:8px;
+  padding:10px 14px;margin:12px 0;font-size:15px;color:#1e3a8a;line-height:1.8}
+.content .analogy b{color:var(--brand2)}
+.content .trap{background:#fdecec;border-left:4px solid #e23b3b;border-radius:8px;
+  padding:10px 14px;margin:12px 0;font-size:15px;color:#7a1f1f;line-height:1.8}
+.content .trap b{color:#e23b3b}
+/* 题卡 */
+.quiz{background:#f8fafc;border:1px solid var(--line);border-left:4px solid var(--brand2);
+  border-radius:12px;padding:14px 18px;margin:14px 0}
+.quiz .qh{font-weight:700;color:var(--brand2);font-size:14.5px;margin-bottom:6px}
+.quiz .q{font-size:15px;line-height:1.85}
+.quiz .q p{margin:.3em 0}
+.toggle{cursor:pointer;display:inline-block;margin-top:8px;color:var(--brand);font-weight:600;
+  font-size:14px;user-select:none}
+.toggle:hover{color:#115e59}
+.analysis{max-height:0;overflow:hidden;transition:max-height .3s ease;margin-top:6px}
+.analysis.open{max-height:2000px}
+.analysis .b{display:block;padding:7px 12px;margin:6px 0;border-radius:8px;font-size:14.5px;line-height:1.7}
+.analysis .a1{background:#fef2f2;color:#7f1d1d}
+.analysis .a2{background:#eff6ff;color:#1e3a8a}
+.analysis .a3{background:#fefce8;color:#854d0e}
+.analysis .a4{background:#f0fdf4;color:#166534}
+.footer{text-align:center;color:var(--muted);font-size:13px;padding:24px}
+@media(max-width:680px){.content{padding:18px 14px}.module{padding:16px}}
+</style>
+</head>
+<body>
+<nav class="topnav"><a href="#story">故事线：把网络通信当成「公司发文 / 快递七步」</a><a href="#m1">模块一 · 为什么网络要分层</a><a href="#m2">模块二 · OSI 七层模型总览</a><a href="#m3">模块三 · 物理层（最底层，搬比特）</a><a href="#m4">模块四 · 数据链路层（成帧、认门牌）</a><a href="#m5">模块五 · 网络层（寻址与路由）</a><a href="#m6">模块六 · 传输层（端到端）</a><a href="#m7">模块七 · 会话层 / 表示层 / 应用层（上三层）</a><a href="#m8">模块八 · 数据封装与 TCP/IP 四层模型（综合进阶）</a><a href="#ref">速查卡与反直觉陷阱</a><a href="#all">练习题（题库 25 题全）</a></nav>
+<header class="doc-head"><h1>OSI模型与体系结构 · 零基础系统学习</h1>
+<blockquote>
+<p>内容来源：题库「网络与信息安全管理员 · OSI模型与体系结构（25 题）」｜ 通俗类比 + 考点自测 + 25 题全解析（含重复题，按题库原序）</p>
+</blockquote></header>
+<section class="module"><h2 id="story">故事线：把网络通信当成「公司发文 / 快递七步」</h2>
+<p>零基础学 OSI，先别背七层，先把整体地图建起来：你在微信发一条消息，数据要从你的手机一路"过关"送到对方手机。OSI 把这件事拆成<strong>七站流水线</strong>，每一站只干自己的活。</p>
+<table>
+<thead>
+<tr>
+<th>层（从下到上）</th>
+<th>在网络里干啥</th>
+<th>生活类比</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>物理层</td>
+<td>把 0/1 变成电信号 / 光信号在线上跑</td>
+<td>公路 + 卡车，只管把货从 A 运到 B</td>
+</tr>
+<tr>
+<td>数据链路层</td>
+<td>把比特打包成「帧」，管相邻两点的可靠送达</td>
+<td>同城快递员，认门牌（MAC 地址）</td>
+</tr>
+<tr>
+<td>网络层</td>
+<td>找路、选路由，把数据送到远端网络</td>
+<td>跨省物流调度，看收件地址（IP）</td>
+</tr>
+<tr>
+<td>传输层</td>
+<td>端到端可靠传输，区分同一台电脑上的不同程序</td>
+<td>快递单上的「收件人+电话」，确保送到对人</td>
+</tr>
+<tr>
+<td>会话层</td>
+<td>建立 / 维持 / 结束对话</td>
+<td>先打电话接通再聊</td>
+</tr>
+<tr>
+<td>表示层</td>
+<td>加密、压缩、格式翻译</td>
+<td>把中文译成英文再寄，并锁进保密箱</td>
+</tr>
+<tr>
+<td>应用层</td>
+<td>直接给你用的功能（网页 / 邮件 / 文件）</td>
+<td>你写好的文件内容本身</td>
+</tr>
+</tbody>
+</table>
+<div class="analogy"><b>📦 类比</b>寄快递＝应用层写内容 → 表示层加密翻译 → 会话层建立连接 → 传输层贴快递单（TCP 面单保证送达）→ 网络层写收件 IP 地址选路 → 数据链路层装车成包裹认门牌 → 物理层卡车上路传比特。每一层只干自己的活，坏在哪一层就查哪一层。</div>
+</section><section class="module"><h2 id="m1">模块一 · 为什么网络要分层</h2>
+<p>网络太复杂（信号、寻址、可靠、加密、应用全搅在一起没人搞得懂），于是把它<strong>拆成一层层，每层只管一件事</strong>。</p>
+<ul>
+<li><strong>分层的好处（题 20 考点）</strong>：各层功能相对独立，改一层（比如把网线换成光纤）不会牵连其他层，整个系统好维护、好替换。</li>
+<li><strong>OSI vs TCP/IP</strong>：OSI 七层是<strong>理论标准</strong>（考试常考），TCP/IP 四层是<strong>实际在用的</strong>（互联网真身）。两者映射关系留到模块八讲。</li>
+</ul>
+<div class="analogy"><b>📦 类比</b>公司分部门——前台、秘书、物流、安保各干各的。换一个秘书，不影响物流部发货。</div><div class="trap"><b>⚠ 陷阱</b>题目里「只允许每层和其上下相邻层发生联系」是<strong>干扰项</strong>；真正采用分层的理由不是"限制通信"，而是「隔层功能相对独立、改动不影响他层」。</div>
+<div class="quiz">
+  <div class="qh">【自测】配套自测（单选）</div>
+  <div class="q"><br />
+Q20：在计算机网络中，要采用分层结构的理由是()。<br />
+  选项：A.可以简化计算机网络的时效　B.隔层功能相对独立，所做的改动不会影响到其他层从而保持体系结构相对稳定　C.比模块结构好　D.只允许每层和其上下相邻层发生联系<br />
+  答案：B<br />
+  </div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>B</strong>。采用分层的核心理由是各层功能相对独立，某一层的改动不会波及其他层，体系结构稳定、易维护。</span><span class="b a2">📚 知识点讲解：分层让复杂网络"分而治之"；每层只和相邻层通过接口交互，替换某层实现不影响整体。</span><span class="b a3">💡 解题思路：找"独立 / 不影响其他层"——这就是分层的本质好处。</span><span class="b a4">🧠 记忆口诀："分层为独立，改层不连累。"</span></div>
+</div>
+</section><section class="module"><h2 id="m2">模块二 · OSI 七层模型总览</h2>
+<p>七层从下到上记口诀 <strong>「物数网传会表应」</strong>（物理、数据链路、网络、传输、会话、表示、应用）。关键规律：</p>
+<ul>
+<li><strong>越往下越"硬"</strong>：物理层管信号，数据链路层管帧，都是和硬件打交道。</li>
+<li><strong>越往上越"软"</strong>：应用层直接服务人，表示层管加密翻译，会话层管对话。</li>
+<li><strong>数据走向</strong>：发送时从上往下<strong>逐层加头（封装）</strong>，接收时从下往上<strong>逐层拆头</strong>。</li>
+</ul>
+<div class="analogy"><b>📦 类比</b>七步寄信——写信(应用) → 翻译加密(表示) → 拨通电话(会话) → 贴快递单(传输) → 填收件地址(网络) → 装车打包(链路) → 卡车上路(物理)。</div>
+<div class="quiz">
+  <div class="qh">【自测】配套自测（单选）</div>
+  <div class="q"><br />
+Q19：社交网络的数据分层不包含()。<br />
+  选项：A.activity-layer　B.registration-layer　C.networking-layer　D.appliction—layer<br />
+  答案：D<br />
+  </div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>D</strong>。标准 OSI 顶层是「应用层（application-layer）」，题中拼错的 appliction-layer 不是规范分层，故"不包含"。</span><span class="b a2">📚 知识点讲解：OSI 七层顶层是应用层；各种业务系统（如社交网络）自己会再细分 activity/registration/networking 等子层，但那不是 OSI 标准层名。</span><span class="b a3">💡 解题思路：认准七层顶层叫"应用层"，拼写都不对的自然被排除。</span><span class="b a4">🧠 记忆口诀："七层顶层应用层，拼错名字不算数。"</span></div>
+</div>
+</section><section class="module"><h2 id="m3">模块三 · 物理层（最底层，搬比特）</h2>
+<p>物理层是"最底下搬箱子的人"：负责把 0/1 变成<strong>电信号 / 光信号 / 无线电波</strong>在介质上传输，<strong>不管内容，只管传得过去</strong>。</p>
+<ul>
+<li><strong>四大特性</strong>：</li>
+<li>机械特性：接口形状、针脚数量（水晶头长啥样）</li>
+<li>电气特性：信号电平、脉冲宽度、传输速率、最大传输距离（题 21 考点）</li>
+<li>功能特性：每根线干嘛用</li>
+<li>规程/规格特性：信号时序（什么时候发）</li>
+<li><strong>常见设备</strong>：中继器（放大信号）、集线器（多口中继）、光纤收发器（光↔电转换）。</li>
+</ul>
+<div class="analogy"><b>📦 类比</b>公路 + 卡车，只管把货物从 A 运到 B，不拆箱、不看里面写啥。</div><div class="trap"><b>⚠ 陷阱</b>① 用 <code>show interface</code> 看端口状态、协议状态、EIA 状态——这是在查<strong>物理层</strong>（题 3、题 23）。② 综合布线一般采用<strong>分层星型</strong>拓扑（题 16，正确）。③ 光纤收发器是否"都是物理层"——<strong>本题库判定为错误</strong>（题 9），考试以题库答案为准。</div>
+<div class="quiz">
+  <div class="qh">【自测】配套自测（单选）</div>
+  <div class="q"><br />
+Q3：当路由器发生故障时，利用 show interface 命令来检查每个端口的状态，解释屏幕输出信息，查看协议建立状态和 EIA 状态等，这属于()诊断。<br />
+  选项：A.物理层　B.数据链路层　C.网路层　D.传输层<br />
+  答案：A<br />
+  </div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>A</strong>。<code>show interface</code> 看端口物理状态、EIA（电气）状态，属于<strong>物理层</strong>诊断。</span><span class="b a2">📚 知识点讲解：物理层管接口、电气信号、链路通断；端口灯、线缆、收发器状态都归物理层。</span><span class="b a3">💡 解题思路：关键词"端口状态 / EIA 状态"＝物理层的最直接体征。</span><span class="b a4">🧠 记忆口诀："show interface 看端口，物理层上查通断。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">【自测】配套自测（判断）</div>
+  <div class="q"><br />
+Q9：光纤收发器都是工作在物理层的。()<br />
+  选项：A.正确　B.错误<br />
+  答案：错误<br />
+  </div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：<strong>错误</strong>。本题库判定"光纤收发器都是工作在物理层"为错误，考试以题库答案为准。</span><span class="b a2">📚 知识点讲解：光纤收发器做光信号↔电信号转换，一般认为属物理层设备；但本题库将"都是"这一绝对表述判为错误，做题时按题库来。</span><span class="b a3">💡 解题思路：遇到"都是 / 全部"这类绝对化字眼，先警惕，再看题库立场。</span><span class="b a4">🧠 记忆口诀："收发器归物理层，但'都是'要慎选。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">【自测】配套自测（判断）</div>
+  <div class="q"><br />
+Q16：综合布线一般采用分层星型的拓扑结构。()<br />
+  选项：A.正确　B.错误<br />
+  答案：正确<br />
+  </div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：<strong>正确</strong>。综合布线普遍采用<strong>分层星型</strong>拓扑（中心节点+分级星型）。</span><span class="b a2">📚 知识点讲解：分层星型易管理、易扩展、故障隔离好，是楼宇/园区综合布线的标准结构。</span><span class="b a3">💡 解题思路：综合布线"分层星型"是固定结论，见到即选正确。</span><span class="b a4">🧠 记忆口诀："综合布线分层星，标准结构记在心。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">【自测】配套自测（单选）</div>
+  <div class="q"><br />
+Q21：物理层的四个特性中，()规定了每种信号的电平、信号的脉冲宽度、允许的数据传输速率和最大传输距离。<br />
+  选项：A.机械特性　B.电气特性　C.规格特性　D.功能特性<br />
+  答案：B<br />
+  </div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>B</strong>。规定电平、脉冲宽度、速率、最大距离的，是<strong>电气特性</strong>。</span><span class="b a2">📚 知识点讲解：机械=接口形状/针脚；电气=电压/速率/距离；功能=每根线含义；规格=时序。</span><span class="b a3">💡 解题思路：看到"电平 / 速率 / 距离"→ 电气特性。</span><span class="b a4">🧠 记忆口诀："电平速率距离远，电气特性管这些。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">【自测】配套自测（单选）</div>
+  <div class="q"><br />
+Q23：当路由器发生故障时，利用 show interface 命令来检查每个端口的状态，解释屏幕输出信息，查看协议建立状态和 EIA 状态等，这属于()诊断。<br />
+  选项：A.物理层　B.数据链路层　C.网路层　D.传输层<br />
+  答案：A<br />
+  </div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>A</strong>。与 Q3 同考点：<code>show interface</code> 查物理端口/EIA 状态，属<strong>物理层</strong>诊断。</span><span class="b a2">📚 知识点讲解：端口物理状态、线缆、收发器都属物理层；此题为题库重复题，答案一致。</span><span class="b a3">💡 解题思路：重复题换汤不换药，仍抓"端口 / EIA 状态"。</span><span class="b a4">🧠 记忆口诀："重复题照样考，端口状态物理层。"</span></div>
+</div>
+</section><section class="module"><h2 id="m4">模块四 · 数据链路层（成帧、认门牌）</h2>
+<p>数据链路层把物理层的"比特流"组装成<strong>「帧」</strong>（一段一段的数据），在<strong>相邻两台设备之间</strong>可靠送达，并认 <strong>MAC 地址</strong>（网卡烧录的物理地址，如 <code>00-1A-2B-...</code>）。</p>
+<ul>
+<li><strong>IEEE 802 分层</strong>：MAC 子层（介质访问控制，如以太网 <strong>CSMA/CD</strong> 冲突检测）在下面；<strong>LLC 子层（逻辑链路控制）在 802.3 的"最顶端"</strong>（题 4、题 24 考点）。</li>
+<li><strong>设备</strong>：交换机、网桥工作在这一层。</li>
+</ul>
+<div class="analogy"><b>📦 类比</b>同城快递员，认门牌（MAC 地址）把包裹送到隔壁楼，不顺路不跨城。</div><div class="trap"><b>⚠ 陷阱</b>① <strong>交换机＝数据链路层</strong>（题 6），不是网络层；路由器才在网络层。② 802.3 最顶端协议层是 <strong>LLC 子层</strong>（题 4、24），不是 MAC、不是物理层。③ CSMA/CD 是<strong>数据链路层</strong>的冲突检测机制（题 18，标准说法正确，题判"错误"是题干把"11协议"误植，需按题库定位）。</div>
+<div class="quiz">
+  <div class="qh">【自测】配套自测（单选）</div>
+  <div class="q"><br />
+Q4：3 标准中，定义在最顶端的协议层是()。<br />
+  选项：A.物理层　B.介质访问控制子层　C.逻辑链路控制子层　D.网络层<br />
+  答案：C<br />
+  </div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>C</strong>。IEEE <strong>802.3</strong> 标准里，最顶端的是<strong>逻辑链路控制子层（LLC）</strong>。</span><span class="b a2">📚 知识点讲解：802.3 数据链路层分 MAC（下，介质访问）和 LLC（上，逻辑链路控制）；LLC 位于顶端、贴近网络层。</span><span class="b a3">💡 解题思路：题干"3标准"即 802.3；"最顶端"→ LLC 子层。</span><span class="b a4">🧠 记忆口诀："802.3 顶端 LLC，逻辑链路控全局。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">【自测】配套自测（单选）</div>
+  <div class="q"><br />
+Q6：交换机工作在 OSI 标准的()。<br />
+  选项：A.网络层　B.数据链路层　C.物理层　D.传输层<br />
+  答案：B<br />
+  </div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>B</strong>。交换机基于 <strong>MAC 地址</strong>转发，工作在<strong>数据链路层</strong>。</span><span class="b a2">📚 知识点讲解：交换机查 MAC 表决定从哪个端口转发帧；路由器才查 IP 表（网络层）。</span><span class="b a3">💡 解题思路：认 MAC → 数据链路层；认 IP → 网络层。</span><span class="b a4">🧠 记忆口诀："交换机认 MAC，数据链路层里扎。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">【自测】配套自测（判断）</div>
+  <div class="q"><br />
+Q18：11 协议采用 CSMA/CD 解决数据链路层的数据冲突的检测。()<br />
+  选项：A.正确　B.错误<br />
+  答案：错误<br />
+  </div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：<strong>错误</strong>。本题库将"11 协议（即 IEEE 802.11）采用 CSMA/CD 解决数据链路层冲突"判为错误——注意 802.11 无线实际用的是 CSMA/CA，且题干"11协议"为 OCR 误植；以题库答案为准。</span><span class="b a2">📚 知识点讲解：CSMA/CD（有线以太网冲突检测）属数据链路层 MAC 子层；802.11 无线用 CSMA/CA（冲突避免）。</span><span class="b a3">💡 解题思路：题干把"802.11"写成"11"，且把无线混为 CD，按题库判错误。</span><span class="b a4">🧠 记忆口诀："802.11 用 CA，CD 是有线以太网。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">【自测】配套自测（单选）</div>
+  <div class="q"><br />
+Q24：在 IEEE 802.3 标准中，定义在最顶端的协议层是()。<br />
+  选项：A.物理层　B.介质访问控制子层　C.逻辑链路控制子层　D.网络层<br />
+  答案：C<br />
+  </div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>C</strong>。与 Q4 同考点：802.3 最顶端是 <strong>LLC 子层</strong>。</span><span class="b a2">📚 知识点讲解：LLC（逻辑链路控制）位于 802.3 数据链路层顶端，向上衔接网络层。</span><span class="b a3">💡 解题思路：重复题，仍抓"802.3 最顶端 = LLC"。</span><span class="b a4">🧠 记忆口诀："重复照旧答 LLC，顶端位置不动摇。"</span></div>
+</div>
+</section><section class="module"><h2 id="m5">模块五 · 网络层（寻址与路由）</h2>
+<p>网络层负责<strong>跨网络找路</strong>：给每台设备一个逻辑地址（<strong>IP</strong>），选路由把数据从源网络送到目的网络，处理拥塞、连接不同网络。核心设备是<strong>路由器</strong>。</p>
+<ul>
+<li><strong>核心职能（题 17）</strong>：路由选择、拥塞控制、网络互连。</li>
+<li><strong>路由器本职（题 14）</strong>：寻找路由和转发报文。</li>
+</ul>
+<div class="analogy"><b>📦 类比</b>跨省物流调度中心，看收件 IP 地址决定走哪条干线，全网哪都能送。</div><div class="trap"><b>⚠ 陷阱</b><strong>路由器＝网络层</strong>（题 1），不是数据链路层；交换机才是数据链路层。把"路由器"和"交换机"所在层搞混，是高频送命题。</div>
+<div class="quiz">
+  <div class="qh">【自测】配套自测（单选）</div>
+  <div class="q"><br />
+Q1：路由器工作在 OSI 的哪一层 ( )<br />
+  选项：A.传输层　B.数据链路层　C.应用层　D.网络层<br />
+  答案：D<br />
+  </div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>D</strong>。路由器基于 IP 地址寻址转发，工作在<strong>网络层</strong>。</span><span class="b a2">📚 知识点讲解：网络层管逻辑地址(IP)与路由；路由器是网络层代表设备。</span><span class="b a3">💡 解题思路："路由器"三字直接对应网络层。</span><span class="b a4">🧠 记忆口诀："路由器干网络层，IP 寻路它最行。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">【自测】配套自测（单选）</div>
+  <div class="q"><br />
+Q14：路由器网络层的基本功能是()。<br />
+  选项：A.配置 IP 地址　B.寻找路由和转发报文　C.将 MAC 地址解析成 IP 地址　D.将 IP 地址解析成 MAC 地址<br />
+  答案：B<br />
+  </div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>B</strong>。路由器网络层的基本功能是<strong>寻找路由和转发报文</strong>。</span><span class="b a2">📚 知识点讲解：A 是主机/管理配置；C 不存在（MAC→IP 是 RARP）；D 是 ARP（网络层但属地址解析，非路由本职）。</span><span class="b a3">💡 解题思路：路由器本职＝"找路 + 转发"。</span><span class="b a4">🧠 记忆口诀："路由本职两件事：找路、转发报文中。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">【自测】配套自测（单选）</div>
+  <div class="q"><br />
+Q17：在 ISO/OSI 参考模型中，网络层的主要功能是()。<br />
+  选项：A.数据格式变换、数据加密与解密、数据压缩与恢复　B.在通信实体之间传送以帧为单位的数据　C.提供可靠的端—端服务，透明地传送报文　D.路由选择、拥塞控制与网络互连<br />
+  答案：D<br />
+  </div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>D</strong>。网络层主要功能＝<strong>路由选择、拥塞控制与网络互连</strong>。</span><span class="b a2">📚 知识点讲解：A 属表示层；B 属数据链路层（帧）；C 属传输层（端到端）。</span><span class="b a3">💡 解题思路：提到"路由 / 拥塞 / 互联"→ 网络层。</span><span class="b a4">🧠 记忆口诀："网络层三件事：路由、拥塞、互联。"</span></div>
+</div>
+</section><section class="module"><h2 id="m6">模块六 · 传输层（端到端）</h2>
+<p>传输层负责<strong>端到端</strong>：从一台电脑的某个<strong>程序</strong>，送到另一台电脑的某个<strong>程序</strong>（靠"端口"区分程序）。</p>
+<ul>
+<li><strong>TCP</strong>：面向连接、可靠（握手 + 确认重传）——适合网页、邮件。</li>
+<li><strong>UDP</strong>：无连接、不可靠但快——用 UDP 时，<strong>可靠性全部由应用层自己兜底</strong>（题 2 考点）。</li>
+<li><strong>SSL</strong>（保障 Web 安全）工作在<strong>传输层</strong>（题 10 答 C）。</li>
+</ul>
+<div class="analogy"><b>📦 类比</b>快递单上的"收件人 + 电话"，保证包裹送到对的人手里，而不是只到楼。</div><div class="trap"><b>⚠ 陷阱</b>① 用 UDP 时，<strong>应用层必须承担可靠性全部工作</strong>（题 2，选 D 应用层）；别误以为传输层替你兜底。② TCP 属<strong>传输层</strong>（题 7），不是网络层。③ SSL 题答"传输层"（题 10，选 C）。</div>
+<div class="quiz">
+  <div class="qh">【自测】配套自测（单选）</div>
+  <div class="q"><br />
+Q2：如果用户应用程序使用 UDP 协议进行数据传输，那么()协议必须承担可靠性方面的全部工作。<br />
+  选项：A.数据链路层　B.互联网络层　C.传输层　D.应用层<br />
+  答案：D<br />
+  </div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>D</strong>。UDP 不可靠，用 UDP 时<strong>应用层</strong>必须自己承担可靠性全部工作。</span><span class="b a2">📚 知识点讲解：UDP 无连接、无确认重传；可靠性（超时、重传、排序）只能由上层应用实现。</span><span class="b a3">💡 解题思路：UDP"不保靠"→ 谁用谁（应用层）自己扛。</span><span class="b a4">🧠 记忆口诀："UDP 不保靠，应用自己扛。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">【自测】配套自测（单选）</div>
+  <div class="q"><br />
+Q7：TCP 协议属于 OSI 参考模型的()。<br />
+  选项：A.网络层　B.传输层　C.会话层　D.表示层<br />
+  答案：B<br />
+  </div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>B</strong>。TCP 是<strong>传输层</strong>协议（可靠、面向连接）。</span><span class="b a2">📚 知识点讲解：传输层代表协议 TCP / UDP；网络层是 IP，会话层之上另有其职。</span><span class="b a3">💡 解题思路："TCP"直接对应传输层。</span><span class="b a4">🧠 记忆口诀："TCP 在传输层，可靠连接它担承。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">【自测】配套自测（单选）</div>
+  <div class="q"><br />
+Q10：SSL 是保障 WEB 数据传输安全性的主要技术，它工作在()。<br />
+  选项：A.链路层　B.网络层　C.传输层　D.应用层<br />
+  答案：C<br />
+  </div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>C</strong>。本题库判定 SSL 工作在<strong>传输层</strong>（介于应用层与网络层之间，为应用提供加密通道）。</span><span class="b a2">📚 知识点讲解：SSL/TLS 在传输层与应用层之间，为 HTTP 等加密成 HTTPS；按本题库答案取"传输层"。</span><span class="b a3">💡 解题思路：题干"保障 WEB 安全的主要技术"→ SSL，按题库定位传输层。</span><span class="b a4">🧠 记忆口诀："SSL 护 WEB，传输层上把密加。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">【自测】配套自测（单选）</div>
+  <div class="q"><br />
+Q13：传输层的主要功能是实现主机与目的主机对等实体之间的()。<br />
+  选项：A.点-点连接　B.网络连接　C.端-端连接　D.物理连接<br />
+  答案：C<br />
+  </div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>C</strong>。传输层提供<strong>端到端（end-to-end）</strong>连接，即主机到主机的对等实体之间。</span><span class="b a2">📚 知识点讲解：网络层是"点到点/网络到网络"，传输层是"端到端/进程到进程（靠端口）"。</span><span class="b a3">💡 解题思路：关键词"主机与目的主机对等实体"＝端到端。</span><span class="b a4">🧠 记忆口诀："传输层管端到端，端口区分各进程。"</span></div>
+</div>
+</section><section class="module"><h2 id="m7">模块七 · 会话层 / 表示层 / 应用层（上三层）</h2>
+<p>上三层离"人"最近：</p>
+<ul>
+<li><strong>会话层</strong>：建立、管理、终止"会话/对话"（像先拨通电话再聊）。</li>
+<li><strong>表示层</strong>：管"翻译和保密"——<strong>加密、压缩、格式转换</strong>。<strong>负责加密功能的是表示层</strong>（题 8 选 D）。</li>
+<li><strong>应用层</strong>：直接给你用的功能（网页 HTTP、邮件 SMTP/POP3、文件 FTP、域名 DNS）；还有<strong>网络管理</strong>（OSI 五项功能、SNMP 等网管工具）与<strong>应用层安全漏洞</strong>。</li>
+</ul>
+<div class="analogy"><b>📦 类比</b>会话层＝先打电话接通；表示层＝把信翻译成对方语言并锁进保密箱；应用层＝你真正要办的事。</div><div class="trap"><b>⚠ 陷阱</b>① 负责加密＝<strong>表示层</strong>（题 8），不是会话层、不是传输层。② 网管工具：Wireshark、HP Openview、Sniffer 都是；<strong>Symantec 是安全软件，不是网管工具</strong>（题 5、25，选 C）。③ 应用层安全漏洞典型两类：<strong>未限制 URL 访问</strong>（题 11，选 D"没有限制的 URL 访问"）、<strong>不安全直接对象引用</strong>（题 15，税务局改 URL 里 ID 盗走数据，选 C）。</div>
+<div class="quiz">
+  <div class="qh">【自测】配套自测（单选）</div>
+  <div class="q"><br />
+Q5：网络管理系统一般具备 OSI 网络管理标准中定义的五项功能，并可以提供图形化的用户界面。下面不属于网络管理工具的是()。<br />
+  选项：A.Wireshark　B.HP openview　C.Symantec　D.Sniffer<br />
+  答案：C<br />
+  </div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>C</strong>。<strong>Symantec</strong> 是安全/杀毒类软件，<strong>不属于</strong>网络管理工具。</span><span class="b a2">📚 知识点讲解：Wireshark（抓包分析）、HP Openview（网管平台）、Sniffer（嗅探/协议分析）都属网管/分析工具；Symantec 偏终端安全。</span><span class="b a3">💡 解题思路：找"不是网管"→ Symantec 是安全软件。</span><span class="b a4">🧠 记忆口诀："网管三杰 W/H/S，Symantec 不掺和。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">【自测】配套自测（单选）</div>
+  <div class="q"><br />
+Q8：在 OSI 参考模型中，负责加密功能的是()。<br />
+  选项：A.会话层　B.传输层　C.物理层　D.表示层<br />
+  答案：D<br />
+  </div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>D</strong>。负责<strong>加密</strong>功能的是<strong>表示层</strong>。</span><span class="b a2">📚 知识点讲解：表示层管数据表示：加密/解密、压缩/解压、格式转换；会话层只管对话，传输层管可靠。</span><span class="b a3">💡 解题思路：关键词"加密"→ 表示层。</span><span class="b a4">🧠 记忆口诀："加密压缩加翻译，表示层里全归你。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">【自测】配套自测（单选）</div>
+  <div class="q"><br />
+Q11：对于上传的页面，在单击上传时，会弹出一个对话框，在弹出的对话框中输入多个文件名，然后单击上传，若单击上传这个对话框没有访问控制，就可以通过浏览中直接输入 URL 访问，可能会导致某些用户在不经过认证的情况下直接上传文件。从以上描述中，可以得出该系统存在()安全漏洞。<br />
+  选项：A.安全配置错误　B.不安全的加密存储　C.传输层保护不足　D.没有限制的 URL 访问<br />
+  答案：D<br />
+  </div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>D</strong>。上传对话框"没有访问控制"，可直接输 URL 绕过认证上传，属于<strong>没有限制的 URL 访问</strong>漏洞。</span><span class="b a2">📚 知识点讲解：这属于"未授权/未限制的直接 URL 访问"，是应用层访问控制缺失；A 偏配置，B 偏存储，C 偏传输，均不贴切。</span><span class="b a3">💡 解题思路：描述核心"直接输 URL 就能访问"→ 没有限制的 URL 访问。</span><span class="b a4">🧠 记忆口诀："URL 无管控，直接访问就出事。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">【自测】配套自测（多选）</div>
+  <div class="q"><br />
+Q12：下列关于入侵检测说法正确的是()<br />
+  选项：A.能够精确检测所有入侵事件　B.可判断应用层的入侵事情　C.可以识别来自本网段、其他网段、以及外部网络的攻击　D.通常部署于防火墙之后<br />
+  答案：BCD<br />
+  </div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>BCD</strong>。入侵检测（IDS）可判断应用层入侵（B）、识别来自本网段/其他网段/外部的攻击（C）、通常部署在防火墙之后（D）。</span><span class="b a2">📚 知识点讲解：A 错——IDS 不能"精确检测所有"入侵（有误报漏报）；应用层入侵要靠 IDS 深度检测；部署在防火墙后做内部监测。</span><span class="b a3">💡 解题思路：找"不正确"的反面：A 太绝对，排除；其余合理。</span><span class="b a4">🧠 记忆口诀："IDS 三能对：应用层、全网段、防火墙后。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">【自测】配套自测（单选）</div>
+  <div class="q"><br />
+Q15：澳大利亚的一个税务局的网站曾被黑客通过简单的修改 URL 中的 ID 就获得了 17000 家公司的信息，可以得出澳大利亚的税务局的网站存在()安全漏洞。<br />
+  选项：A.不安全的加密存储　B.安全配置错误　C.不安全的直接对象引用　D.传输层保护不足<br />
+  答案：C<br />
+  </div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>C</strong>。仅靠修改 URL 中的 ID 就取到他人数据，是<strong>不安全的直接对象引用</strong>漏洞。</span><span class="b a2">📚 知识点讲解：直接对象引用（IDOR）指用对象引用（如 ?id=123）未校验权限，攻击者可遍历 ID 越权访问；属应用层越权。</span><span class="b a3">💡 解题思路：关键词"改 URL 里的 ID 就拿别人数据"→ 直接对象引用。</span><span class="b a4">🧠 记忆口诀："改个 ID 就越权，直接引用最危险。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">【自测】配套自测（单选）</div>
+  <div class="q"><br />
+Q25：网络管理系统一般具备 OSI 网络管理标准中定义的五项功能，并可以提供图形化的用户界面。下面不属于网络管理工具的是()。<br />
+  选项：A.Wireshark　B.HP open view　C.Symantec　D.Sniffer<br />
+  答案：C<br />
+  </div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>C</strong>。与 Q5 同考点：<strong>Symantec</strong> 不属于网络管理工具。</span><span class="b a2">📚 知识点讲解：Wireshark/HP Openview/Sniffer 为网管或协议分析工具；Symantec 为安全软件。</span><span class="b a3">💡 解题思路：重复题，仍排除 Symantec。</span><span class="b a4">🧠 记忆口诀："重复题照旧答，Symantec 不是它。"</span></div>
+</div>
+</section><section class="module"><h2 id="m8">模块八 · 数据封装与 TCP/IP 四层模型（综合进阶）</h2>
+<p><strong>数据封装</strong>：发送时数据每向下走一层，就"套一层信封"（加本层头部）；到达对端再从下往上逐层拆开。各层的数据单位叫 <strong>PDU</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>层</th>
+<th>PDU 名称</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>应用层</td>
+<td>数据（Data）</td>
+</tr>
+<tr>
+<td>传输层</td>
+<td>段（Segment，TCP）/ 数据报（UDP）</td>
+</tr>
+<tr>
+<td>网络层</td>
+<td>包 / 分组（Packet）</td>
+</tr>
+<tr>
+<td>数据链路层</td>
+<td>帧（Frame）</td>
+</tr>
+<tr>
+<td>物理层</td>
+<td>比特（Bit）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>TCP/IP 四层 vs OSI 七层</strong>：TCP/IP 把 OSI 上三层合并为「应用层」，把下两层合并为「网络接口层」，中间保留「网际层、传输层」。互联网实际用 TCP/IP 四层（题 22：四层之一为<strong>网络接口层</strong>）。</p>
+<div class="analogy"><b>📦 类比</b>层层套信封，每套一层多一个"地址标签"，对方拆一层读一层——坏在哪层，看那层的信封就知道。</div>
+<div class="quiz">
+  <div class="qh">【自测】配套自测（单选）</div>
+  <div class="q"><br />
+Q22：TCP/IP 参考模型的四个层次分别为()、网际层、传输层、应用层。<br />
+  选项：A.物理层　B.网络接口层　C.会话层　D.表示层<br />
+  答案：B<br />
+  </div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>B</strong>。TCP/IP 四层＝<strong>网络接口层</strong>、网际层、传输层、应用层。</span><span class="b a2">📚 知识点讲解：网络接口层对应 OSI 下两层（物理+数据链路）；网际层对应网络层（IP）；应用层对应 OSI 上三层。</span><span class="b a3">💡 解题思路：TCP/IP 最底层叫"网络接口层"，不是物理层。</span><span class="b a4">🧠 记忆口诀："TCP/IP 四层：接口、网际、传输、应用。"</span></div>
+</div>
+</section><section class="module"><h2 id="ref">速查卡与反直觉陷阱</h2>
+<h3>① 七层速查（物数网传会表应）</h3>
+<table>
+<thead>
+<tr>
+<th>层</th>
+<th>关键职责</th>
+<th>典型设备 / 协议</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>物理层</td>
+<td>比特流、信号传输</td>
+<td>中继器、集线器、光纤收发器</td>
+</tr>
+<tr>
+<td>数据链路层</td>
+<td>成帧、MAC、可靠相邻传输</td>
+<td>交换机、网桥、CSMA/CD、LLC/MAC</td>
+</tr>
+<tr>
+<td>网络层</td>
+<td>寻址、路由、拥塞控制</td>
+<td>路由器、IP、ICMP、ARP</td>
+</tr>
+<tr>
+<td>传输层</td>
+<td>端到端、端口区分程序</td>
+<td>TCP、UDP</td>
+</tr>
+<tr>
+<td>会话层</td>
+<td>建立/管理/终止会话</td>
+<td>—</td>
+</tr>
+<tr>
+<td>表示层</td>
+<td>加密、压缩、格式转换</td>
+<td>（SSL 加密功能在此层）</td>
+</tr>
+<tr>
+<td>应用层</td>
+<td>直接服务用户 + 网管 + 应用安全</td>
+<td>HTTP/FTP/SMTP/DNS/SNMP、网管工具</td>
+</tr>
+</tbody>
+</table>
+<h3>② 设备 / 协议所在层速查</h3>
+<ul>
+<li><strong>物理层</strong>：中继器、集线器、光纤收发器、双绞线/光纤</li>
+<li><strong>数据链路层</strong>：交换机、网桥、MAC/LLC 子层、CSMA/CD</li>
+<li><strong>网络层</strong>：路由器、IP、ICMP、ARP、路由协议</li>
+<li><strong>传输层</strong>：TCP、UDP</li>
+<li><strong>表示层</strong>：加密/压缩（SSL 的加密功能）</li>
+<li><strong>应用层</strong>：HTTP/FTP/SMTP/POP3/DNS/SNMP、网络管理工具</li>
+</ul>
+<h3>③ 反直觉陷阱（最容易选反）</h3>
+<ul>
+<li><strong>光纤收发器</strong>：题库判定"都是物理层"为<strong>错误</strong>（以题为准）。</li>
+<li><strong>交换机＝数据链路层</strong>；<strong>路由器＝网络层</strong>（别互换）。</li>
+<li><strong>负责加密＝表示层</strong>（不是会话层）。</li>
+<li><strong>802.3 最顶端＝LLC 子层</strong>（不是 MAC/物理层）。</li>
+<li><strong>UDP → 可靠性由应用层承担</strong>（传输层不兜底）。</li>
+<li><strong>SSL 题答"传输层"</strong>（按本题库定位）。</li>
+<li><strong>采用分层理由＝隔层独立</strong>（不是"只允许相邻层联系"）。</li>
+<li><strong>TCP/IP 最底层＝网络接口层</strong>（不是"物理层"）。</li>
+</ul>
+</section><section class="module"><h2 id="all">练习题（题库 25 题全）</h2>
+<blockquote>
+<p>完整收录题库「OSI模型与体系结构」25 题（含重复题，按题库原序）。每题附四要素解析。重复题已标注。</p>
+</blockquote>
+<div class="quiz">
+  <div class="qh">练习 Q1（单选）</div>
+  <div class="q">
+<p><strong>题干</strong>：路由器工作在 OSI 的哪一层 ( )</p>
+<p><strong>选项</strong>：A.传输层　B.数据链路层　C.应用层　D.网络层</p>
+<p><strong>答案</strong>：D</p>
+</div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>D</strong>。路由器基于 IP 寻址转发，工作在<strong>网络层</strong>。</span><span class="b a2">📚 知识点讲解：网络层管逻辑地址(IP)与路由；路由器是网络层代表设备。</span><span class="b a3">💡 解题思路："路由器"三字直接对应网络层。</span><span class="b a4">🧠 记忆口诀："路由器干网络层，IP 寻路它最行。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">练习 Q2（单选）</div>
+  <div class="q">
+<p><strong>题干</strong>：如果用户应用程序使用 UDP 协议进行数据传输，那么()协议必须承担可靠性方面的全部工作。</p>
+<p><strong>选项</strong>：A.数据链路层　B.互联网络层　C.传输层　D.应用层</p>
+<p><strong>答案</strong>：D</p>
+</div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>D</strong>。UDP 不可靠，用 UDP 时<strong>应用层</strong>必须自己承担可靠性全部工作。</span><span class="b a2">📚 知识点讲解：UDP 无连接、无确认重传；可靠性（超时、重传、排序）只能由上层应用实现。</span><span class="b a3">💡 解题思路：UDP"不保靠"→ 谁用谁（应用层）自己扛。</span><span class="b a4">🧠 记忆口诀："UDP 不保靠，应用自己扛。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">练习 Q3（单选）</div>
+  <div class="q">
+<p><strong>题干</strong>：当路由器发生故障时，利用 show interface 命令来检查每个端口的状态，解释屏幕输出信息，查看协议建立状态和 EIA 状态等，这属于()诊断。</p>
+<p><strong>选项</strong>：A.物理层　B.数据链路层　C.网路层　D.传输层</p>
+<p><strong>答案</strong>：A</p>
+</div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>A</strong>。<code>show interface</code> 看端口物理状态、EIA（电气）状态，属于<strong>物理层</strong>诊断。</span><span class="b a2">📚 知识点讲解：物理层管接口、电气信号、链路通断；端口灯、线缆、收发器状态都归物理层。</span><span class="b a3">💡 解题思路：关键词"端口状态 / EIA 状态"＝物理层的最直接体征。</span><span class="b a4">🧠 记忆口诀："show interface 看端口，物理层上查通断。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">练习 Q4（单选）</div>
+  <div class="q">
+<p><strong>题干</strong>：3 标准中，定义在最顶端的协议层是()。</p>
+<p><strong>选项</strong>：A.物理层　B.介质访问控制子层　C.逻辑链路控制子层　D.网络层</p>
+<p><strong>答案</strong>：C</p>
+</div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>C</strong>。IEEE <strong>802.3</strong> 标准里，最顶端的是<strong>逻辑链路控制子层（LLC）</strong>。</span><span class="b a2">📚 知识点讲解：802.3 数据链路层分 MAC（下，介质访问）和 LLC（上，逻辑链路控制）；LLC 位于顶端、贴近网络层。</span><span class="b a3">💡 解题思路：题干"3标准"即 802.3；"最顶端"→ LLC 子层。</span><span class="b a4">🧠 记忆口诀："802.3 顶端 LLC，逻辑链路控全局。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">练习 Q5（单选）</div>
+  <div class="q">
+<p><strong>题干</strong>：网络管理系统一般具备 OSI 网络管理标准中定义的五项功能，并可以提供图形化的用户界面。下面不属于网络管理工具的是()。</p>
+<p><strong>选项</strong>：A.Wireshark　B.HP openview　C.Symantec　D.Sniffer</p>
+<p><strong>答案</strong>：C</p>
+</div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>C</strong>。<strong>Symantec</strong> 是安全/杀毒类软件，<strong>不属于</strong>网络管理工具。</span><span class="b a2">📚 知识点讲解：Wireshark（抓包分析）、HP Openview（网管平台）、Sniffer（嗅探/协议分析）都属网管/分析工具；Symantec 偏终端安全。</span><span class="b a3">💡 解题思路：找"不是网管"→ Symantec 是安全软件。</span><span class="b a4">🧠 记忆口诀："网管三杰 W/H/S，Symantec 不掺和。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">练习 Q6（单选）</div>
+  <div class="q">
+<p><strong>题干</strong>：交换机工作在 OSI 标准的()。</p>
+<p><strong>选项</strong>：A.网络层　B.数据链路层　C.物理层　D.传输层</p>
+<p><strong>答案</strong>：B</p>
+</div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>B</strong>。交换机基于 <strong>MAC 地址</strong>转发，工作在<strong>数据链路层</strong>。</span><span class="b a2">📚 知识点讲解：交换机查 MAC 表决定从哪个端口转发帧；路由器才查 IP 表（网络层）。</span><span class="b a3">💡 解题思路：认 MAC → 数据链路层；认 IP → 网络层。</span><span class="b a4">🧠 记忆口诀："交换机认 MAC，数据链路层里扎。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">练习 Q7（单选）</div>
+  <div class="q">
+<p><strong>题干</strong>：TCP 协议属于 OSI 参考模型的()。</p>
+<p><strong>选项</strong>：A.网络层　B.传输层　C.会话层　D.表示层</p>
+<p><strong>答案</strong>：B</p>
+</div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>B</strong>。TCP 是<strong>传输层</strong>协议（可靠、面向连接）。</span><span class="b a2">📚 知识点讲解：传输层代表协议 TCP / UDP；网络层是 IP，会话层之上另有其职。</span><span class="b a3">💡 解题思路："TCP"直接对应传输层。</span><span class="b a4">🧠 记忆口诀："TCP 在传输层，可靠连接它担承。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">练习 Q8（单选）</div>
+  <div class="q">
+<p><strong>题干</strong>：在 OSI 参考模型中，负责加密功能的是()。</p>
+<p><strong>选项</strong>：A.会话层　B.传输层　C.物理层　D.表示层</p>
+<p><strong>答案</strong>：D</p>
+</div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>D</strong>。负责<strong>加密</strong>功能的是<strong>表示层</strong>。</span><span class="b a2">📚 知识点讲解：表示层管数据表示：加密/解密、压缩/解压、格式转换；会话层只管对话，传输层管可靠。</span><span class="b a3">💡 解题思路：关键词"加密"→ 表示层。</span><span class="b a4">🧠 记忆口诀："加密压缩加翻译，表示层里全归你。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">练习 Q9（判断）</div>
+  <div class="q">
+<p><strong>题干</strong>：光纤收发器都是工作在物理层的。()</p>
+<p><strong>选项</strong>：A.正确　B.错误</p>
+<p><strong>答案</strong>：错误</p>
+</div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：<strong>错误</strong>。本题库判定"光纤收发器都是工作在物理层"为错误，考试以题库答案为准。</span><span class="b a2">📚 知识点讲解：光纤收发器做光信号↔电信号转换，一般认为属物理层设备；但本题库将"都是"这一绝对表述判为错误，做题时按题库来。</span><span class="b a3">💡 解题思路：遇到"都是 / 全部"这类绝对化字眼，先警惕，再看题库立场。</span><span class="b a4">🧠 记忆口诀："收发器归物理层，但'都是'要慎选。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">练习 Q10（单选）</div>
+  <div class="q">
+<p><strong>题干</strong>：SSL 是保障 WEB 数据传输安全性的主要技术，它工作在()。</p>
+<p><strong>选项</strong>：A.链路层　B.网络层　C.传输层　D.应用层</p>
+<p><strong>答案</strong>：C</p>
+</div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>C</strong>。本题库判定 SSL 工作在<strong>传输层</strong>（介于应用层与网络层之间，为应用提供加密通道）。</span><span class="b a2">📚 知识点讲解：SSL/TLS 在传输层与应用层之间，为 HTTP 等加密成 HTTPS；按本题库答案取"传输层"。</span><span class="b a3">💡 解题思路：题干"保障 WEB 安全的主要技术"→ SSL，按题库定位传输层。</span><span class="b a4">🧠 记忆口诀："SSL 护 WEB，传输层上把密加。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">练习 Q11（单选）</div>
+  <div class="q">
+<p><strong>题干</strong>：对于上传的页面，在单击上传时，会弹出一个对话框，在弹出的对话框中输入多个文件名，然后单击上传，若单击上传这个对话框没有访问控制，就可以通过浏览中直接输入 URL 访问，可能会导致某些用户在不经过认证的情况下直接上传文件。从以上描述中，可以得出该系统存在()安全漏洞。</p>
+<p><strong>选项</strong>：A.安全配置错误　B.不安全的加密存储　C.传输层保护不足　D.没有限制的 URL 访问</p>
+<p><strong>答案</strong>：D</p>
+</div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>D</strong>。上传对话框"没有访问控制"，可直接输 URL 绕过认证上传，属于<strong>没有限制的 URL 访问</strong>漏洞。</span><span class="b a2">📚 知识点讲解：这属于"未授权/未限制的直接 URL 访问"，是应用层访问控制缺失；A 偏配置，B 偏存储，C 偏传输，均不贴切。</span><span class="b a3">💡 解题思路：描述核心"直接输 URL 就能访问"→ 没有限制的 URL 访问。</span><span class="b a4">🧠 记忆口诀："URL 无管控，直接访问就出事。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">练习 Q12（多选）</div>
+  <div class="q">
+<p><strong>题干</strong>：下列关于入侵检测说法正确的是()</p>
+<p><strong>选项</strong>：A.能够精确检测所有入侵事件　B.可判断应用层的入侵事情　C.可以识别来自本网段、其他网段、以及外部网络的攻击　D.通常部署于防火墙之后</p>
+<p><strong>答案</strong>：BCD</p>
+</div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>BCD</strong>。入侵检测（IDS）可判断应用层入侵（B）、识别来自本网段/其他网段/外部的攻击（C）、通常部署在防火墙之后（D）。</span><span class="b a2">📚 知识点讲解：A 错——IDS 不能"精确检测所有"入侵（有误报漏报）；应用层入侵要靠 IDS 深度检测；部署在防火墙后做内部监测。</span><span class="b a3">💡 解题思路：找"不正确"的反面：A 太绝对，排除；其余合理。</span><span class="b a4">🧠 记忆口诀："IDS 三能对：应用层、全网段、防火墙后。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">练习 Q13（单选）</div>
+  <div class="q">
+<p><strong>题干</strong>：传输层的主要功能是实现主机与目的主机对等实体之间的()。</p>
+<p><strong>选项</strong>：A.点-点连接　B.网络连接　C.端-端连接　D.物理连接</p>
+<p><strong>答案</strong>：C</p>
+</div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>C</strong>。传输层提供<strong>端到端（end-to-end）</strong>连接，即主机到主机的对等实体之间。</span><span class="b a2">📚 知识点讲解：网络层是"点到点/网络到网络"，传输层是"端到端/进程到进程（靠端口）"。</span><span class="b a3">💡 解题思路：关键词"主机与目的主机对等实体"＝端到端。</span><span class="b a4">🧠 记忆口诀："传输层管端到端，端口区分各进程。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">练习 Q14（单选）</div>
+  <div class="q">
+<p><strong>题干</strong>：路由器网络层的基本功能是()。</p>
+<p><strong>选项</strong>：A.配置 IP 地址　B.寻找路由和转发报文　C.将 MAC 地址解析成 IP 地址　D.将 IP 地址解析成 MAC 地址</p>
+<p><strong>答案</strong>：B</p>
+</div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>B</strong>。路由器网络层的基本功能是<strong>寻找路由和转发报文</strong>。</span><span class="b a2">📚 知识点讲解：A 是主机/管理配置；C 不存在（MAC→IP 是 RARP）；D 是 ARP（网络层但属地址解析，非路由本职）。</span><span class="b a3">💡 解题思路：路由器本职＝"找路 + 转发"。</span><span class="b a4">🧠 记忆口诀："路由本职两件事：找路、转发报文中。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">练习 Q15（单选）</div>
+  <div class="q">
+<p><strong>题干</strong>：澳大利亚的一个税务局的网站曾被黑客通过简单的修改 URL 中的 ID 就获得了 17000 家公司的信息，可以得出澳大利亚的税务局的网站存在()安全漏洞。</p>
+<p><strong>选项</strong>：A.不安全的加密存储　B.安全配置错误　C.不安全的直接对象引用　D.传输层保护不足</p>
+<p><strong>答案</strong>：C</p>
+</div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>C</strong>。仅靠修改 URL 中的 ID 就取到他人数据，是<strong>不安全的直接对象引用</strong>漏洞。</span><span class="b a2">📚 知识点讲解：直接对象引用（IDOR）指用对象引用（如 ?id=123）未校验权限，攻击者可遍历 ID 越权访问；属应用层越权。</span><span class="b a3">💡 解题思路：关键词"改 URL 里的 ID 就拿别人数据"→ 直接对象引用。</span><span class="b a4">🧠 记忆口诀："改个 ID 就越权，直接引用最危险。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">练习 Q16（判断）</div>
+  <div class="q">
+<p><strong>题干</strong>：综合布线一般采用分层星型的拓扑结构。()</p>
+<p><strong>选项</strong>：A.正确　B.错误</p>
+<p><strong>答案</strong>：正确</p>
+</div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：<strong>正确</strong>。综合布线普遍采用<strong>分层星型</strong>拓扑（中心节点+分级星型）。</span><span class="b a2">📚 知识点讲解：分层星型易管理、易扩展、故障隔离好，是楼宇/园区综合布线的标准结构。</span><span class="b a3">💡 解题思路：综合布线"分层星型"是固定结论，见到即选正确。</span><span class="b a4">🧠 记忆口诀："综合布线分层星，标准结构记在心。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">练习 Q17（单选）</div>
+  <div class="q">
+<p><strong>题干</strong>：在 ISO/OSI 参考模型中，网络层的主要功能是()。</p>
+<p><strong>选项</strong>：A.数据格式变换、数据加密与解密、数据压缩与恢复　B.在通信实体之间传送以帧为单位的数据　C.提供可靠的端—端服务，透明地传送报文　D.路由选择、拥塞控制与网络互连</p>
+<p><strong>答案</strong>：D</p>
+</div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>D</strong>。网络层主要功能＝<strong>路由选择、拥塞控制与网络互连</strong>。</span><span class="b a2">📚 知识点讲解：A 属表示层；B 属数据链路层（帧）；C 属传输层（端到端）。</span><span class="b a3">💡 解题思路：提到"路由 / 拥塞 / 互联"→ 网络层。</span><span class="b a4">🧠 记忆口诀："网络层三件事：路由、拥塞、互联。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">练习 Q18（判断）</div>
+  <div class="q">
+<p><strong>题干</strong>：11 协议采用 CSMA/CD 解决数据链路层的数据冲突的检测。()</p>
+<p><strong>选项</strong>：A.正确　B.错误</p>
+<p><strong>答案</strong>：错误</p>
+</div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：<strong>错误</strong>。本题库将"11 协议（即 IEEE 802.11）采用 CSMA/CD 解决数据链路层冲突"判为错误——注意 802.11 无线实际用 CSMA/CA，且题干"11协议"为 OCR 误植；以题库答案为准。</span><span class="b a2">📚 知识点讲解：CSMA/CD（有线以太网冲突检测）属数据链路层 MAC 子层；802.11 无线用 CSMA/CA（冲突避免）。</span><span class="b a3">💡 解题思路：题干把"802.11"写成"11"，且把无线混为 CD，按题库判错误。</span><span class="b a4">🧠 记忆口诀："802.11 用 CA，CD 是有线以太网。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">练习 Q19（单选）</div>
+  <div class="q">
+<p><strong>题干</strong>：社交网络的数据分层不包含()?</p>
+<p><strong>选项</strong>：A.activity-layer　B.registration-layer　C.networking-layer　D.appliction—layer</p>
+<p><strong>答案</strong>：D</p>
+</div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>D</strong>。标准 OSI 顶层是「应用层（application-layer）」，题中拼错的 appliction-layer 不是规范分层，故"不包含"。</span><span class="b a2">📚 知识点讲解：OSI 七层顶层是应用层；各种业务系统（如社交网络）自己会再细分 activity/registration/networking 等子层，但那不是 OSI 标准层名。</span><span class="b a3">💡 解题思路：认准七层顶层叫"应用层"，拼写都不对的自然被排除。</span><span class="b a4">🧠 记忆口诀："七层顶层应用层，拼错名字不算数。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">练习 Q20（单选）</div>
+  <div class="q">
+<p><strong>题干</strong>：在计算机网络中，要采用分层结构的理由是()。</p>
+<p><strong>选项</strong>：A.可以简化计算机网络的时效　B.隔层功能相对独立，所做的改动不会影响到其他层从而保持体系结构相对稳定　C.比模块结构好　D.只允许每层和其上下相邻层发生联系</p>
+<p><strong>答案</strong>：B</p>
+</div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>B</strong>。采用分层的核心理由是各层功能相对独立，某一层的改动不会波及其他层，体系结构稳定、易维护。</span><span class="b a2">📚 知识点讲解：分层让复杂网络"分而治之"；每层只和相邻层通过接口交互，替换某层实现不影响整体。</span><span class="b a3">💡 解题思路：找"独立 / 不影响其他层"——这就是分层的本质好处。</span><span class="b a4">🧠 记忆口诀："分层为独立，改层不连累。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">练习 Q21（单选）</div>
+  <div class="q">
+<p><strong>题干</strong>：物理层的四个特性中，()规定了每种信号的电平、信号的脉冲宽度、允许的数据传输速率和最大传输距离。</p>
+<p><strong>选项</strong>：A.机械特性　B.电气特性　C.规格特性　D.功能特性</p>
+<p><strong>答案</strong>：B</p>
+</div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>B</strong>。规定电平、脉冲宽度、速率、最大距离的，是<strong>电气特性</strong>。</span><span class="b a2">📚 知识点讲解：机械=接口形状/针脚；电气=电压/速率/距离；功能=每根线含义；规格=时序。</span><span class="b a3">💡 解题思路：看到"电平 / 速率 / 距离"→ 电气特性。</span><span class="b a4">🧠 记忆口诀："电平速率距离远，电气特性管这些。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">练习 Q22（单选）</div>
+  <div class="q">
+<p><strong>题干</strong>：TCP/IP 参考模型的四个层次分别为()、网际层、传输层、应用层。</p>
+<p><strong>选项</strong>：A.物理层　B.网络接口层　C.会话层　D.表示层</p>
+<p><strong>答案</strong>：B</p>
+</div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>B</strong>。TCP/IP 四层＝<strong>网络接口层</strong>、网际层、传输层、应用层。</span><span class="b a2">📚 知识点讲解：网络接口层对应 OSI 下两层（物理+数据链路）；网际层对应网络层（IP）；应用层对应 OSI 上三层。</span><span class="b a3">💡 解题思路：TCP/IP 最底层叫"网络接口层"，不是物理层。</span><span class="b a4">🧠 记忆口诀："TCP/IP 四层：接口、网际、传输、应用。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">练习 Q23（单选）【与 Q3 重复】</div>
+  <div class="q">
+<p><strong>题干</strong>：当路由器发生故障时，利用 show interface 命令来检查每个端口的状态，解释屏幕输出信息，查看协议建立状态和 EIA 状态等，这属于()诊断。</p>
+<p><strong>选项</strong>：A.物理层　B.数据链路层　C.网路层　D.传输层</p>
+<p><strong>答案</strong>：A</p>
+</div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>A</strong>。与 Q3 同考点：<code>show interface</code> 查物理端口/EIA 状态，属<strong>物理层</strong>诊断。</span><span class="b a2">📚 知识点讲解：端口物理状态、线缆、收发器都属物理层；此题为题库重复题，答案一致。</span><span class="b a3">💡 解题思路：重复题换汤不换药，仍抓"端口 / EIA 状态"。</span><span class="b a4">🧠 记忆口诀："重复题照样考，端口状态物理层。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">练习 Q24（单选）【与 Q4 重复】</div>
+  <div class="q">
+<p><strong>题干</strong>：在 IEEE 802.3 标准中，定义在最顶端的协议层是()。</p>
+<p><strong>选项</strong>：A.物理层　B.介质访问控制子层　C.逻辑链路控制子层　D.网络层</p>
+<p><strong>答案</strong>：C</p>
+</div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>C</strong>。与 Q4 同考点：802.3 最顶端是 <strong>LLC 子层</strong>。</span><span class="b a2">📚 知识点讲解：LLC（逻辑链路控制）位于 802.3 数据链路层顶端，向上衔接网络层。</span><span class="b a3">💡 解题思路：重复题，仍抓"802.3 最顶端 = LLC"。</span><span class="b a4">🧠 记忆口诀："重复照旧答 LLC，顶端位置不动摇。"</span></div>
+</div>
+<div class="quiz">
+  <div class="qh">练习 Q25（单选）【与 Q5 重复】</div>
+  <div class="q">
+<p><strong>题干</strong>：网络管理系统一般具备 OSI 网络管理标准中定义的五项功能，并可以提供图形化的用户界面。下面不属于网络管理工具的是()。</p>
+<p><strong>选项</strong>：A.Wireshark　B.HP open view　C.Symantec　D.Sniffer</p>
+<p><strong>答案</strong>：C</p>
+</div>
+  <div class="toggle" onclick="toggleA(this)">▸ 显示解析</div>
+  <div class="analysis"><span class="b a1">🎯 答案解析：选 <strong>C</strong>。与 Q5 同考点：<strong>Symantec</strong> 不属于网络管理工具。</span><span class="b a2">📚 知识点讲解：Wireshark/HP Openview/Sniffer 为网管或协议分析工具；Symantec 为安全软件。</span><span class="b a3">💡 解题思路：重复题，仍排除 Symantec。</span><span class="b a4">🧠 记忆口诀："重复题照旧答，Symantec 不是它。"</span></div>
+</div></section>
+<div class="footer">本文由题库（网络与信息安全管理员 · OSI模型与体系结构 25 题）整理生成，框架参考「网络协议与服务」学习笔记。</div>
+<script>function toggleA(el){
+  var box=el.nextElementSibling;
+  box.classList.toggle('open');
+  el.textContent = box.classList.contains('open') ? '▾ 收起解析' : '▸ 显示解析';
+}</script>
+</body>
+</html>
