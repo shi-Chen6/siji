@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>漏洞与安全评估 · 零基础系统学习</title>
+<style>
+  :root{
+    --bg:#f5f7fb; --card:#ffffff; --ink:#1f2a44; --muted:#6b7790;
+    --line:#e6eaf2; --brand:#3b6ef5; --brand-soft:#eaf0ff;
+    --green:#16a34a; --green-soft:#e7f8ee; --red:#e23b3b; --red-soft:#fdecec;
+    --amber:#d98b00; --amber-soft:#fff4e0; --violet:#7c5cff; --violet-soft:#f1ecff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.7;font-size:15px}
+  header{background:linear-gradient(135deg,#3b6ef5,#7c5cff);color:#fff;padding:34px 20px;text-align:center}
+  header h1{margin:0 0 8px;font-size:24px}
+  header p{margin:0;opacity:.92;font-size:14px}
+  .wrap{max-width:920px;margin:0 auto;padding:18px}
+  nav{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);padding:10px 14px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+  nav a{font-size:13px;color:var(--brand);text-decoration:none;background:var(--brand-soft);
+    padding:5px 11px;border-radius:20px;white-space:nowrap}
+  nav a:hover{background:var(--brand);color:#fff}
+  section{background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:22px;margin:18px 0;box-shadow:0 4px 18px rgba(40,60,120,.05)}
+  h2{font-size:20px;margin:0 0 6px;display:flex;align-items:center;gap:10px}
+  h2 .num{background:var(--brand);color:#fff;width:30px;height:30px;border-radius:9px;
+    display:inline-flex;align-items:center;justify-content:center;font-size:15px;flex:0 0 auto}
+  h3{font-size:16px;margin:18px 0 8px;color:var(--brand)}
+  p{margin:8px 0}
+  .analogy{background:var(--brand-soft);border-left:4px solid var(--brand);border-radius:8px;
+    padding:10px 14px;margin:12px 0;font-size:14px;color:#2a3a66}
+  .analogy b{color:var(--brand)}
+  .kv{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
+  .kv th,.kv td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  .kv th{background:var(--brand-soft);color:#2a3a66}
+  .quiz{background:#fbfcfe;border:1px dashed var(--line);border-radius:10px;padding:12px 14px;margin:14px 0}
+  .quiz .q{font-weight:600}
+  .quiz .ans{display:inline-block;margin-top:8px;background:var(--green-soft);color:var(--green);
+    font-weight:700;padding:4px 12px;border-radius:8px;font-size:14px}
+  .toggle{cursor:pointer;color:var(--brand);font-size:13px;margin-top:8px;user-select:none;font-weight:600}
+  .analysis{display:none;margin-top:10px;border-top:1px dashed var(--line);padding-top:10px;font-size:14px}
+  .analysis.open{display:block}
+  .analysis .b{display:block;margin:6px 0;padding:8px 10px;border-radius:8px}
+  .a1{background:var(--green-soft)} .a2{background:var(--brand-soft)} .a3{background:var(--amber-soft)} .a4{background:var(--violet-soft)}
+  .figure{background:#fbfcff;border:1px solid var(--line);border-radius:12px;padding:14px;margin:14px 0;text-align:center}
+  .figure svg{width:100%;max-width:560px;height:auto}
+  .figure .cap{font-size:13px;color:var(--muted);margin-top:6px}
+  .trap{background:var(--red-soft);border-left:4px solid var(--red);border-radius:8px;
+    padding:10px 14px;margin:12px 0;font-size:14px;color:#7a1f1f}
+  .trap b{color:var(--red)}
+  #story .flow{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:14px 0}
+  #story .step{background:var(--brand-soft);border:1px solid #cfe0ff;color:#2a3a66;border-radius:12px;
+    padding:10px 12px;width:140px;text-align:center;font-size:13px}
+  #story .step b{display:block;color:var(--brand);font-size:15px;margin-bottom:3px}
+  #ref .card{background:#fbfcfe;border:1px solid var(--line);border-radius:12px;padding:14px;margin:12px 0}
+  #ref h3{margin-top:0}
+  #ref ul{margin:6px 0;padding-left:20px}
+  #ref li{margin:4px 0}
+  .practice .toolbar{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+  .practice button{background:var(--brand);color:#fff;border:none;padding:8px 16px;border-radius:9px;cursor:pointer;font-size:14px}
+  .practice button.ghost{background:var(--brand-soft);color:var(--brand)}
+  .item{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0;background:#fff}
+  .item .q{font-weight:600;font-size:14.5px}
+  .item .meta{font-size:12px;color:var(--muted);margin-top:4px}
+  .item .ans{display:inline-block;margin-top:8px;background:var(--green-soft);color:var(--green);
+    font-weight:700;padding:3px 10px;border-radius:7px;font-size:13px}
+  .item .dup{color:var(--amber);font-size:12px;margin-left:8px}
+  .item .edge{color:var(--violet);font-size:12px;margin-left:8px}
+  .item .analysis{margin-top:8px}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:6px 0}
+  .legend span b{color:var(--amber)} .legend span i{color:var(--violet);font-style:normal}
+  footer{text-align:center;color:var(--muted);font-size:13px;padding:24px}
+  @media(max-width:600px){.wrap{padding:10px}section{padding:16px}#story .step{width:46%}}
+</style>
+</head>
+<body>
+<header>
+  <h1>🛡️ 漏洞与安全评估 · 零基础系统学习</h1>
+  <p>内容来源：题库「漏洞与安全评估（20 题）」｜ 通俗类比 + 考点自测 + 20 题全解析</p>
+</header>
+<nav>
+<a href="#story">📖 故事线</a><a href="#m1">① 漏洞基础</a><a href="#m2">② 典型漏洞</a><a href="#m3">③ 扫描检测</a><a href="#m4">④ 恶意检测</a><a href="#m5">⑤ 评估整改</a><a href="#m6">⑥ 延伸硬件</a><a href="#ref">🃏 速查卡</a><a href="#m7">⑦ 20题自测</a>
+</nav>
+<div class="wrap">
+<section id="story">
+  <h2><span class="num">📖</span> 故事线：把"找漏洞、防漏洞"串成一条线</h2>
+  <p>零基础学漏洞与安全评估，先建立整体地图：系统为什么有漏洞 → 有哪些典型漏洞怎么补 → 怎么扫描发现漏洞 → 怎么检测恶意代码 → 怎么评估整改形成闭环 → 顺带了解它牵连的硬件与布线。6 个模块就是这条流水线的 6 站，一路学下来 20 题全拿下。</p>
+  <div class="flow">
+    <div class="step"><b>① 漏洞基础</b>什么是漏洞、表现在哪（模块一）</div>
+    <div class="step"><b>② 典型漏洞</b>缓冲溢出/Unicode/Apache（模块二）</div>
+    <div class="step"><b>③ 扫描检测</b>漏洞扫描、端口扫描（模块三）</div>
+    <div class="step"><b>④ 恶意检测</b>扫描法、行为检测（模块四）</div>
+    <div class="step"><b>⑤ 评估整改</b>四阶段、基线交付物（模块五）</div>
+    <div class="step"><b>⑥ 延伸硬件</b>IDE、管槽、录入设备（模块六）</div>
+  </div>
+  <div class="analogy"><b>生活类比：</b>漏洞评估像给房子做"安全体检"——先看房子有哪些天生弱点（漏洞基础），再查水管裂缝、门锁隐患（典型漏洞），然后请人挨间敲门试探（扫描检测），再装监控识别坏人手法（恶意检测），最后出整改清单并验收（评估闭环）。</div>
+</section><section class="module" id="m1">
+<h2><span class="num">1</span> 模块1 漏洞与脆弱性基础</h2>
+<h3>1.1 什么是"漏洞 / 脆弱性"</h3>
+<p><strong>漏洞（Vulnerability，也叫脆弱性）</strong>是系统里"可能被攻击者利用的弱点"——可能是代码缺陷、配置错误，也可能是管理流程的空子。它不是"已经发生的攻击"，而是"容易被攻击的口子"。</p>
+<div class="analogy"><b>生活类比：</b>漏洞像房子墙上的裂缝——现在没进贼，但贼知道从这能钻进来。裂缝就是脆弱性，贼利用裂缝进来就是"被攻击"。</div>
+<h3>1.2 信息安全漏洞主要表现在哪里（Q11）</h3>
+<p>漏洞的后果是多维的：系统本身"脆"（设计缺陷）、被"钻空子"非法进入、被各方"打"、内部人"越权"提权。四方面都成立，所以表现为 ABCD 全选。</p>
+<h3>1.3 安全漏洞的三大来源（Q14）</h3>
+<p>从系统整体看，漏洞不只是"技术 bug"，还来自人（误操作/被钓鱼）和管理的规划策略执行不到位。漏洞 = 人 + 技术 + 管理，三方面共同构成。</p>
+<div class="quiz"><div class="q">【自测】信息安全漏洞主要表现在()</div>A.系统存在安全方面的脆弱性　B.非法用户得以获得访问权　C.系统易受来自各方面的攻击　D.合法用户未经授权提高访问权限<div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">选 <b>ABCD</b>。信息安全漏洞主要表现为：系统有脆弱性、非法用户获访问权、系统易受各方攻击、合法用户未经授权提权。</span><span class="b a2">漏洞的后果是多方面的：本身“脆”（设计缺陷）、被“钻空子”非法进入、被各方“打”、内部人“越权”提权。四方面全中。</span><span class="b a3">全选。</span><span class="b a4">“漏洞四相：脆、进、打、提。”</span></div></div>
+<div class="quiz"><div class="q">【自测】从系统整体看，安全“漏洞”包括哪些方面()。</div>A.人的因素　B.技术因素　C.规划，策略和执行过程<div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">选 <b>ABC</b>。安全“漏洞”从系统整体看包括：人的因素、技术因素、规划/策略/执行过程。</span><span class="b a2">漏洞不只是“技术 bug”：人（员工误操作/被钓鱼）、技术（代码/配置缺陷）、管理（规划策略执行不到位）三方面共同构成。三者都选。</span><span class="b a3">全选 ABC。</span><span class="b a4">“漏洞三方面：人、技、管。”</span></div></div>
+</section><section class="module" id="m2">
+<h2><span class="num">2</span> 模块2 典型漏洞与补丁</h2>
+<h3>2.1 缓冲区溢出：最可靠的方案是打补丁（Q1）</h3>
+<p><strong>缓冲区溢出</strong>是程序没检查输入长度，往固定大小的内存"缓冲区"写了超量数据，覆盖相邻内存，黑客借此植入恶意代码。它的根因是"程序代码本身的缺陷"，所以<strong>最可靠的解法是给系统装最新补丁</strong>，从代码层面堵洞。</p>
+<div class="trap"><b>⚠ 必考题：</b>缓冲溢出的"最可靠解决方案"是<b>安装最新补丁</b>，不是防火墙、不是 IDS、不是杀毒——后三者都治标不治本。</div>
+<h3>2.2 Unicode 漏洞：收紧 cmd 权限可防（Q13）</h3>
+<p><strong>Unicode 漏洞</strong>（经典 IIS 漏洞）利用扩展字符绕过敏感路径、借 <code>cmd.exe</code> 执行系统命令。限制网络用户访问和调用 cmd 的权限，攻击者就拿不到命令行，漏洞利用被阻断。所以限制 cmd 权限是有效防范。</p>
+<h3>2.3 Apache 安全配置：别暴露版本号（Q5）</h3>
+<p>Apache 安全配置里，"显示版本号"反而是不安全的——暴露版本等于告诉攻击者你有哪些已知漏洞可打。安全做法：装最新补丁、只启必需服务模块、用专用低权用户/组运行。</p>
+<div class="quiz"><div class="q">【自测】许多黑客攻击都是利用软件实现中的缓冲区溢出的漏洞，对于这一威胁，最可靠的解决方案是()。</div>A.安装防火墙　B.安装入侵检测系统　C.给系统安装最新的补丁　D.安装防病毒软件<div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">选 <b>C</b>。最可靠方案是“给系统安装最新的补丁”，从源头修补溢出漏洞。</span><span class="b a2">缓冲区溢出是程序未检查输入长度、往固定大小缓冲区写了超量数据，覆盖相邻内存、被黑客植入恶意代码。补丁修复的是“程序本身的缺陷”，所以打补丁治本。</span><span class="b a3">防火墙/IDS/杀毒都治标不治本：防火墙拦不了已授权正常端口上的溢出利用；IDS 只报警不阻断；杀毒靠特征库，对零day溢出无能为力。只有补丁从代码层面堵洞。</span><span class="b a4">“溢出漏洞补丁堵，防火墙IDS只是护。”</span></div></div>
+<div class="quiz"><div class="q">【自测】限制网络用户访问和调用cmd的权限可以防范Unicode 漏洞。()</div>A.正确　B.错误<div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">正确。限制网络用户访问和调用 cmd 的权限，可防范 Unicode 漏洞利用。</span><span class="b a2">Unicode 漏洞（经典 IIS 漏洞）利用扩展字符绕过敏感路径、借 cmd.exe 执行系统命令。收紧对 cmd 的访问/调用权限，攻击者就拿不到命令行，漏洞利用被阻断。所以限制 cmd 权限是有效防范措施。</span><span class="b a3">题干对。</span><span class="b a4">“Unicode 借 cmd 跑，权限收紧跑不了。”</span></div></div>
+<div class="quiz"><div class="q">【自测】下列选项中，()不是Apache 服务器的安全配置事项。</div>A.确保已经安装了最新的安全补丁　B.只启动应用程序需要的服务模块　C.显示Apache 的版本号　D.确保Apache 运行在正确的用户和组下<div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">选 <b>C</b>。Apache 安全配置里“显示版本号”反而是不安全的，不应做。</span><span class="b a2">显示版本号会让攻击者知道你跑的 Apache 具体版本，便于针对性利用已知漏洞。安全做法：装最新补丁、只启必需服务模块、用专用低权用户/组运行。所以“显示版本号”恰恰是题问的“不是安全配置事项”。</span><span class="b a3">找“不是安全配置”：A/B/D 都更安全，C 暴露版本=更危险。</span><span class="b a4">“版本号别显，暴露挨打先。”</span></div></div>
+</section><section class="module" id="m3">
+<h2><span class="num">3</span> 模块3 漏洞扫描与检测</h2>
+<h3>3.1 脆弱性分析 = 漏洞扫描（Q12）</h3>
+<p><strong>脆弱性分析技术</strong>通俗就叫<strong>漏洞扫描技术</strong>——自动检测远程或本地系统的安全弱点（配置/补丁/开放端口）。两者是一回事的不同说法。</p>
+<h3>3.2 端口扫描：预知能否远程登录（Q4）</h3>
+<p><strong>端口扫描</strong>像"敲门"：向目标发探测包，看哪些端口有回应，从而判断开放了哪些服务（如 SSH 22、RDP 3389）。开放即可能远程登录。病毒查杀、包过滤、身份认证都不是这种"预知探测"。</p>
+<h3>3.3 一次完整的扫描不包括什么（Q17）</h3>
+<p>完整扫描流程：发现目标 → 搜集信息 → 判断/测试是否存在漏洞。"发现漏洞后能不能解决"是整改环节，不属于"扫描"本身。</p>
+<h3>3.4 终端防护技术（Q7）</h3>
+<p>防病毒、补丁管理、漏洞扫描都直接保护终端；"防止非法外联"管的是数据不出网，属边界/防泄露，不直接加固终端本身。</p>
+<div class="quiz"><div class="q">【自测】脆弱性分析技术，也被通俗地称为漏洞扫描技术。该技术是检测远程或本地系统安全脆弱性的一种安全技术。()</div>A.正确　B.错误<div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">正确。脆弱性分析技术通俗就叫“漏洞扫描技术”，检测远程或本地系统的安全弱点。</span><span class="b a2">脆弱性（vulnerability）=系统可能被攻破的弱点；漏洞扫描就是自动化的脆弱性分析——扫系统配置/补丁/开放端口找弱点。两者是一回事的不同说法。</span><span class="b a3">题干说“也被通俗称为”——对。</span><span class="b a4">“脆弱性分析=漏洞扫描，换汤不换药。”</span></div></div>
+<div class="quiz"><div class="q">【自测】预知某主机是否可远程登录，可利用()进行检测。</div>A.端口扫描　B.病毒查杀　C.包过滤　D.身份认证<div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">选 <b>A</b>。预知某主机能否被远程登录，用“端口扫描”探它是否开放了远程登录端口（如 22/3389）。</span><span class="b a2">端口扫描像“敲门”：发探测包看哪些端口有回应，从而判断服务开着没、能否登录。病毒查杀看文件、包过滤是防火墙动作、身份认证是登录环节不是探测手段。</span><span class="b a3">“预知能否登录”=先探端口→选 A。</span><span class="b a4">“想知能不能登，端口扫描先敲门。”</span></div></div>
+<div class="quiz"><div class="q">【自测】一次完整的网络安全扫描不包括以下哪个阶段()。</div>A.根据检测到的漏洞看能否解决　B.发现目标后进一步搜集目标信息　C.根据搜集到的信息判断或者进一步测试系统是否存在安　D.发现目标主机或网络<div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">选 <b>A</b>。一次完整网络安全扫描“不包括”“根据检测到的漏洞看能否解决”。</span><span class="b a2">完整扫描流程：发现目标→搜集目标信息→判断/测试是否存在漏洞。至于“发现漏洞后能不能解决”是整改环节，不属于“扫描”本身。所以 A 是扫描不包含的步骤。</span><span class="b a3">找“不包括”→ A。</span><span class="b a4">“扫描只管找洞，解决是后话。”</span></div></div>
+<div class="quiz"><div class="q">【自测】()技术不能保护终端的安全。</div>A.防病毒　B.补丁管理　C.防止非法外联　D.漏洞扫描<div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">选 <b>C</b>。“防止非法外联”保护的是“数据不出网”，不能直接保护终端本机安全。</span><span class="b a2">终端安全防护手段：防病毒（杀毒）、补丁管理（修漏洞）、漏洞扫描（查弱点）都直接护终端。而“防止非法外联”是管“内网机器偷偷连外网”，属边界/数据防泄露，不直接加固终端自身。</span><span class="b a3">找“不能保护终端”：A/B/D 直接护终端，C 是外联管控。</span><span class="b a4">“外联管控防泄露，终端加固靠杀补扫。”</span></div></div>
+</section><section class="module" id="m4">
+<h2><span class="num">4</span> 模块4 恶意代码检测手段</h2>
+<h3>4.1 扫描法：用特征字符串比对（Q16）</h3>
+<p><strong>扫描法</strong>=拿已知病毒的<strong>特征字符串</strong>（一段独特字节）去比对文件，命中即中毒，包括特征代码扫描法和特征字扫描法。行为检测法看行为、校验和法看哈希变化、比较法看前后差异，都不靠特征字符串。</p>
+<h3>4.2 特征码 / 行为检测都有风险（Q18）</h3>
+<p>基于特征码和基于行为的检测，都要在沙箱/监控里"跑"可疑代码才能提取特征或观察行为；一旦逃逸或误判，运行恶意代码就有安全风险。所以"可能带来安全问题"是对的。</p>
+<h3>4.3 定量 vs 定性评估（Q15）</h3>
+<p>安全评估：定量=数字打分（精确但参数难量化）；定性=高/中/低分级（易操作）。实际多用定性或定性与定量结合。</p>
+<div class="quiz"><div class="q">【自测】()是用每一种病毒体含有的特征字符串对被检测的对象进行扫描，扫描法包括特征代码扫描法和特征字扫描法。</div>A.行为检测法　B.扫描法　C.校验和法　D.比较法<div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">选 <b>B</b>。用病毒体特征字符串扫描被检对象的，是“扫描法”（含特征代码扫描法、特征字扫描法）。</span><span class="b a2">扫描法=拿已知病毒的特征串（一段独特字节）去比对文件，命中即中毒。行为检测法看行为、校验和法看文件哈希变化、比较法看前后差异，都不靠“特征字符串扫描”。</span><span class="b a3">找“特征字符串扫描”→ 扫描法 B。</span><span class="b a4">“病毒特征串比对，扫描法最对。”</span></div></div>
+<div class="quiz"><div class="q">【自测】基于特征码的扫描技术和基于行为的检测技术都需要执行潜在的恶意代码并分析它们的特征或行为，但是这可能会给系统带来安全问题。()</div>A.正确　B.错误<div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">正确。基于特征码和基于行为的检测技术都需执行潜在恶意代码并分析其特征/行为，这本身可能给系统带来安全风险。</span><span class="b a2">这两类检测要在沙箱/监控环境里“跑”可疑代码才能提取特征或观察行为；一旦逃逸或误判，运行恶意代码就有风险。所以题干说“可能带来安全问题”是对的。</span><span class="b a3">题干对。</span><span class="b a4">“特征行为都要跑，跑了就有险。”</span></div></div>
+<div class="quiz"><div class="q">【自测】虽然在安全评估过程中采取定量评估能获得准确的分析结果，但是由于参数确定较为困难，往往实际评估多采取定性评估，或者定性和定量评估相结合的方法。()</div>A.正确　B.错误<div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">正确。定量评估虽准但参数难定，实际多用定性评估或定性与定量结合。</span><span class="b a2">安全评估：定量=用数字打分（如风险值），精确但参数（资产值/发生概率）难量化；定性=高/中/低分级，易操作。所以实践以定性为主或结合。题干表述正确。</span><span class="b a3">题干对。</span><span class="b a4">“定量虽准参数难，定性定性最常用。”</span></div></div>
+</section><section class="module" id="m5">
+<h2><span class="num">5</span> 模块5 安全评估闭环与整改</h2>
+<h3>5.1 漏洞挖掘及修复贯穿四阶段（Q10）</h3>
+<p><strong>漏洞挖掘及修复</strong>覆盖信息系统全生命周期：开发（写代码引入）→测试（挖）→上线（加固）→运行（监控修复）。软件著作权管理是法律、第三方安全测试只是测试环节、安全加固是上线后动作，都不覆盖四阶段。</p>
+<h3>5.2 南网安全基线整改交付物（Q8）</h3>
+<p>整改要"验证漏洞真修好"，需两种证据：<strong>漏洞扫描器渗透测试结果</strong> + <strong>第三方人工渗透测试结果</strong>。工具自动化 + 独立人工，避免自查盲区。值班记录、运维文档不证明漏洞已整改。</p>
+<div class="quiz"><div class="q">【自测】下列安全活动中，()涉及信息系统开发、测试、上线、运行四个阶段。</div>A.软件著作权管理　B.第三方安全测试　C.安全加固　D.漏洞挖掘及修复<div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">选 <b>D</b>。“漏洞挖掘及修复”贯穿信息系统开发、测试、上线、运行四个阶段。</span><span class="b a2">漏洞不是上线才有的，开发阶段写代码就可能引入、测试阶段挖、上线后运维持续修、运行阶段监控。所以“漏洞挖掘及修复”覆盖全生命周期四阶段。软件著作权管理是法律、第三方安全测试只是测试环节、安全加固是上线后动作，都不覆盖四阶段。</span><span class="b a3">找“涉及四个阶段”→ 漏洞挖掘及修复。</span><span class="b a4">“漏洞挖修贯四段，生老病死都管。”</span></div></div>
+<div class="quiz"><div class="q">【自测】根据南网安全基线要求，检查历年风险评估发现应用系统中存在的应用系统存在数据被篡改漏洞是否根据要求整改到位时，交付物应包括() 和()。</div>A.漏洞扫描器渗透测试结果　B.第三方人工渗透测试结果　C.值班记录　D.运维文档<div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">选 <b>AB</b>。整改交付物：漏洞扫描器渗透测试结果 + 第三方人工渗透测试结果。</span><span class="b a2">安全基线整改要“验证漏洞真修好”，需两种证据：工具自动化渗透测试（扫描器）+ 独立第三方人工渗透（避免自查盲区）。值班记录、运维文档不证明漏洞已整改。</span><span class="b a3">选 A、B。</span><span class="b a4">“整改要验收，机器扫+人工透。”</span></div></div>
+</section><section class="module" id="m6">
+<h2><span class="num">6</span> 模块6 延伸：硬件接口与综合布线</h2>
+<p>本章题库还混入了少量"硬件接口 / 综合布线 / 图像录入"题，虽不纯属漏洞评估，但属同一份考卷，一并拿下。</p>
+<h3>6.1 印刷图片录入设备（Q3）</h3>
+<p>把纸质图片变数字图像需"采集/输入"设备：扫描仪扫稿、数码相机/数字摄像机拍照。<strong>投影仪是输出设备</strong>（把电脑画面投大屏），不能录入。</p>
+<h3>6.2 IDE 设备（Q6）</h3>
+<p>IDE 是老式并行硬盘/光驱接口。<strong>硬盘、CD-ROM 驱动器、刻录机</strong>都走 IDE；扫描仪是独立外设，不走 IDE。</p>
+<h3>6.3 管槽安装规范（Q9）</h3>
+<p>综合布线里走线管/线槽的要求：路由与建筑基线一致、注意整体布置、"横平竖直"弹线定位。"走最短路由"虽省料但不一定合规，不是基本要求。</p>
+<div class="quiz"><div class="q">【自测】以下设备中，不能使用()将印刷图片资料录入计算机。</div>A.扫描仪　B.投影仪　C.数字摄像机　D.数码相机<div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">选 <b>B</b>。投影仪不能把印刷图片“录入”计算机；扫描仪、数字摄像机、数码相机都能。</span><span class="b a2">印刷图片是纸质的，要变成电脑里的数字图像需“采集/输入”设备。扫描仪扫平面稿；数码相机/数字摄像机拍实物；投影仪是“输出”设备，把电脑画面放大投到屏幕，方向相反。</span><span class="b a3">找“不能录入”：A/C/D 都是输入采集类，B 投影仪是放映输出。</span><span class="b a4">“录入靠采不靠投，投影只管往外秀。”</span></div></div>
+<div class="quiz"><div class="q">【自测】常见的IDE 设备包括：</div>A.硬盘　B.CD-ROM驱动器　C.扫描仪　D.刻录机<div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">选 <b>ABD</b>。常见 IDE 设备：硬盘、CD-ROM 驱动器、刻录机。</span><span class="b a2">IDE（Integrated Drive Electronics）是老式并行硬盘/光驱接口。硬盘、光驱、刻录机都走 IDE；扫描仪是独立外设（并口/USB/SCSI），不走 IDE。</span><span class="b a3">排除 C 扫描仪。</span><span class="b a4">“IDE 三兄弟：硬盘、光驱、刻录机。”</span></div></div>
+<div class="quiz"><div class="q">【自测】管槽安装的基本要求包括()。</div>A.管槽路由与建筑物基线保持一致　B.注意房间内的整体布置　C.“横平竖直”,弹线定位　D.走最短的路由<div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">选 <b>ABC</b>。管槽安装要求：路由与建筑基线一致、注意整体布置、“横平竖直”弹线定位。</span><span class="b a2">管槽（线管/线槽）是综合布线里走网线电线的通道。规范：沿建筑结构走、美观整齐、横平竖直弹线保证平直。D“走最短路由”虽省料但不一定合规（要避开干扰、随建筑走），不是基本要求。</span><span class="b a3">排除 D。</span><span class="b a4">“管槽安装：基线齐、布置美、横平竖直。”</span></div></div>
+</section><section id="ref">
+  <h2><span class="num">🃏</span> 速查卡：漏洞与安全评估 20 题核心</h2>
+  <div class="card"><h3>① 漏洞基础</h3><ul>
+    <li>漏洞=脆弱性（易被利用的弱点）；表现：脆/进/打/提（ABCD）</li>
+    <li>漏洞三方面：人、技术、管理（规划策略执行）</li>
+  </ul></div>
+  <div class="card"><h3>② 典型漏洞</h3><ul>
+    <li>缓冲溢出最可靠方案：装最新补丁（非防火墙/IDS/杀毒）</li>
+    <li>Unicode 漏洞：限制 cmd 权限可防</li>
+    <li>Apache：别显示版本号</li>
+  </ul></div>
+  <div class="card"><h3>③ 扫描检测</h3><ul>
+    <li>脆弱性分析=漏洞扫描</li>
+    <li>端口扫描：探远程登录端口</li>
+    <li>完整扫描不含"看能否解决"</li>
+    <li>防止非法外联不护终端（护终端靠杀/补/扫）</li>
+  </ul></div>
+  <div class="card"><h3>④ 恶意检测+评估</h3><ul>
+    <li>扫描法=特征字符串比对</li>
+    <li>特征码/行为检测都要"跑"代码，有风险</li>
+    <li>定量虽准参数难，实际用定性或结合</li>
+    <li>漏洞挖修贯四阶段；整改交付：扫描器+第三方人工</li>
+  </ul></div>
+  <div class="card"><h3>⑤ 延伸硬件</h3><ul>
+    <li>录入图像靠采集（扫描仪/相机/摄像机），投影仪是输出</li>
+    <li>IDE 三兄弟：硬盘、光驱、刻录机</li>
+    <li>管槽：基线齐、布置美、横平竖直</li>
+  </ul></div>
+</section><section class="practice" id="m7">
+  <h2><span class="num">⑦</span> 练习题（题库 20 题全）</h2>
+  <p>完整收录题库「漏洞与安全评估」20 题，点击每题展开四要素解析。重复题已标注（来源：冲刺 200 题与中级考试题完全重复）。</p>
+  <div class="legend">
+    <span><b>橙色=与前面重复</b></span><span><i>紫色=了解即可（延伸题）</i></span>
+  </div>
+  <div class="toolbar">
+    <button onclick="expandAll()">展开全部解析</button>
+    <button class="ghost" onclick="collapseAll()">收起全部解析</button>
+  </div>
+  <div id="items"></div>
+</section></div>
+<footer>漏洞与安全评估 · 零基础系统学习 ｜ 来源：题库「漏洞与安全评估（20 题）」</footer>
+<script>
+const QA = [["1", "许多黑客攻击都是利用软件实现中的缓冲区溢出的漏洞，对于这一威胁，最可靠的解决方案是()。", "A.安装防火墙　B.安装入侵检测系统　C.给系统安装最新的补丁　D.安装防病毒软件", "C", "选 <b>C</b>。最可靠方案是“给系统安装最新的补丁”，从源头修补溢出漏洞。｜缓冲区溢出是程序未检查输入长度、往固定大小缓冲区写了超量数据，覆盖相邻内存、被黑客植入恶意代码。补丁修复的是“程序本身的缺陷”，所以打补丁治本。｜防火墙/IDS/杀毒都治标不治本：防火墙拦不了已授权正常端口上的溢出利用；IDS 只报警不阻断；杀毒靠特征库，对零day溢出无能为力。只有补丁从代码层面堵洞。｜“溢出漏洞补丁堵，防火墙IDS只是护。”", ""], ["2", "许多黑客攻击都是利用软件实现中的缓冲区溢出的漏洞，对于这一威胁，最可靠的解决方案是()。", "A.安装防火墙　B.安装入侵检测系统　C.给系统安装最新的补丁　D.安装防病毒软件", "C", "本题与 Q1 完全重复。选 <b>C</b>。最可靠方案是安装最新补丁，从源头修补溢出漏洞。｜溢出是程序未校验输入长度、写超量数据覆盖相邻内存。补丁修复程序本身缺陷，治本。｜防火墙/IDS/杀毒都治标：防火墙拦不住正常端口上的溢出；IDS 只报不拦；杀毒对零day溢出无效。｜“溢出漏洞补丁堵，防火墙IDS只是护。”", "dup"], ["3", "以下设备中，不能使用()将印刷图片资料录入计算机。", "A.扫描仪　B.投影仪　C.数字摄像机　D.数码相机", "B", "选 <b>B</b>。投影仪不能把印刷图片“录入”计算机；扫描仪、数字摄像机、数码相机都能。｜印刷图片是纸质的，要变成电脑里的数字图像需“采集/输入”设备。扫描仪扫平面稿；数码相机/数字摄像机拍实物；投影仪是“输出”设备，把电脑画面放大投到屏幕，方向相反。｜找“不能录入”：A/C/D 都是输入采集类，B 投影仪是放映输出。｜“录入靠采不靠投，投影只管往外秀。”", "edge"], ["4", "预知某主机是否可远程登录，可利用()进行检测。", "A.端口扫描　B.病毒查杀　C.包过滤　D.身份认证", "A", "选 <b>A</b>。预知某主机能否被远程登录，用“端口扫描”探它是否开放了远程登录端口（如 22/3389）。｜端口扫描像“敲门”：发探测包看哪些端口有回应，从而判断服务开着没、能否登录。病毒查杀看文件、包过滤是防火墙动作、身份认证是登录环节不是探测手段。｜“预知能否登录”=先探端口→选 A。｜“想知能不能登，端口扫描先敲门。”", ""], ["5", "下列选项中，()不是Apache 服务器的安全配置事项。", "A.确保已经安装了最新的安全补丁　B.只启动应用程序需要的服务模块　C.显示Apache 的版本号　D.确保Apache 运行在正确的用户和组下", "C", "选 <b>C</b>。Apache 安全配置里“显示版本号”反而是不安全的，不应做。｜显示版本号会让攻击者知道你跑的 Apache 具体版本，便于针对性利用已知漏洞。安全做法：装最新补丁、只启必需服务模块、用专用低权用户/组运行。所以“显示版本号”恰恰是题问的“不是安全配置事项”。｜找“不是安全配置”：A/B/D 都更安全，C 暴露版本=更危险。｜“版本号别显，暴露挨打先。”", ""], ["6", "常见的IDE 设备包括：", "A.硬盘　B.CD-ROM驱动器　C.扫描仪　D.刻录机", "ABD", "选 <b>ABD</b>。常见 IDE 设备：硬盘、CD-ROM 驱动器、刻录机。｜IDE（Integrated Drive Electronics）是老式并行硬盘/光驱接口。硬盘、光驱、刻录机都走 IDE；扫描仪是独立外设（并口/USB/SCSI），不走 IDE。｜排除 C 扫描仪。｜“IDE 三兄弟：硬盘、光驱、刻录机。”", "edge"], ["7", "()技术不能保护终端的安全。", "A.防病毒　B.补丁管理　C.防止非法外联　D.漏洞扫描", "C", "选 <b>C</b>。“防止非法外联”保护的是“数据不出网”，不能直接保护终端本机安全。｜终端安全防护手段：防病毒（杀毒）、补丁管理（修漏洞）、漏洞扫描（查弱点）都直接护终端。而“防止非法外联”是管“内网机器偷偷连外网”，属边界/数据防泄露，不直接加固终端自身。｜找“不能保护终端”：A/B/D 直接护终端，C 是外联管控。｜“外联管控防泄露，终端加固靠杀补扫。”", ""], ["8", "根据南网安全基线要求，检查历年风险评估发现应用系统中存在的应用系统存在数据被篡改漏洞是否根据要求整改到位时，交付物应包括() 和()。", "A.漏洞扫描器渗透测试结果　B.第三方人工渗透测试结果　C.值班记录　D.运维文档", "AB", "选 <b>AB</b>。整改交付物：漏洞扫描器渗透测试结果 + 第三方人工渗透测试结果。｜安全基线整改要“验证漏洞真修好”，需两种证据：工具自动化渗透测试（扫描器）+ 独立第三方人工渗透（避免自查盲区）。值班记录、运维文档不证明漏洞已整改。｜选 A、B。｜“整改要验收，机器扫+人工透。”", ""], ["9", "管槽安装的基本要求包括()。", "A.管槽路由与建筑物基线保持一致　B.注意房间内的整体布置　C.“横平竖直”,弹线定位　D.走最短的路由", "ABC", "选 <b>ABC</b>。管槽安装要求：路由与建筑基线一致、注意整体布置、“横平竖直”弹线定位。｜管槽（线管/线槽）是综合布线里走网线电线的通道。规范：沿建筑结构走、美观整齐、横平竖直弹线保证平直。D“走最短路由”虽省料但不一定合规（要避开干扰、随建筑走），不是基本要求。｜排除 D。｜“管槽安装：基线齐、布置美、横平竖直。”", "edge"], ["10", "下列安全活动中，()涉及信息系统开发、测试、上线、运行四个阶段。", "A.软件著作权管理　B.第三方安全测试　C.安全加固　D.漏洞挖掘及修复", "D", "选 <b>D</b>。“漏洞挖掘及修复”贯穿信息系统开发、测试、上线、运行四个阶段。｜漏洞不是上线才有的，开发阶段写代码就可能引入、测试阶段挖、上线后运维持续修、运行阶段监控。所以“漏洞挖掘及修复”覆盖全生命周期四阶段。软件著作权管理是法律、第三方安全测试只是测试环节、安全加固是上线后动作，都不覆盖四阶段。｜找“涉及四个阶段”→ 漏洞挖掘及修复。｜“漏洞挖修贯四段，生老病死都管。”", ""], ["11", "信息安全漏洞主要表现在()", "A.系统存在安全方面的脆弱性　B.非法用户得以获得访问权　C.系统易受来自各方面的攻击　D.合法用户未经授权提高访问权限", "ABCD", "选 <b>ABCD</b>。信息安全漏洞主要表现为：系统有脆弱性、非法用户获访问权、系统易受各方攻击、合法用户未经授权提权。｜漏洞的后果是多方面的：本身“脆”（设计缺陷）、被“钻空子”非法进入、被各方“打”、内部人“越权”提权。四方面全中。｜全选。｜“漏洞四相：脆、进、打、提。”", ""], ["12", "脆弱性分析技术，也被通俗地称为漏洞扫描技术。该技术是检测远程或本地系统安全脆弱性的一种安全技术。", "A.正确　B.错误", "正确", "正确。脆弱性分析技术通俗就叫“漏洞扫描技术”，检测远程或本地系统的安全弱点。｜脆弱性（vulnerability）=系统可能被攻破的弱点；漏洞扫描就是自动化的脆弱性分析——扫系统配置/补丁/开放端口找弱点。两者是一回事的不同说法。｜题干说“也被通俗称为”——对。｜“脆弱性分析=漏洞扫描，换汤不换药。”", ""], ["13", "限制网络用户访问和调用cmd的权限可以防范Unicode 漏洞。()", "A.正确　B.错误", "正确", "正确。限制网络用户访问和调用 cmd 的权限，可防范 Unicode 漏洞利用。｜Unicode 漏洞（经典 IIS 漏洞）利用扩展字符绕过敏感路径、借 cmd.exe 执行系统命令。收紧对 cmd 的访问/调用权限，攻击者就拿不到命令行，漏洞利用被阻断。所以限制 cmd 权限是有效防范措施。｜题干对。｜“Unicode 借 cmd 跑，权限收紧跑不了。”", ""], ["14", "从系统整体看，安全“漏洞”包括哪些方面()。", "A.人的因素　B.技术因素　C.规划，策略和执行过程", "ABC", "选 <b>ABC</b>。安全“漏洞”从系统整体看包括：人的因素、技术因素、规划/策略/执行过程。｜漏洞不只是“技术 bug”：人（员工误操作/被钓鱼）、技术（代码/配置缺陷）、管理（规划策略执行不到位）三方面共同构成。三者都选。｜全选 ABC。｜“漏洞三方面：人、技、管。”", ""], ["15", "虽然在安全评估过程中采取定量评估能获得准确的分析结果，但是由于参数确定较为困难，往往实际评估多采取定性评估，或者定性和定量评估相结合的方法。", "A.正确　B.错误", "正确", "正确。定量评估虽准但参数难定，实际多用定性评估或定性与定量结合。｜安全评估：定量=用数字打分（如风险值），精确但参数（资产值/发生概率）难量化；定性=高/中/低分级，易操作。所以实践以定性为主或结合。题干表述正确。｜题干对。｜“定量虽准参数难，定性定性最常用。”", ""], ["16", "()是用每一种病毒体含有的特征字符串对被检测的对象进行扫描，扫描法包括特征代码扫描法和特征字扫描法。", "A.行为检测法　B.扫描法　C.校验和法　D.比较法", "B", "选 <b>B</b>。用病毒体特征字符串扫描被检对象的，是“扫描法”（含特征代码扫描法、特征字扫描法）。｜扫描法=拿已知病毒的特征串（一段独特字节）去比对文件，命中即中毒。行为检测法看行为、校验和法看文件哈希变化、比较法看前后差异，都不靠“特征字符串扫描”。｜找“特征字符串扫描”→ 扫描法 B。｜“病毒特征串比对，扫描法最对。”", ""], ["17", "一次完整的网络安全扫描不包括以下哪个阶段()。", "A.根据检测到的漏洞看能否解决　B.发现目标后进一步搜集目标信息　C.根据搜集到的信息判断或者进一步测试系统是否存在安　D.发现目标主机或网络", "A", "选 <b>A</b>。一次完整网络安全扫描“不包括”“根据检测到的漏洞看能否解决”。｜完整扫描流程：发现目标→搜集目标信息→判断/测试是否存在漏洞。至于“发现漏洞后能不能解决”是整改环节，不属于“扫描”本身。所以 A 是扫描不包含的步骤。｜找“不包括”→ A。｜“扫描只管找洞，解决是后话。”", ""], ["18", "基于特征码的扫描技术和基于行为的检测技术都需要执行潜在的恶意代码并分析它们的特征或行为，但是这可能会给系统带来安全问题。", "A.正确　B.错误", "正确", "正确。基于特征码和基于行为的检测技术都需执行潜在恶意代码并分析其特征/行为，这本身可能给系统带来安全风险。｜这两类检测要在沙箱/监控环境里“跑”可疑代码才能提取特征或观察行为；一旦逃逸或误判，运行恶意代码就有风险。所以题干说“可能带来安全问题”是对的。｜题干对。｜“特征行为都要跑，跑了就有险。”", ""], ["19", "以下设备中，不能使用()将印刷图片资料录入计算机。", "A.扫描仪　B.投影仪　C.数字摄像机　D.数码相机", "B", "本题与 Q3 完全重复。选 <b>B</b>。投影仪不能录入印刷图片，扫描仪/数字摄像机/数码相机可以。｜印刷图片变数字图像需“采集”设备；投影仪是输出设备，方向相反。｜找“不能录入”：B 投影仪是放映输出。｜“录入靠采不靠投，投影只管往外秀。”", "dup"], ["20", "预知某主机是否可远程登录，可利用()进行检测。", "A.端口扫描　B.病毒查杀　C.包过滤　D.身份认证", "A", "本题与 Q4 完全重复。选 <b>A</b>。预知能否远程登录用端口扫描探开放端口。｜端口扫描像敲门探服务；病毒查杀/包过滤/身份认证都不是预知探测。｜选 A。｜“想知能不能登，端口扫描先敲门。”", "dup"]];
+
+const box=document.getElementById('items');
+QA.forEach((q)=>{
+  const num=q[0], stem=q[1], opts=q[2], ans=q[3];
+  const analysisRaw = q[4];
+  const tag = (q.length===6) ? q[5] : '';
+  const isSpecial = analysisRaw.indexOf('⚠')===0 || ans.indexOf('题库标注')>=0;
+  let tagHtml = tag==='dup' ? '<span class="dup">（与前面重复）</span>'
+              : tag==='edge' ? '<span class="edge">（了解即可）</span>'
+              : tag==='dupedge' ? '<span class="dup">（与前面重复）</span><span class="edge">（了解即可）</span>'
+              : isSpecial ? '<span class="edge">（存疑·见解析）</span>' : '';
+  const ansHtml = '<span class="ans">答案：'+ans+'</span>';
+  let ana;
+  if(isSpecial){
+    ana = '<div class="analysis"><span class="b a2">'+analysisRaw+'</span></div>';
+  } else {
+    const parts = analysisRaw.split('｜');
+    const cls=['a1','a2','a3','a4'];
+    ana = '<div class="analysis">'+parts.map((p,k)=>'<span class="b '+cls[k]+'">'+(p||'')+'</span>').join('')+'</div>';
+  }
+  const div=document.createElement('div');
+  div.className='item';
+  div.innerHTML='<div class="q">'+num+'. '+stem+'</div>'
+    +'<div class="meta">'+tagHtml+'</div>'
+    +'<div style="font-size:13.5px;color:#556">选项：'+opts.replace(/｜.*/,'')+'</div>'
+    + ansHtml
+    +'<div class="toggle" onclick="this.nextElementSibling.classList.toggle(\'open\')">▸ 显示解析</div>'
+    + ana;
+  box.appendChild(div);
+});
+function expandAll(){document.querySelectorAll('.item .analysis').forEach(e=>e.classList.add('open'));}
+function collapseAll(){document.querySelectorAll('.item .analysis').forEach(e=>e.classList.remove('open'));}
+</script>
+</body>
+</html>

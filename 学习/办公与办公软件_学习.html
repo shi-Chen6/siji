@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>办公与办公软件 · 零基础系统学习</title>
+<style>
+  :root{
+    --bg:#f5f7fb; --card:#ffffff; --ink:#1f2a44; --muted:#6b7790;
+    --line:#e6eaf2; --brand:#3b6ef5; --brand-soft:#eaf0ff;
+    --green:#16a34a; --green-soft:#e7f8ee; --red:#e23b3b; --red-soft:#fdecec;
+    --amber:#d98b00; --amber-soft:#fff4e0; --violet:#7c5cff; --violet-soft:#f1ecff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.7;font-size:15px}
+  header{background:linear-gradient(135deg,#3b6ef5,#7c5cff);color:#fff;padding:34px 20px;text-align:center}
+  header h1{margin:0 0 8px;font-size:24px}
+  header p{margin:0;opacity:.92;font-size:14px}
+  .wrap{max-width:920px;margin:0 auto;padding:18px}
+  nav{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);padding:10px 14px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+  nav a{font-size:13px;color:var(--brand);text-decoration:none;background:var(--brand-soft);
+    padding:5px 11px;border-radius:20px;white-space:nowrap}
+  nav a:hover{background:var(--brand);color:#fff}
+  section{background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:22px;margin:18px 0;box-shadow:0 4px 18px rgba(40,60,120,.05)}
+  h2{font-size:20px;margin:0 0 6px;display:flex;align-items:center;gap:10px}
+  h2 .num{background:var(--brand);color:#fff;width:30px;height:30px;border-radius:9px;
+    display:inline-flex;align-items:center;justify-content:center;font-size:15px;flex:0 0 auto}
+  h3{font-size:16px;margin:18px 0 8px;color:var(--brand)}
+  p{margin:8px 0}
+  .analogy{background:var(--brand-soft);border-left:4px solid var(--brand);border-radius:8px;
+    padding:10px 14px;margin:12px 0;font-size:14px;color:#2a3a66}
+  .analogy b{color:var(--brand)}
+  .kv{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
+  .kv th,.kv td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  .kv th{background:var(--brand-soft);color:#2a3a66}
+  .quiz{background:#fbfcfe;border:1px dashed var(--line);border-radius:10px;padding:12px 14px;margin:14px 0}
+  .quiz .q{font-weight:600}
+  .quiz .ans{display:inline-block;margin-top:8px;background:var(--green-soft);color:var(--green);
+    font-weight:700;padding:4px 12px;border-radius:8px;font-size:14px}
+  .toggle{cursor:pointer;color:var(--brand);font-size:13px;margin-top:8px;user-select:none;font-weight:600}
+  .analysis{display:none;margin-top:10px;border-top:1px dashed var(--line);padding-top:10px;font-size:14px}
+  .analysis.open{display:block}
+  .analysis .b{display:block;margin:6px 0;padding:8px 10px;border-radius:8px}
+  .a1{background:var(--green-soft)} .a2{background:var(--brand-soft)} .a3{background:var(--amber-soft)} .a4{background:var(--violet-soft)}
+  .figure{background:#fbfcff;border:1px solid var(--line);border-radius:12px;padding:14px;margin:14px 0;text-align:center}
+  .figure svg{width:100%;max-width:560px;height:auto}
+  .figure .cap{font-size:13px;color:var(--muted);margin-top:6px}
+  .trap{background:var(--red-soft);border-left:4px solid var(--red);border-radius:8px;
+    padding:10px 14px;margin:12px 0;font-size:14px;color:#7a1f1f}
+  .trap b{color:var(--red)}
+  #story .flow{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:14px 0}
+  #story .step{background:var(--brand-soft);border:1px solid #cfe0ff;color:#2a3a66;border-radius:12px;
+    padding:10px 12px;width:140px;text-align:center;font-size:13px}
+  #story .step b{display:block;color:var(--brand);font-size:15px;margin-bottom:3px}
+  #ref .card{background:#fbfcfe;border:1px solid var(--line);border-radius:12px;padding:14px;margin:12px 0}
+  #ref h3{margin-top:0}
+  #ref ul{margin:6px 0;padding-left:20px}
+  #ref li{margin:4px 0}
+  .practice .toolbar{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+  .practice button{background:var(--brand);color:#fff;border:none;padding:8px 16px;border-radius:9px;cursor:pointer;font-size:14px}
+  .practice button.ghost{background:var(--brand-soft);color:var(--brand)}
+  .item{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0;background:#fff}
+  .item .q{font-weight:600;font-size:14.5px}
+  .item .meta{font-size:12px;color:var(--muted);margin-top:4px}
+  .item .ans{display:inline-block;margin-top:8px;background:var(--green-soft);color:var(--green);
+    font-weight:700;padding:3px 10px;border-radius:7px;font-size:13px}
+  .item .dup{color:var(--amber);font-size:12px;margin-left:8px}
+  .item .edge{color:var(--violet);font-size:12px;margin-left:8px}
+  .item .analysis{margin-top:8px}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:6px 0}
+  .legend span b{color:var(--amber)} .legend span i{color:var(--violet);font-style:normal}
+  footer{text-align:center;color:var(--muted);font-size:13px;padding:24px}
+  @media(max-width:600px){.wrap{padding:10px}section{padding:16px}#story .step{width:46%}}
+</style>
+</head>
+<body>
+<header>
+  <h1>📄 办公与办公软件 · 零基础系统学习</h1>
+  <p>内容来源：题库「办公与办公软件（9 题）」｜ 通俗类比 + 考点自测 + 9 题全解析</p>
+</header>
+
+<nav>
+<a href="#story">📖 故事线</a><a href="#m1">① 办公套件</a><a href="#m2">② 文档兼容</a><a href="#m3">③ Word基础</a><a href="#m4">④ 演示联动</a><a href="#m5">⑤ 延伸</a><a href="#ref">🃏 速查卡</a><a href="#m8">⑥ 9题自测</a>
+</nav>
+
+<div class="wrap">
+<section id="story">
+  <h2><span class="num">📖</span> 故事线：办公软件从“装”到“用”一张图</h2>
+  <p>零基础学办公软件，先建立整体地图：认得“什么是套件”→ 懂得“文件格式与兼容”→ 会“Word 排版与快捷键”→ 掌握“表格与演示联动”→ 了解“延伸的系统更新与网络安全”。5 个模块就是这条递进链，一路学下来 9 题全拿下。</p>
+  <div class="flow">
+    <div class="step"><b>① 办公套件</b>WPS/Office/OpenOffice，IE 不是（模块一）</div>
+    <div class="step"><b>② 文档兼容</b>docx 格式、改扩展名陷阱（模块二）</div>
+    <div class="step"><b>③ Word 基础</b>段落对齐、Ctrl+C（模块三）</div>
+    <div class="step"><b>④ 演示联动</b>粘贴链接自动更新（模块四）</div>
+    <div class="step"><b>⑤ 延伸</b>WSUS、网络安全审查（模块五）</div>
+  </div>
+  <div class="analogy"><b>生活类比：</b>用办公软件像布置办公室——先认“家具有哪些套件”（模块一），再懂“文件用哪种盒子装、老盒能不能开”（模块二），然后会“摆桌椅排版、复制粘贴”（模块三），接着让“表格和幻灯片联动”（模块四），最后知道“电脑还要打补丁、上网要审查”（模块五）。</div>
+</section>
+<section class="module" id="m1">
+<h2><span class="num">1</span> 模块1 办公软件与办公套件</h2>
+<h3>1.1 什么是办公软件</h3>
+<p><strong>办公软件</strong>就是帮你在电脑上“写文档、做表格、做演示”的工具总称。最常见的三大件：Word（写字）、Excel（算表）、PowerPoint（做幻灯片），它们解决的是“日常办公”问题。</p>
+<div class="analogy"><b>生活类比：</b>办公软件像“文具套装”——笔（写字）、尺子（算数）、画板（演示），把办公室里最常用的活儿搬上了电脑。</div>
+<h3>1.2 办公套件 vs 单一应用</h3>
+<p><strong>办公套件</strong>是把上述多个软件“打包捆绑”一起卖、一起装的合集。主流三套件：金山 WPS（Kingsoft Office）、微软 Microsoft Office、开源 Apache OpenOffice。注意：<b>浏览器（如 Internet Explorer）只是用来上网的，不属于办公套件</b>。</p>
+<div class="trap"><b>⚠ 考点：</b>看到带“Office”字样的通常是套件；IE / 浏览器是上网工具，不是办公套件。</div>
+<div class="quiz"><div class="q">【自测】下列各种软件中，()不属于办公套件。</div><div style="font-size:13.5px;color:#556;margin-top:6px">选项：A.Kingsoft Office　B.Internet Explorer　C.Microsoft Office　D.Apache OpenOffice</div><div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">🎯 答案解析：选 <b>B</b>。Internet Explorer 是“网页浏览器”，不是办公套件。</span><span class="b a2">📚 知识点讲解：办公套件＝把多个办公软件打包在一起卖（文字、表格、演示等）。常见三大家：金山 WPS（Kingsoft Office）、微软 Microsoft Office、开源 Apache OpenOffice。浏览器是用来上网的，归“上网工具”，不在办公套件里。</span><span class="b a3">💡 解题思路：找“不属于办公套件”。A 金山、C 微软、D 开源三件套都带“Office”字样，明显是办公套件；B “Explorer”是浏览器。</span><span class="b a4">🧠 记忆口诀：“带 Office 的是套件，IE 浏览器靠边站。”</span></div></div>
+</section>
+<section class="module" id="m2">
+<h2><span class="num">2</span> 模块2 文档格式与兼容</h2>
+<h3>2.1 docx 是什么格式</h3>
+<p>docx 是 Word 2007 及以后版本的默认格式，本质是“一个压缩包里装了一堆 XML 文本”（类似把文档拆成结构化小文件再 zip 起来）。而老 Word 2003 用的 doc 是另一种二进制格式。两者内核不同。</p>
+<div class="analogy"><b>生活类比：</b>docx 像“新式打包快递盒（里面按规矩分格放）”，doc 像“老式麻袋”。盒子和麻袋的封条名（.docx / .doc）只是标签不同，里面东西的格式天差地别。</div>
+<h3>2.2 “改扩展名”的经典陷阱</h3>
+<p>有人以为把文件后缀 .docx 改成 .doc，老 Word 就能打开。<b>错！</b>扩展名只是文件名尾巴，改它不改变文件内部真正的格式。Word 2003 打开后只会看到乱码或报错。要真正打开，得：装“Office 兼容包”，或用 Word 2007+ / WPS 2012+ 直接开。</p>
+<div class="trap"><b>⚠ 考点：</b>Q1 问“不正确”的说法，就是“改扩展名后能打开”这一句。记住：<b>扩展名≠格式</b>。</div>
+<div class="quiz"><div class="q">【自测】以下关于打开扩展名为 docx 的文件的说法中，不正确的是()。</div><div style="font-size:13.5px;color:#556;margin-top:6px">选项：A.通过安装 Office 兼容包就可以用 Word 2003 打开 docx 文件　B.用 Word 2007 可以直接打开 docx 文件　C.用 WPS 2012 可以直接打开 docx 文件　D.将扩展名 docx 改为 doc 后可以用 Word 2003 打开 docx 文件</div><div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">🎯 答案解析：选 <b>D</b>。把 docx 文件扩展名改成 doc，并不能让 Word 2003 打开它——扩展名只是文件名后缀，文件内部的格式并没变，Word 2003 读不懂。</span><span class="b a2">📚 知识点讲解：docx 是 Word 2007 起的“新”格式（本质是压缩的 XML 包），Word 2003 认的是老 doc 二进制格式。要打开它，要么装“兼容包”，要么用新版本 Word / WPS。只改扩展名是“换汤不换药”，内容没转换。</span><span class="b a3">💡 解题思路：找“不正确”的说法。A 装兼容包可开（对）；B Word 2007 直接开（对）；C WPS 2012 直接开（对）；D 改扩展名就能开——错，扩展名≠格式。</span><span class="b a4">🧠 记忆口诀：“扩展名是马甲，格式没换别想开。”</span></div></div>
+</section>
+<section class="module" id="m3">
+<h2><span class="num">3</span> 模块3 Word 文字处理基础</h2>
+<h3>3.1 段落对齐方式</h3>
+<p>段落对齐决定一行文字在左右页边距之间怎么摆。Word 2007 提供的对齐有：左对齐、<strong>两端对齐</strong>（首尾顶边、中间匀开）、<strong>居中对齐</strong>、右对齐、<strong>分散对齐</strong>（连单行也撑满整行）。注意：<b>没有“上下对齐”这个选项</b>——那是页面“垂直对齐”的概念，不是段落对齐。</p>
+<div class="quiz"><div class="q">【自测】在 Word 2007 中，段落对齐方式包括()。</div><div style="font-size:13.5px;color:#556;margin-top:6px">选项：A.两端对齐　B.分散对齐　C.居中对齐　D.上下对齐</div><div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">🎯 答案解析：选 <b>ABC</b>。Word 段落对齐有：左对齐、两端对齐、居中对齐、右对齐、分散对齐。“上下对齐”不存在（那是“垂直居中”之类的页面设置，不是段落对齐方式）。</span><span class="b a2">📚 知识点讲解：段落对齐管的是“一行文字在左右页边距之间怎么摆”。两端对齐（首尾顶边、中间匀开）、分散对齐（连单行也撑满）、居中对齐（放中间）。D“上下对齐”是混淆项——Word 没有这个段落对齐选项。</span><span class="b a3">💡 解题思路：选“包括”的。A/B/C 都是真对齐方式；D 上下对齐是凑的干扰项，排除。</span><span class="b a4">🧠 记忆口诀：“两端分散居中右，上下对齐是忽悠。”</span></div></div>
+<h3>3.2 常用快捷键</h3>
+<p>Ctrl+C 复制、Ctrl+X 剪切、Ctrl+V 粘贴，是 Windows 通用快捷键，在 Word 里选中文本或对象后按 Ctrl+C 即可复制到剪贴板。</p>
+<div class="quiz"><div class="q">【自测】Word 文档中 Ctrl+C 复制所选文本或对象。</div><div style="font-size:13.5px;color:#556;margin-top:6px">选项：A.正确　B.错误</div><div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">🎯 答案解析：选 <b>正确</b>。Ctrl+C 就是“复制”的通用快捷键，Word 里选中文字 / 图片后按它即复制到剪贴板。</span><span class="b a2">📚 知识点讲解：Ctrl+C（Copy）复制、Ctrl+X（Cut）剪切、Ctrl+V（Paste）粘贴，是 Windows 通用快捷键，Word 当然支持。</span><span class="b a3">💡 解题思路：题干说 Ctrl+C 复制——这是常识性正确表述，选正确。</span><span class="b a4">🧠 记忆口诀：“C 是复制，V 是粘贴，X 是剪切。”</span></div></div>
+</section>
+<section class="module" id="m4">
+<h2><span class="num">4</span> 模块4 表格与演示联动</h2>
+<h3>4.1 Excel 与 PowerPoint 的“粘贴链接”</h3>
+<p>在 PPT 里插入 Excel 表格有两种贴法：① <strong>普通粘贴</strong>＝贴一张“静态照片”，以后 Excel 改了它不变；② <strong>粘贴链接</strong>＝贴一个“指向 Excel 单元格的活指针”（OLE 链接），Excel 源数据一更新，PPT 里的表自动跟着变。题干说的就是第二种。</p>
+<div class="analogy"><b>生活类比：</b>普通粘贴像“打印出来的照片”（定格）；粘贴链接像“实时视频连线”（源动它动）。</div>
+<div class="quiz"><div class="q">【自测】如果将 Excel 数据表格以粘贴链接方式插入到 PowerPoint 演示文稿中，则当 Excel 工作簿中的表格数据更改后，PowerPoint 演示文稿中对应的信息将自动更改。</div><div style="font-size:13.5px;color:#556;margin-top:6px">选项：A.正确　B.错误</div><div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">🎯 答案解析：选 <b>正确</b>。粘贴链接（链接对象）后，Excel 源数据一改，PPT 里的表会自动跟着变。</span><span class="b a2">📚 知识点讲解：Office 的“粘贴链接”用的是 OLE 链接技术——PPT 里只存一个“指向 Excel 单元格的指针”，不存数据副本。源一更新，指针指向的最新值就显示出来。区别于“普通粘贴”（只贴一张静态快照，源改了它不变）。</span><span class="b a3">💡 解题思路：关键词“粘贴链接方式”＋“自动更改”——链接的本质就是实时联动，所以正确。</span><span class="b a4">🧠 记忆口诀：“链接是活指针，源变它也变。”</span></div></div>
+</section>
+<section class="module" id="m5">
+<h2><span class="num">5</span> 模块5 延伸：系统更新与网络安全</h2>
+<h3>5.1 延伸：WSUS 系统更新</h3>
+<p>WSUS（Windows Server Update Services）是微软给企业内网批量发 Windows 补丁的服务，运行在 Windows Server 上。它和 Office（办公软件）是两码事。说“装 WSUS 需先装 Office 2003”是错的。</p>
+<div class="quiz"><div class="q">【自测】要使用默认选项安装 WSUS，需要在计算机上安装 Microsoft Office 2003。</div><div style="font-size:13.5px;color:#556;margin-top:6px">选项：A.正确　B.错误</div><div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">🎯 答案解析：选 <b>错误</b>。装 WSUS 不需要先装 Office 2003，两者毫无关系。</span><span class="b a2">📚 知识点讲解：WSUS＝Windows Server Update Services（Windows 服务器更新服务），是微软给内网批量分发 Windows 补丁的工具，跑在 Windows Server 上。Office 是办公软件，和补丁分发服务不搭界。</span><span class="b a3">💡 解题思路：WSUS 是“系统更新服务”，Office 是“办公软件”——风马牛不相及，说“需先装 Office 2003”纯属误导，选错误。</span><span class="b a4">🧠 记忆口诀：“WSUS 管补丁，Office 不相干。”</span></div></div>
+<h3>5.2 延伸：网络安全审查监督</h3>
+<p>网络安全审查办公室对关键信息基础设施、数据处理等活动做“事前＋事中＋事后”全过程监督，通过主动审查、日常监测、接受举报等手段覆盖全周期。</p>
+<div class="quiz"><div class="q">【自测】网络安全审查办公室通过接受举报等形式加强()监督。</div><div style="font-size:13.5px;color:#556;margin-top:6px">选项：A.事前　B.事中　C.事后　D.以上都是</div><div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">🎯 答案解析：选 <b>D</b>。“以上都是”——网络安全审查办公室既管事前（上线前审查）、也管事中（运行监测）、还管事后（举报追责），全周期覆盖。</span><span class="b a2">📚 知识点讲解：网络安全审查是对关键信息基础设施、数据处理等活动做“事前＋事中＋事后”的全过程监督。审查办公室通过主动审查、日常监测、接受举报等多种手段，把三个阶段都管起来。</span><span class="b a3">💡 解题思路：问“加强哪种监督”，三个选项事前 / 事中 / 事后本身就是监督的三个环节，且题干“通过接受举报等形式”暗示多手段、全覆盖，故选“以上都是”。</span><span class="b a4">🧠 记忆口诀：“审查管全程，事前事中又事后。”</span></div></div>
+</section>
+<section id="ref">
+  <h2><span class="num">🃏</span> 速查卡：办公与办公软件</h2>
+  <div class="card"><h3>一、办公套件识别</h3>
+    <ul>
+      <li><b>是套件</b>：Kingsoft Office（WPS）、Microsoft Office、Apache OpenOffice</li>
+      <li><b>不是套件</b>：Internet Explorer（浏览器，上网工具）</li>
+    </ul></div>
+  <div class="card"><h3>二、文档格式与兼容</h3>
+    <ul>
+      <li>docx＝Word 2007+ 的 XML 压缩格式；doc＝Word 2003 老二进制格式</li>
+      <li>打开 docx：装兼容包 / 用 Word 2007+ / WPS 2012+</li>
+      <li><b>陷阱</b>：改扩展名 docx→doc 不能让 Word 2003 打开（扩展名≠格式）</li>
+    </ul></div>
+  <div class="card"><h3>三、Word 基础</h3>
+    <ul>
+      <li>段落对齐：左 / 两端 / 居中 / 右 / 分散对齐（<b>无“上下对齐”</b>）</li>
+      <li>Ctrl+C 复制、Ctrl+X 剪切、Ctrl+V 粘贴</li>
+    </ul></div>
+  <div class="card"><h3>四、表格与演示联动</h3>
+    <ul>
+      <li>Excel“粘贴链接”进 PPT：源改→PPT 自动更新（OLE 链接）</li>
+    </ul></div>
+  <div class="card"><h3>五、延伸</h3>
+    <ul>
+      <li>WSUS＝Windows 补丁分发服务，与 Office 无关</li>
+      <li>网络安全审查：事前＋事中＋事后，全周期监督</li>
+    </ul></div>
+</section>
+<section class="practice" id="m8">
+<h2><span class="num">⑥</span> 9 题全量自测</h2>
+<div class="legend"><span>🟠 <b>橙</b>＝与前面重复</span><span><i>🟣 紫</i>＝了解即可（延伸题）</span></div>
+<div class="toolbar"><button onclick="expandAll()">展开全部解析</button><button class="ghost" onclick="collapseAll()">收起全部</button></div>
+<div id="items"></div>
+</section>
+</div>
+
+<footer>办公与办公软件 · 零基础系统学习 ｜ 来源：题库「办公与办公软件（9 题）」</footer>
+
+<script>
+const QA = [["1", "以下关于打开扩展名为 docx 的文件的说法中，不正确的是()。", "A.通过安装 Office 兼容包就可以用 Word 2003 打开 docx 文件　B.用 Word 2007 可以直接打开 docx 文件　C.用 WPS 2012 可以直接打开 docx 文件　D.将扩展名 docx 改为 doc 后可以用 Word 2003 打开 docx 文件", "D", "🎯 答案解析：选 <b>D</b>。把 docx 文件扩展名改成 doc，并不能让 Word 2003 打开它——扩展名只是文件名后缀，文件内部的格式并没变，Word 2003 读不懂。｜📚 知识点讲解：docx 是 Word 2007 起的“新”格式（本质是压缩的 XML 包），Word 2003 认的是老 doc 二进制格式。要打开它，要么装“兼容包”，要么用新版本 Word / WPS。只改扩展名是“换汤不换药”，内容没转换。｜💡 解题思路：找“不正确”的说法。A 装兼容包可开（对）；B Word 2007 直接开（对）；C WPS 2012 直接开（对）；D 改扩展名就能开——错，扩展名≠格式。｜🧠 记忆口诀：“扩展名是马甲，格式没换别想开。”", ""], ["2", "下列各种软件中，()不属于办公套件。", "A.Kingsoft Office　B.Internet Explorer　C.Microsoft Office　D.Apache OpenOffice", "B", "🎯 答案解析：选 <b>B</b>。Internet Explorer 是“网页浏览器”，不是办公套件。｜📚 知识点讲解：办公套件＝把多个办公软件打包在一起卖（文字、表格、演示等）。常见三大家：金山 WPS（Kingsoft Office）、微软 Microsoft Office、开源 Apache OpenOffice。浏览器是用来上网的，归“上网工具”，不在办公套件里。｜💡 解题思路：找“不属于办公套件”。A 金山、C 微软、D 开源三件套都带“Office”字样，明显是办公套件；B “Explorer”是浏览器。｜🧠 记忆口诀：“带 Office 的是套件，IE 浏览器靠边站。”", ""], ["3", "如果将 Excel 数据表格以粘贴链接方式插入到 PowerPoint 演示文稿中，则当 Excel 工作簿中的表格数据更改后，PowerPoint 演示文稿中对应的信息将自动更改。", "A.正确　B.错误", "正确", "🎯 答案解析：选 <b>正确</b>。粘贴链接（链接对象）后，Excel 源数据一改，PPT 里的表会自动跟着变。｜📚 知识点讲解：Office 的“粘贴链接”用的是 OLE 链接技术——PPT 里只存一个“指向 Excel 单元格的指针”，不存数据副本。源一更新，指针指向的最新值就显示出来。区别于“普通粘贴”（只贴一张静态快照，源改了它不变）。｜💡 解题思路：关键词“粘贴链接方式”＋“自动更改”——链接的本质就是实时联动，所以正确。｜🧠 记忆口诀：“链接是活指针，源变它也变。”", ""], ["4", "在 Word 2007 中，段落对齐方式包括()。", "A.两端对齐　B.分散对齐　C.居中对齐　D.上下对齐", "ABC", "🎯 答案解析：选 <b>ABC</b>。Word 段落对齐有：左对齐、两端对齐、居中对齐、右对齐、分散对齐。“上下对齐”不存在（那是“垂直居中”之类的页面设置，不是段落对齐方式）。｜📚 知识点讲解：段落对齐管的是“一行文字在左右页边距之间怎么摆”。两端对齐（首尾顶边、中间匀开）、分散对齐（连单行也撑满）、居中对齐（放中间）。D“上下对齐”是混淆项——Word 没有这个段落对齐选项。｜💡 解题思路：选“包括”的。A/B/C 都是真对齐方式；D 上下对齐是凑的干扰项，排除。｜🧠 记忆口诀：“两端分散居中右，上下对齐是忽悠。”", ""], ["5", "要使用默认选项安装 WSUS，需要在计算机上安装 Microsoft Office 2003。", "A.正确　B.错误", "错误", "🎯 答案解析：选 <b>错误</b>。装 WSUS 不需要先装 Office 2003，两者毫无关系。｜📚 知识点讲解：WSUS＝Windows Server Update Services（Windows 服务器更新服务），是微软给内网批量分发 Windows 补丁的工具，跑在 Windows Server 上。Office 是办公软件，和补丁分发服务不搭界。｜💡 解题思路：WSUS 是“系统更新服务”，Office 是“办公软件”——风马牛不相及，说“需先装 Office 2003”纯属误导，选错误。｜🧠 记忆口诀：“WSUS 管补丁，Office 不相干。”", "edge"], ["6", "Word 文档中 Ctrl+C 复制所选文本或对象。", "A.正确　B.错误", "正确", "🎯 答案解析：选 <b>正确</b>。Ctrl+C 就是“复制”的通用快捷键，Word 里选中文字 / 图片后按它即复制到剪贴板。｜📚 知识点讲解：Ctrl+C（Copy）复制、Ctrl+X（Cut）剪切、Ctrl+V（Paste）粘贴，是 Windows 通用快捷键，Word 当然支持。｜💡 解题思路：题干说 Ctrl+C 复制——这是常识性正确表述，选正确。｜🧠 记忆口诀：“C 是复制，V 是粘贴，X 是剪切。”", ""], ["7", "网络安全审查办公室通过接受举报等形式加强()监督。", "A.事前　B.事中　C.事后　D.以上都是", "D", "🎯 答案解析：选 <b>D</b>。“以上都是”——网络安全审查办公室既管事前（上线前审查）、也管事中（运行监测）、还管事后（举报追责），全周期覆盖。｜📚 知识点讲解：网络安全审查是对关键信息基础设施、数据处理等活动做“事前＋事中＋事后”的全过程监督。审查办公室通过主动审查、日常监测、接受举报等多种手段，把三个阶段都管起来。｜💡 解题思路：问“加强哪种监督”，三个选项事前 / 事中 / 事后本身就是监督的三个环节，且题干“通过接受举报等形式”暗示多手段、全覆盖，故选“以上都是”。｜🧠 记忆口诀：“审查管全程，事前事中又事后。”", "edge"], ["8", "以下关于打开扩展名为 docx 的文件的说法中，不正确的是()。", "A.通过安装 Office 兼容包就可以用 Word 2003 打开 docx 文件　B.用 Word 2007 可以直接打开 docx 文件　C.用 WPS 2012 可以直接打开 docx 文件　D.将扩展名 docx 改为 doc 后可以用 Word 2003 打开 docx 文件", "D", "🎯 答案解析：选 <b>D</b>。把 docx 扩展名改成 doc 只是改名，文件内部仍是 docx 格式，Word 2003 打不开。本题与 Q1 完全相同。｜📚 知识点讲解：docx 是 Word 2007+ 的 XML 压缩格式，Word 2003 认的是老 doc 二进制格式；改扩展名不改变格式，属跨文档重复题。｜💡 解题思路：同 Q1：找“不正确”说法，D“改扩展名能开”是错的。｜🧠 记忆口诀：“扩展名是马甲，格式没换别想开。”", "dup"], ["9", "下列各种软件中，()不属于办公套件。", "A.Kingsoft Office　B.Internet Explorer　C.Microsoft Office　D.Apache OpenOffice", "B", "🎯 答案解析：选 <b>B</b>。Internet Explorer 是浏览器，不是办公套件。本题与 Q2 完全相同。｜📚 知识点讲解：办公套件指 WPS / Microsoft Office / OpenOffice 这类打包办公软件；IE 属上网工具，跨文档重复题。｜💡 解题思路：同 Q2：带“Office”字样的多为套件，IE 靠边站。｜🧠 记忆口诀：“带 Office 的是套件，IE 浏览器靠边站。”", "dup"]];
+
+const box=document.getElementById('items');
+QA.forEach((q)=>{
+  const num=q[0], stem=q[1], opts=q[2], ans=q[3];
+  const analysisRaw = q[4];
+  const tag = (q.length===6) ? q[5] : '';
+  const isSpecial = analysisRaw.indexOf('⚠')===0 || ans.indexOf('题库标注')>=0;
+  let tagHtml = tag==='dup' ? '<span class="dup">（与前面重复）</span>'
+              : tag==='edge' ? '<span class="edge">（了解即可）</span>'
+              : tag==='dupedge' ? '<span class="dup">（与前面重复）</span><span class="edge">（了解即可）</span>'
+              : isSpecial ? '<span class="edge">（存疑·见解析）</span>' : '';
+  const ansHtml = '<span class="ans">答案：'+ans+'</span>';
+  let ana;
+  if(isSpecial){
+    ana = '<div class="analysis"><span class="b a2">'+analysisRaw+'</span></div>';
+  } else {
+    const parts = analysisRaw.split('｜');
+    const cls=['a1','a2','a3','a4'];
+    ana = '<div class="analysis">'+parts.map((p,k)=>'<span class="b '+cls[k]+'">'+(p||'')+'</span>').join('')+'</div>';
+  }
+  const div=document.createElement('div');
+  div.className='item';
+  div.innerHTML='<div class="q">'+num+'. '+stem+'</div>'
+    +'<div class="meta">'+tagHtml+'</div>'
+    +'<div style="font-size:13.5px;color:#556">选项：'+opts.replace(/｜.*/,'')+'</div>'
+    + ansHtml
+    +'<div class="toggle" onclick="this.nextElementSibling.classList.toggle(\'open\')">▸ 显示解析</div>'
+    + ana;
+  box.appendChild(div);
+});
+function expandAll(){document.querySelectorAll('.item .analysis').forEach(e=>e.classList.add('open'));}
+function collapseAll(){document.querySelectorAll('.item .analysis').forEach(e=>e.classList.remove('open'));}
+</script>
+</body>
+</html>

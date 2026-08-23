@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>多媒体与信号处理 · 零基础系统学习</title>
+<style>
+  :root{
+    --bg:#f5f7fb; --card:#ffffff; --ink:#1f2a44; --muted:#6b7790;
+    --line:#e6eaf2; --brand:#3b6ef5; --brand-soft:#eaf0ff;
+    --green:#16a34a; --green-soft:#e7f8ee; --red:#e23b3b; --red-soft:#fdecec;
+    --amber:#d98b00; --amber-soft:#fff4e0; --violet:#7c5cff; --violet-soft:#f1ecff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.7;font-size:15px}
+  header{background:linear-gradient(135deg,#3b6ef5,#7c5cff);color:#fff;padding:34px 20px;text-align:center}
+  header h1{margin:0 0 8px;font-size:24px}
+  header p{margin:0;opacity:.92;font-size:14px}
+  .wrap{max-width:920px;margin:0 auto;padding:18px}
+  nav{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);padding:10px 14px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+  nav a{font-size:13px;color:var(--brand);text-decoration:none;background:var(--brand-soft);
+    padding:5px 11px;border-radius:20px;white-space:nowrap}
+  nav a:hover{background:var(--brand);color:#fff}
+  section{background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:22px;margin:18px 0;box-shadow:0 4px 18px rgba(40,60,120,.05)}
+  h2{font-size:20px;margin:0 0 6px;display:flex;align-items:center;gap:10px}
+  h2 .num{background:var(--brand);color:#fff;width:30px;height:30px;border-radius:9px;
+    display:inline-flex;align-items:center;justify-content:center;font-size:15px;flex:0 0 auto}
+  h3{font-size:16px;margin:18px 0 8px;color:var(--brand)}
+  p{margin:8px 0}
+  .analogy{background:var(--brand-soft);border-left:4px solid var(--brand);border-radius:8px;
+    padding:10px 14px;margin:12px 0;font-size:14px;color:#2a3a66}
+  .analogy b{color:var(--brand)}
+  .kv{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
+  .kv th,.kv td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  .kv th{background:var(--brand-soft);color:#2a3a66}
+  .quiz{background:#fbfcfe;border:1px dashed var(--line);border-radius:10px;padding:12px 14px;margin:14px 0}
+  .quiz .q{font-weight:600}
+  .quiz .ans{display:inline-block;margin-top:8px;background:var(--green-soft);color:var(--green);
+    font-weight:700;padding:4px 12px;border-radius:8px;font-size:14px}
+  .toggle{cursor:pointer;color:var(--brand);font-size:13px;margin-top:8px;user-select:none;font-weight:600}
+  .analysis{display:none;margin-top:10px;border-top:1px dashed var(--line);padding-top:10px;font-size:14px}
+  .analysis.open{display:block}
+  .analysis .b{display:block;margin:6px 0;padding:8px 10px;border-radius:8px}
+  .a1{background:var(--green-soft)} .a2{background:var(--brand-soft)} .a3{background:var(--amber-soft)} .a4{background:var(--violet-soft)}
+  .figure{background:#fbfcff;border:1px solid var(--line);border-radius:12px;padding:14px;margin:14px 0;text-align:center}
+  .figure svg{width:100%;max-width:560px;height:auto}
+  .figure .cap{font-size:13px;color:var(--muted);margin-top:6px}
+  .trap{background:var(--red-soft);border-left:4px solid var(--red);border-radius:8px;
+    padding:10px 14px;margin:12px 0;font-size:14px;color:#7a1f1f}
+  .trap b{color:var(--red)}
+  #story .flow{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:14px 0}
+  #story .step{background:var(--brand-soft);border:1px solid #cfe0ff;color:#2a3a66;border-radius:12px;
+    padding:10px 12px;width:140px;text-align:center;font-size:13px}
+  #story .step b{display:block;color:var(--brand);font-size:15px;margin-bottom:3px}
+  #ref .card{background:#fbfcfe;border:1px solid var(--line);border-radius:12px;padding:14px;margin:12px 0}
+  #ref h3{margin-top:0}
+  #ref ul{margin:6px 0;padding-left:20px}
+  #ref li{margin:4px 0}
+  .practice .toolbar{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+  .practice button{background:var(--brand);color:#fff;border:none;padding:8px 16px;border-radius:9px;cursor:pointer;font-size:14px}
+  .practice button.ghost{background:var(--brand-soft);color:var(--brand)}
+  .item{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0;background:#fff}
+  .item .q{font-weight:600;font-size:14.5px}
+  .item .meta{font-size:12px;color:var(--muted);margin-top:4px}
+  .item .ans{display:inline-block;margin-top:8px;background:var(--green-soft);color:var(--green);
+    font-weight:700;padding:3px 10px;border-radius:7px;font-size:13px}
+  .item .dup{color:var(--amber);font-size:12px;margin-left:8px}
+  .item .edge{color:var(--violet);font-size:12px;margin-left:8px}
+  .item .analysis{margin-top:8px}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:6px 0}
+  .legend span b{color:var(--amber)} .legend span i{color:var(--violet);font-style:normal}
+  footer{text-align:center;color:var(--muted);font-size:13px;padding:24px}
+  @media(max-width:600px){.wrap{padding:10px}section{padding:16px}#story .step{width:46%}}
+</style>
+</head>
+<body>
+<header>
+  <h1>🎬 多媒体与信号处理 · 零基础系统学习</h1>
+  <p>内容来源：题库「多媒体与信号处理（22 题）」｜ 通俗类比 + 考点自测 + 22 题全解析</p>
+</header>
+
+<nav>
+<a href="#story">📖 故事线</a><a href="#m1">① 媒体概念</a><a href="#m2">② 图像</a><a href="#m3">③ 音频</a><a href="#m4">④ 打印</a><a href="#m5">⑤ 显示故障</a><a href="#m6">⑥ 延伸</a><a href="#ref">🃏 速查卡</a><a href="#m8">⑦ 22题自测</a>
+</nav>
+
+<div class="wrap">
+<section id="story">
+  <h2><span class="num">📖</span> 故事线：从“媒体”到“设备”一张图</h2>
+  <p>零基础学多媒体与信号处理，先认“什么是媒体”，再搞懂图像和声音怎么变成数字，接着看把这些数字“打出来、显示出来”的设备，最后补一点网络与办公里的多媒体。6 个模块就是这条链，22 题全拿下。</p>
+  <div class="flow">
+    <div class="step"><b>① 媒体概念</b>存储实体＋信息载体（模块一）</div>
+    <div class="step"><b>② 图像</b>扫描像素、点距、分辨率（模块二）</div>
+    <div class="step"><b>③ 音频</b>采样量化编码、数模输出（模块三）</div>
+    <div class="step"><b>④ 打印</b>激光/喷墨/针式、堵头（模块四）</div>
+    <div class="step"><b>⑤ 显示故障</b>参数、刷新、长鸣内存（模块五）</div>
+    <div class="step"><b>⑥ 延伸</b>网络打印机、PPT、局域网（模块六）</div>
+  </div>
+  <div class="analogy"><b>生活类比：</b>多媒体像“办一场有声有色的新闻发布会”——先定“传播什么媒介”（模块一），再把画面拍成数字（模块二）、把声音录成数字（模块三），然后用打印机印材料（模块四）、用大屏显示（模块五），最后通过内网直播共享（模块六）。</div>
+</section>
+<section class="module" id="m1">
+<h2><span class="num">1</span> 模块1 媒体与多媒体概念</h2>
+<h3>1.1 什么是“媒体”</h3>
+<p>“媒体”有两重含义：① <strong>存储信息的实体</strong>——用来“装”信息的硬件介质，如磁盘、光盘、磁带、半导体存储器（U 盘/内存芯片）；② <strong>表达与传递信息的载体</strong>——图像、声音、文字等用来“表达/传播”信息的形式。</p>
+<div class="analogy"><b>生活类比：</b>媒体的第一重含义像“仓库”（装货的房子），第二重含义像“货物本身”（被搬运传达的内容）。仓库和货物，两件事别混。</div>
+<h3>1.2 多媒体 = 多种载体融合</h3>
+<p><strong>多媒体</strong>指计算机综合处理文字、图形、图像、声音、视频等多种媒体，让信息“图文声像并茂”。它依赖数字化——把各种媒体都变成 0/1 才能被计算机统一处理。</p>
+<div class="trap"><b>⚠ 考点：</b>问“存储信息的实体”时，选磁盘/光盘/磁带/半导体存储器这类<strong>介质</strong>；文字、图形是信息内容不是实体，声卡、视频卡是板卡设备不是存储介质。</div>
+<div class="quiz"><div class="q">【自测】通常所说的“媒体”有两重含义，一是指()等存储信息的实体；二是指图像、声音等表达与传递信息的载体。</div><div style="font-size:13.5px;color:#556;margin-top:6px">选项：A.文字、图形、磁带、半导体存储器　B.磁盘、光盘、磁带、半导体存储器　C.声卡、U 盘、磁带、半导体存储器　D.视频卡、磁带、光盘、半导体存储器</div><div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">🎯 答案解析：选 <b>B</b>。媒体第一重含义是“存储信息的实体”（即存储介质）：磁盘、光盘、磁带、半导体存储器。</span><span class="b a2">📚 知识点讲解：媒体的两重含义——① 存储实体（硬件介质，用来“装”信息）；② 信息载体（图像、声音、文字等用来“表达/传递”信息的形式）。B 全都是存储介质；A 里“文字、图形”是信息内容不是实体；C/D 里声卡、视频卡是板卡设备不是存储介质。</span><span class="b a3">💡 解题思路：找“存储信息的实体”＝存储介质。B 四项全是盘/带/芯片；其余含文字图形或声卡视频卡，排除。</span><span class="b a4">🧠 记忆口诀：“媒体两层：介质装、载体传。”</span></div></div>
+</section>
+<section class="module" id="m2">
+<h2><span class="num">2</span> 模块2 图像：数字化、像素、点距、分辨率</h2>
+<h3>2.1 图像怎么变成数字：扫描与像素</h3>
+<p>把纸质图片“扫”进电脑，靠<strong>扫描仪</strong>按分辨率（DPI）采样成像素点阵。<strong>像素总数＝横向 DPI×宽(英寸) × 纵向 DPI×高(英寸)</strong>。</p>
+<div class="analogy"><b>生活类比：</b>扫描像用方格网盖在图上，每格取一个颜色点。网越密（DPI 越高）、图越大，格子越多（像素越多），画面越清楚。</div>
+<div class="quiz"><div class="q">【自测】使用图像扫描仪以 300DPI 的分辨率扫描一幅 3×3 英寸的图片，可以得到()像素的数字图像。</div><div style="font-size:13.5px;color:#556;margin-top:6px">选项：A.100×100　B.300×300　C.600×600　D.900×900</div><div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">🎯 答案解析：选 <b>D</b>。像素数＝分辨率×物理尺寸。横向 300DPI×3英寸＝900 像素，纵向同理 900，即 900×900。</span><span class="b a2">📚 知识点讲解：DPI（每英寸点数）是扫描/打印精度。数字图像总像素＝横向 DPI×宽(英寸) × 纵向 DPI×高(英寸)。本题 300×3＝900，两边都是 900。</span><span class="b a3">💡 解题思路：算“300×3”＝900，四个选项只有 D 是 900×900（不是 300、也不是 600）。</span><span class="b a4">🧠 记忆口诀：“DPI 乘英寸，长宽都相乘。”</span></div></div>
+<h3>2.2 点距与清晰度</h3>
+<p><strong>点距</strong>是显示器上相邻两个像素中心的间距（mm）。点距越小，同样尺寸下塞进的像素越多，画面越细腻清晰。</p>
+<div class="quiz"><div class="q">【自测】点距是显示器的主要技术指标之一，点距越小显示器的清晰度越高。</div><div style="font-size:13.5px;color:#556;margin-top:6px">选项：A.正确　B.错误</div><div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">🎯 答案解析：选 <b>正确</b>。点距越小，单位面积像素越密，画面越细腻清晰。</span><span class="b a2">📚 知识点讲解：点距＝相邻两个像素点中心之间的距离（mm）。点距越小→同样尺寸下像素更多→图像更锐利。所以“点距小、清晰度高”正确。</span><span class="b a3">💡 解题思路：点距小＝像素密＝清晰，逻辑正向，选正确。</span><span class="b a4">🧠 记忆口诀：“点距越小越清晰。”</span></div></div>
+<h3>2.3 分辨率由谁决定</h3>
+<p>实际显示分辨率＝<strong>显示器物理分辨率</strong>与<strong>显卡输出能力</strong>二者取小，缺一不可。</p>
+<div class="quiz"><div class="q">【自测】显示器的分辨率决定于()。</div><div style="font-size:13.5px;color:#556;margin-top:6px">选项：A.决定于显卡　B.决定于内存　C.决定于显示器　D.既决定于显示器，又决定于显卡</div><div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">🎯 答案解析：选 <b>D</b>。实际显示分辨率＝显示器物理分辨率与显卡输出能力二者取小，共同决定。</span><span class="b a2">📚 知识点讲解：显示器有最大物理像素（如 1920×1080）；显卡有最大输出能力。最终画面分辨率不能超过任一方——所以“既决定于显示器，又决定于显卡”。内存只影响系统整体性能，不直接定分辨率。</span><span class="b a3">💡 解题思路：分辨率是“显示器”和“显卡”双方约束的结果，排除只说一边的 A/C 和无关的 B。</span><span class="b a4">🧠 记忆口诀：“分辨率看两边：显示器加显卡。”</span></div></div>
+</section>
+<section class="module" id="m3">
+<h2><span class="num">3</span> 模块3 音频：数字化、采样定理、数模输出</h2>
+<h3>3.1 声音数字化三步曲</h3>
+<p>模拟声音变数字：① <strong>采样</strong>（按时间间隔抓瞬时值）→ ② <strong>量化</strong>（把值近似成离散数字）→ ③ <strong>编码</strong>（写成二进制流，如 PCM）。</p>
+<div class="analogy"><b>生活类比：</b>采样像“每秒拍很多张照片”定格声音；量化像“把每张照片的亮度四舍五入到整数”；编码像“把这些整数写成密码本”。</div>
+<div class="quiz"><div class="q">【自测】声音信号的数字化过程包括采样、()和编码。</div><div style="font-size:13.5px;color:#556;margin-top:6px">选项：A.合成　B.转换　C.量化　D.压缩</div><div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">🎯 答案解析：选 <b>C</b>。声音数字化三步：采样 → 量化 → 编码，缺的是“量化”。</span><span class="b a2">📚 知识点讲解：模拟声音变数字的三步——① 采样：按固定时间间隔“抓”一个瞬时值；② 量化：把抓到的值近似成离散的数字（如 0–65535）；③ 编码：把数字按格式（如 PCM）写成二进制流。</span><span class="b a3">💡 解题思路：题干已给“采样”和“编码”，中间缺“量化”。</span><span class="b a4">🧠 记忆口诀：“采样量化再编码，声音变数字。”</span></div></div>
+<h3>3.2 采样定理：采样要多快</h3>
+<p><strong>奈奎斯特采样定理</strong>：要无失真还原，采样频率必须 > 2 倍信号最高频率。如最高频 10MHz，采样须 > 20MHz。</p>
+<div class="quiz"><div class="q">【自测】假设模拟信号的最高频率为 10MHz，采样频率必须大于()，才能无失真地还原出原信号。</div><div style="font-size:13.5px;color:#556;margin-top:6px">选项：A.10MHz　B.20MHz　C.30MHz　D.40MHz</div><div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">🎯 答案解析：选 <b>B</b>。采样频率必须大于 2 倍最高频率＝20MHz。</span><span class="b a2">📚 知识点讲解：奈奎斯特采样定理——要无失真还原模拟信号，采样频率必须 > 2×信号最高频率。本题 2×10MHz＝20MHz。</span><span class="b a3">💡 解题思路：套公式“2×最高频”：10MHz×2＝20MHz，选 B。</span><span class="b a4">🧠 记忆口诀：“采样要过两倍频，否则混叠失真形。”</span></div></div>
+<h3>3.3 数字进、模拟出</h3>
+<p>计算机里全是数字信号，但扬声器是模拟设备，必须经<strong>数模转换（DAC）</strong>转回连续波形才能发声。所以“传到扬声器的”是模拟信号。</p>
+<div class="quiz"><div class="q">【自测】音频信号经计算机系统处理后传到扬声器的信号是()信号。</div><div style="font-size:13.5px;color:#556;margin-top:6px">选项：A.数字　B.模拟　C.采样　D.量化</div><div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">🎯 答案解析：选 <b>B</b>。扬声器是模拟设备，计算机内部是数字信号，必须经“数模转换（DAC）”转回模拟信号才能发声。</span><span class="b a2">📚 知识点讲解：计算机里一切都是 0/1 数字；但耳朵听的、喇叭振膜动的是连续变化的模拟波形。所以“处理完传向扬声器”的那一段是模拟信号（DAC 输出）。</span><span class="b a3">💡 解题思路：扬声器发声靠连续波形→模拟；数字信号喇叭直接听不懂。选 B。</span><span class="b a4">🧠 记忆口诀：“数字进、模拟出，喇叭只认波形。”</span></div></div>
+</section>
+<section class="module" id="m4">
+<h2><span class="num">4</span> 模块4 打印输出设备</h2>
+<h3>4.1 四类打印机特点</h3>
+<p>常见打印机：<strong>激光</strong>（静电成像，快/好/静，办公首选）、<strong>喷墨</strong>（喷液滴，慢、易堵，适合照片）、<strong>针式</strong>（撞针复写，慢且吵，用于发票）、<strong>3D</strong>（增材制造，非文档打印）。</p>
+<div class="quiz"><div class="q">【自测】市面上较常见的打印机大致分为喷墨打印机、激光打印机、针式打印机、3D 打印机等。其中哪种打印机的特点是打印速度快、打印品质好、工作噪音小？()</div><div style="font-size:13.5px;color:#556;margin-top:6px">选项：A.喷墨打印机　B.激光打印机　C.针式打印机　D.3D打印机</div><div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">🎯 答案解析：选 <b>B</b>。激光打印机非击打式，速度快、品质好、噪声小。</span><span class="b a2">📚 知识点讲解：四类打印机——激光（静电成像，快/好/静，办公文档首选）；喷墨（喷液滴，慢、易堵，适合照片）；针式（撞针复写，慢且吵，用于发票）；3D（增材制造，非文档打印）。题干三特征指向激光。</span><span class="b a3">💡 解题思路：找“快+好+静”→ 非击打→激光。针式击打会吵，喷墨慢，3D 不属文档打印。</span><span class="b a4">🧠 记忆口诀：“快好静，选激光。”</span></div></div>
+<h3>4.2 激光打印机的优点</h3>
+<p>激光打印机四大优点：分辨率高、速度快、噪声低、单页成本低。</p>
+<div class="quiz"><div class="q">【自测】以下哪些是激光打印机的优点()。</div><div style="font-size:13.5px;color:#556;margin-top:6px">选项：A.打印分辨率高　B.打印速度快　C.工作噪声低　D.打印成本低</div><div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">🎯 答案解析：选 <b>ABCD</b>。激光打印机四大优点全中：分辨率高、速度快、噪声低、单页成本低。</span><span class="b a2">📚 知识点讲解：激光打印机用“静电吸附碳粉+定影”非击打成像——文字边缘锐利（分辨率高）、整页成像快、无撞击声（噪声低）、碳粉按页计便宜（成本低）。</span><span class="b a3">💡 解题思路：四个描述都是激光打印机的公认优点，全选。</span><span class="b a4">🧠 记忆口诀：“激光：清、快、静、省。”</span></div></div>
+<h3>4.3 常见故障：喷墨堵头</h3>
+<p>墨盒有墨但字符缺笔画，多半是<strong>喷嘴部分堵塞</strong>（出墨不均）；驱动/电路故障通常完全打不出，漏墨是脏不是缺笔画。</p>
+<div class="quiz"><div class="q">【自测】某喷墨打印机能正常进行打印工作，墨盒中还有充足的墨水，但打印出来的字符不完整，则可能的故障原因为()。</div><div style="font-size:13.5px;color:#556;margin-top:6px">选项：A.驱动程序故障　B.打印墨盒漏墨　C.打印机电路故障　D.打印喷嘴部分堵塞</div><div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">🎯 答案解析：选 <b>D</b>。墨足但字符缺笔画＝喷嘴部分堵塞，出墨不均。</span><span class="b a2">📚 知识点讲解：喷墨靠微小喷嘴喷墨。若部分喷嘴堵了，对应位置不出墨→字符缺笔画/断线；但整体还能打印（说明驱动、电路、供墨基本正常）。漏墨会脏不是缺笔画；驱动/电路故障通常完全打不出。</span><span class="b a3">💡 解题思路：关键词“墨充足+字符不完整”→ 出墨通道局部堵→喷嘴堵塞。</span><span class="b a4">🧠 记忆口诀：“墨够字缺，喷嘴堵。”</span></div></div>
+</section>
+<section class="module" id="m5">
+<h2><span class="num">5</span> 模块5 显示设备与开机故障</h2>
+<h3>5.1 显示器性能参数</h3>
+<p>显示器关键参数：接口（VGA 老模拟口，现多 HDMI/DP 数字口）、分辨率（尺寸÷点距）、刷新频率（低了会闪）、色彩（24 位真彩色已普及）。</p>
+<div class="quiz"><div class="q">【自测】下面有关 PC 机显示器主要性能参数的叙述中，正确的是()。</div><div style="font-size:13.5px;color:#556;margin-top:6px">选项：A.目前所有显示器只能采用 VGA 接口与显卡连接　B.显示器的分辨率与屏幕尺寸和点距密切相关　C.显示器的刷新频率对图像显示的稳定性有影响　D.目前 CRT 和 LCD 显示器一般均具有 24 位彩色显示能力</div><div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">🎯 答案解析：选 <b>BCD</b>。A 错（还有 HDMI/DVI/DP 等，非“只能 VGA”）；B 对（分辨率≈尺寸÷点距）；C 对（刷新低会闪）；D 对（24 位真彩色已普及）。</span><span class="b a2">📚 知识点讲解：显示器参数——接口：VGA 是老模拟口，现多数字口（HDMI/DP）；分辨率：由屏幕尺寸和点距共同决定；刷新率：每秒重绘次数，低了肉眼觉得闪；色彩：24 位＝1600 万色，CRT/LCD 都支持。</span><span class="b a3">💡 解题思路：排除 A（“所有/只能”太绝对），其余三项都符合常识。</span><span class="b a4">🧠 记忆口诀：“接口不止 VGA，分辨率看点距，刷新防闪烁，24 位真彩色。”</span></div></div>
+<h3>5.2 刷新频率与闪烁</h3>
+<p>刷新频率＝屏幕每秒重绘次数，越高越不闪。本题库将“稳定工作最低刷新频率”标为 60Hz（实际体验 75Hz 更舒服，考试以题库为准）。</p>
+<div class="quiz"><div class="q">【自测】显示器稳定工作（基本消除闪烁）的最低刷新频率是()。</div><div style="font-size:13.5px;color:#556;margin-top:6px">选项：A.70Hz　B.75Hz　C.65Hz　D.60Hz</div><div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">🎯 答案解析：选 <b>D</b>。按本题库答案，稳定工作的最低刷新频率为 60Hz。</span><span class="b a2">📚 知识点讲解：刷新频率＝屏幕每秒重绘次数。频率越高越不闪；人眼通常 75Hz 以上才基本无感闪烁。但本题库将“最低稳定”标为 60Hz，考试以题库答案为准。</span><span class="b a3">💡 解题思路：本题为题库固定答案 D（60Hz）。注意实际体验 75Hz 更舒服，但考题按给定答案选。</span><span class="b a4">🧠 记忆口诀：“刷新越低越闪，题库给 60 最低。”</span></div></div>
+<h3>5.3 开机长鸣：先查内存</h3>
+<p>开机自检（POST）发现硬件异常会“响铃报警”。<strong>长鸣且进不了系统</strong>是经典“内存条”故障特征（多为松动/损坏）；显卡问题多为“一长两短”。</p>
+<div class="quiz"><div class="q">【自测】在计算机日常开机的时候，发现机箱内出现“嘟，嘟……”长鸣声音，并且电脑不能进入系统，通常是由于()部件出现问题而产生的。</div><div style="font-size:13.5px;color:#556;margin-top:6px">选项：A.CPU　B.内存条　C.显示卡　D.电源</div><div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">🎯 答案解析：选 <b>B</b>。Award BIOS 一长两短/长鸣通常报警“内存故障”，多为内存条松动或损坏。</span><span class="b a2">📚 知识点讲解：开机自检（POST）发现硬件异常会“响铃报警”，不同长短组合对应不同部件。常见的“长鸣”是内存没插好/坏了；显卡问题多为“一长两短”；CPU/电源故障表现不同。</span><span class="b a3">💡 解题思路：题干“长鸣+不能进系统”是经典内存报警特征，选内存条。</span><span class="b a4">🧠 记忆口诀：“开机长鸣进不去，先查内存条。”</span></div></div>
+</section>
+<section class="module" id="m6">
+<h2><span class="num">6</span> 模块6 延伸：网络与办公中的多媒体</h2>
+<h3>6.1 网络打印机共享</h3>
+<p>计算机网络的核心功能是<strong>资源共享</strong>与通信——自然包括使用网络打印机、共享文件、联网游戏、视频点播。</p>
+<div class="quiz"><div class="q">【自测】下列对有关计算机网络的叙述中，正确的是()。</div><div style="font-size:13.5px;color:#556;margin-top:6px">选项：A.利用计算机网络，可以使用网络打印机　B.利用计算机网络，不能共享网络资源　C.利用计算机网络，不能进行网络游戏　D.利用计算机网络，不可以进行视频点播</div><div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">🎯 答案解析：选 <b>A</b>。网络的核心功能就是“资源共享”，自然包括使用网络打印机。</span><span class="b a2">📚 知识点讲解：计算机网络两大基本功能——资源共享（打印机、文件、算力）和通信（游戏、视频点播、聊天）。B/C/D 都说“不能”，正好说反了。</span><span class="b a3">💡 解题思路：找“正确”的叙述。A 符合“资源共享”；B/C/D 三个“不能”都违背网络常识。</span><span class="b a4">🧠 记忆口诀：“网络能共享，打印机也上网。”</span></div></div>
+<h3>6.2 PPT 里的多媒体对象</h3>
+<p>PowerPoint 不止文字图片，还能插入<strong>图形、图表、公式、声音、视频</strong>等多媒体对象，做成声像俱全的演示。</p>
+<div class="quiz"><div class="q">【自测】在 PowerPoint 2000 的幻灯片上可以插入多种对象，除了可以插入图形、图表外，还可以插入公式、声音和视频。</div><div style="font-size:13.5px;color:#556;margin-top:6px">选项：A.正确　B.错误</div><div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">🎯 答案解析：选 <b>正确</b>。PPT 支持插入图形、图表、公式、声音、视频等多媒体对象。</span><span class="b a2">📚 知识点讲解：演示文稿不只是文字图片，还能嵌入公式（如 MathType/公式编辑器）、声音、视频，做成多媒体演示。题干说法对。</span><span class="b a3">💡 解题思路：PPT 本就是多媒体演示工具，插入声音视频公式是基本功能，选正确。</span><span class="b a4">🧠 记忆口诀：“PPT 啥都能插，声像公式都行。”</span></div></div>
+<h3>6.3 局域网资源共享的边界</h3>
+<p>局域网可共享软驱、打印机、硬盘等；但<strong>视频捕获卡</strong>这类需独占的本地实时采集硬件，一般不作网络共享资源。</p>
+<div class="quiz"><div class="q">【自测】局域网中不能共用的资源是()。</div><div style="font-size:13.5px;color:#556;margin-top:6px">选项：A.软驱　B.视频捕获卡　C.打印机　D.硬盘</div><div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div><div class="analysis"><span class="b a1">🎯 答案解析：选 <b>B</b>。视频捕获卡是本地专用采集硬件，通常不通过网络共享；软驱、打印机、硬盘都可共享。</span><span class="b a2">📚 知识点讲解：局域网资源共享指把本机设备/文件开放给同网其他机器用。打印机、硬盘、软驱都常见共享；视频捕获卡（视频采集卡）需独占本地硬件且实时性强，一般不作网络共享资源。</span><span class="b a3">💡 解题思路：找“不能共用”的。A/C/D 都是典型可共享资源；B 采集卡特殊，选它。</span><span class="b a4">🧠 记忆口诀：“网共享，打印机硬盘软驱；采集卡独占。”</span></div></div>
+</section>
+<section id="ref">
+  <h2><span class="num">🃏</span> 速查卡：多媒体与信号处理</h2>
+  <div class="card"><h3>一、媒体概念</h3>
+    <ul>
+      <li>两重含义：① 存储实体（磁盘/光盘/磁带/半导体）② 信息载体（图/声/文）</li>
+      <li>多媒体＝文图声像综合处理（靠数字化）</li>
+    </ul></div>
+  <div class="card"><h3>二、图像</h3>
+    <ul>
+      <li>像素＝DPI×英寸尺寸（长宽都乘）</li>
+      <li>点距越小越清晰；分辨率＝显示器∩显卡（取小）</li>
+    </ul></div>
+  <div class="card"><h3>三、音频</h3>
+    <ul>
+      <li>数字化三步：采样 → 量化 → 编码</li>
+      <li>采样频率 > 2×最高频（奈奎斯特）</li>
+      <li>扬声器收到的是<strong>模拟</strong>信号（DAC 转回）</li>
+    </ul></div>
+  <div class="card"><h3>四、打印机</h3>
+    <ul>
+      <li>激光＝快/好/静/成本低；喷墨易堵；针式吵（发票）；3D 非文档</li>
+      <li>墨足字缺 → 喷嘴堵塞</li>
+    </ul></div>
+  <div class="card"><h3>五、显示与故障</h3>
+    <ul>
+      <li>参数：接口(不止 VGA)、分辨率(尺寸÷点距)、刷新防闪、24 位真彩</li>
+      <li>开机长鸣进不去 → 内存条</li>
+    </ul></div>
+  <div class="card"><h3>六、延伸</h3>
+    <ul>
+      <li>网络能共享打印机/文件；PPT 可插声像公式</li>
+      <li>视频捕获卡一般不能网络共享</li>
+    </ul></div>
+</section>
+<section class="practice" id="m8">
+<h2><span class="num">⑥</span> 22 题全量自测</h2>
+<div class="legend"><span>🟠 <b>橙</b>＝与前面重复</span><span><i>🟣 紫</i>＝了解即可（延伸题）</span></div>
+<div class="toolbar"><button onclick="expandAll()">展开全部解析</button><button class="ghost" onclick="collapseAll()">收起全部</button></div>
+<div id="items"></div>
+</section>
+</div>
+
+<footer>多媒体与信号处理 · 零基础系统学习 ｜ 来源：题库「多媒体与信号处理（22 题）」</footer>
+
+<script>
+const QA = [["1", "使用图像扫描仪以 300DPI 的分辨率扫描一幅 3×3 英寸的图片，可以得到()像素的数字图像。", "A.100×100　B.300×300　C.600×600　D.900×900", "D", "🎯 答案解析：选 <b>D</b>。像素数＝分辨率×物理尺寸。横向 300DPI×3英寸＝900 像素，纵向同理 900，即 900×900。｜📚 知识点讲解：DPI（每英寸点数）是扫描/打印精度。数字图像总像素＝横向 DPI×宽(英寸) × 纵向 DPI×高(英寸)。本题 300×3＝900，两边都是 900。｜💡 解题思路：算“300×3”＝900，四个选项只有 D 是 900×900（不是 300、也不是 600）。｜🧠 记忆口诀：“DPI 乘英寸，长宽都相乘。”", ""], ["2", "通常所说的“媒体”有两重含义，一是指()等存储信息的实体；二是指图像、声音等表达与传递信息的载体。", "A.文字、图形、磁带、半导体存储器　B.磁盘、光盘、磁带、半导体存储器　C.声卡、U 盘、磁带、半导体存储器　D.视频卡、磁带、光盘、半导体存储器", "B", "🎯 答案解析：选 <b>B</b>。媒体第一重含义是“存储信息的实体”（即存储介质）：磁盘、光盘、磁带、半导体存储器。｜📚 知识点讲解：媒体的两重含义——① 存储实体（硬件介质，用来“装”信息）；② 信息载体（图像、声音、文字等用来“表达/传递”信息的形式）。B 全都是存储介质；A 里“文字、图形”是信息内容不是实体；C/D 里声卡、视频卡是板卡设备不是存储介质。｜💡 解题思路：找“存储信息的实体”＝存储介质。B 四项全是盘/带/芯片；其余含文字图形或声卡视频卡，排除。｜🧠 记忆口诀：“媒体两层：介质装、载体传。”", ""], ["3", "声音信号的数字化过程包括采样、()和编码。", "A.合成　B.转换　C.量化　D.压缩", "C", "🎯 答案解析：选 <b>C</b>。声音数字化三步：采样 → 量化 → 编码，缺的是“量化”。｜📚 知识点讲解：模拟声音变数字的三步——① 采样：按固定时间间隔“抓”一个瞬时值；② 量化：把抓到的值近似成离散的数字（如 0–65535）；③ 编码：把数字按格式（如 PCM）写成二进制流。｜💡 解题思路：题干已给“采样”和“编码”，中间缺“量化”。｜🧠 记忆口诀：“采样量化再编码，声音变数字。”", ""], ["4", "音频信号经计算机系统处理后传到扬声器的信号是()信号。", "A.数字　B.模拟　C.采样　D.量化", "B", "🎯 答案解析：选 <b>B</b>。扬声器是模拟设备，计算机内部是数字信号，必须经“数模转换（DAC）”转回模拟信号才能发声。｜📚 知识点讲解：计算机里一切都是 0/1 数字；但耳朵听的、喇叭振膜动的是连续变化的模拟波形。所以“处理完传向扬声器”的那一段是模拟信号（DAC 输出）。｜💡 解题思路：扬声器发声靠连续波形→模拟；数字信号喇叭直接听不懂。选 B。｜🧠 记忆口诀：“数字进、模拟出，喇叭只认波形。”", ""], ["5", "假设模拟信号的最高频率为 10MHz，采样频率必须大于()，才能无失真地还原出原信号。", "A.10MHz　B.20MHz　C.30MHz　D.40MHz", "B", "🎯 答案解析：选 <b>B</b>。采样频率必须大于 2 倍最高频率＝20MHz。｜📚 知识点讲解：奈奎斯特采样定理——要无失真还原模拟信号，采样频率必须 > 2×信号最高频率。本题 2×10MHz＝20MHz。｜💡 解题思路：套公式“2×最高频”：10MHz×2＝20MHz，选 B。｜🧠 记忆口诀：“采样要过两倍频，否则混叠失真形。”", ""], ["6", "以下哪些是激光打印机的优点()。", "A.打印分辨率高　B.打印速度快　C.工作噪声低　D.打印成本低", "ABCD", "🎯 答案解析：选 <b>ABCD</b>。激光打印机四大优点全中：分辨率高、速度快、噪声低、单页成本低。｜📚 知识点讲解：激光打印机用“静电吸附碳粉+定影”非击打成像——文字边缘锐利（分辨率高）、整页成像快、无撞击声（噪声低）、碳粉按页计便宜（成本低）。｜💡 解题思路：四个描述都是激光打印机的公认优点，全选。｜🧠 记忆口诀：“激光：清、快、静、省。”", ""], ["7", "市面上较常见的打印机大致分为喷墨打印机、激光打印机、针式打印机、3D 打印机等。其中哪种打印机的特点是打印速度快、打印品质好、工作噪音小？()", "A.喷墨打印机　B.激光打印机　C.针式打印机　D.3D打印机", "B", "🎯 答案解析：选 <b>B</b>。激光打印机非击打式，速度快、品质好、噪声小。｜📚 知识点讲解：四类打印机——激光（静电成像，快/好/静，办公文档首选）；喷墨（喷液滴，慢、易堵，适合照片）；针式（撞针复写，慢且吵，用于发票）；3D（增材制造，非文档打印）。题干三特征指向激光。｜💡 解题思路：找“快+好+静”→ 非击打→激光。针式击打会吵，喷墨慢，3D 不属文档打印。｜🧠 记忆口诀：“快好静，选激光。”", ""], ["8", "下面有关 PC 机显示器主要性能参数的叙述中，正确的是()。", "A.目前所有显示器只能采用 VGA 接口与显卡连接　B.显示器的分辨率与屏幕尺寸和点距密切相关　C.显示器的刷新频率对图像显示的稳定性有影响　D.目前 CRT 和 LCD 显示器一般均具有 24 位彩色显示能力", "BCD", "🎯 答案解析：选 <b>BCD</b>。A 错（还有 HDMI/DVI/DP 等，非“只能 VGA”）；B 对（分辨率≈尺寸÷点距）；C 对（刷新低会闪）；D 对（24 位真彩色已普及）。｜📚 知识点讲解：显示器参数——接口：VGA 是老模拟口，现多数字口（HDMI/DP）；分辨率：由屏幕尺寸和点距共同决定；刷新率：每秒重绘次数，低了肉眼觉得闪；色彩：24 位＝1600 万色，CRT/LCD 都支持。｜💡 解题思路：排除 A（“所有/只能”太绝对），其余三项都符合常识。｜🧠 记忆口诀：“接口不止 VGA，分辨率看点距，刷新防闪烁，24 位真彩色。”", ""], ["9", "下列对有关计算机网络的叙述中，正确的是()。", "A.利用计算机网络，可以使用网络打印机　B.利用计算机网络，不能共享网络资源　C.利用计算机网络，不能进行网络游戏　D.利用计算机网络，不可以进行视频点播", "A", "🎯 答案解析：选 <b>A</b>。网络的核心功能就是“资源共享”，自然包括使用网络打印机。｜📚 知识点讲解：计算机网络两大基本功能——资源共享（打印机、文件、算力）和通信（游戏、视频点播、聊天）。B/C/D 都说“不能”，正好说反了。｜💡 解题思路：找“正确”的叙述。A 符合“资源共享”；B/C/D 三个“不能”都违背网络常识。｜🧠 记忆口诀：“网络能共享，打印机也上网。”", "edge"], ["10", "市面上较常见的哪种打印机的特点是打印速度快、打印品质好、工作噪音小？", "A.针式打印机　B.激光打印机　C.喷墨打印机", "B", "🎯 答案解析：选 <b>B</b>。激光打印机特点就是快、好、静。本题与 Q7 重复（选项略少）。｜📚 知识点讲解：激光打印机非击打静电成像，速度品质兼优且噪声低；针式击打慢且吵，喷墨较慢，均不符合。属跨文档重复题。｜💡 解题思路：同 Q7，“快+好+静”＝激光。｜🧠 记忆口诀：“快好静，选激光。”", "dup"], ["11", "市面上较常见的哪种打印机的特点是打印速度快、打印品质好、工作噪音小？", "A.喷墨打印机　B.激光打印机　C.针式打印机", "B", "🎯 答案解析：选 <b>B</b>。激光打印机特点快、好、静。本题与 Q7 重复（第三次出现）。｜📚 知识点讲解：同 Q7/Q10，激光打印机非击打式，速度品质噪声三项俱优。属跨文档重复题。｜💡 解题思路：同 Q7，“快+好+静”＝激光。｜🧠 记忆口诀：“快好静，选激光。”", "dup"], ["12", "显示器稳定工作（基本消除闪烁）的最低刷新频率是()。", "A.70Hz　B.75Hz　C.65Hz　D.60Hz", "D", "🎯 答案解析：选 <b>D</b>。按本题库答案，稳定工作的最低刷新频率为 60Hz。｜📚 知识点讲解：刷新频率＝屏幕每秒重绘次数。频率越高越不闪；人眼通常 75Hz 以上才基本无感闪烁。但本题库将“最低稳定”标为 60Hz，考试以题库答案为准。｜💡 解题思路：本题为题库固定答案 D（60Hz）。注意实际体验 75Hz 更舒服，但考题按给定答案选。｜🧠 记忆口诀：“刷新越低越闪，题库给 60 最低。”", ""], ["13", "在 PowerPoint 2000 的幻灯片上可以插入多种对象，除了可以插入图形、图表外，还可以插入公式、声音和视频。", "A.正确　B.错误", "正确", "🎯 答案解析：选 <b>正确</b>。PPT 支持插入图形、图表、公式、声音、视频等多媒体对象。｜📚 知识点讲解：演示文稿不只是文字图片，还能嵌入公式（如 MathType/公式编辑器）、声音、视频，做成多媒体演示。题干说法对。｜💡 解题思路：PPT 本就是多媒体演示工具，插入声音视频公式是基本功能，选正确。｜🧠 记忆口诀：“PPT 啥都能插，声像公式都行。”", "edge"], ["14", "点距是显示器的主要技术指标之一，点距越小显示器的清晰度越高。", "A.正确　B.错误", "正确", "🎯 答案解析：选 <b>正确</b>。点距越小，单位面积像素越密，画面越细腻清晰。｜📚 知识点讲解：点距＝相邻两个像素点中心之间的距离（mm）。点距越小→同样尺寸下像素更多→图像更锐利。所以“点距小、清晰度高”正确。｜💡 解题思路：点距小＝像素密＝清晰，逻辑正向，选正确。｜🧠 记忆口诀：“点距越小越清晰。”", ""], ["15", "局域网中不能共用的资源是()。", "A.软驱　B.视频捕获卡　C.打印机　D.硬盘", "B", "🎯 答案解析：选 <b>B</b>。视频捕获卡是本地专用采集硬件，通常不通过网络共享；软驱、打印机、硬盘都可共享。｜📚 知识点讲解：局域网资源共享指把本机设备/文件开放给同网其他机器用。打印机、硬盘、软驱都常见共享；视频捕获卡（视频采集卡）需独占本地硬件且实时性强，一般不作网络共享资源。｜💡 解题思路：找“不能共用”的。A/C/D 都是典型可共享资源；B 采集卡特殊，选它。｜🧠 记忆口诀：“网共享，打印机硬盘软驱；采集卡独占。”", "edge"], ["16", "某喷墨打印机能正常进行打印工作，墨盒中还有充足的墨水，但打印出来的字符不完整，则可能的故障原因为()。", "A.驱动程序故障　B.打印墨盒漏墨　C.打印机电路故障　D.打印喷嘴部分堵塞", "D", "🎯 答案解析：选 <b>D</b>。墨足但字符缺笔画＝喷嘴部分堵塞，出墨不均。｜📚 知识点讲解：喷墨靠微小喷嘴喷墨。若部分喷嘴堵了，对应位置不出墨→字符缺笔画/断线；但整体还能打印（说明驱动、电路、供墨基本正常）。漏墨会脏不是缺笔画；驱动/电路故障通常完全打不出。｜💡 解题思路：关键词“墨充足+字符不完整”→ 出墨通道局部堵→喷嘴堵塞。｜🧠 记忆口诀：“墨够字缺，喷嘴堵。”", ""], ["17", "在计算机日常开机的时候，发现机箱内出现“嘟，嘟……”长鸣声音，并且电脑不能进入系统，通常是由于()部件出现问题而产生的。", "A.CPU　B.内存条　C.显示卡　D.电源", "B", "🎯 答案解析：选 <b>B</b>。Award BIOS 一长两短/长鸣通常报警“内存故障”，多为内存条松动或损坏。｜📚 知识点讲解：开机自检（POST）发现硬件异常会“响铃报警”，不同长短组合对应不同部件。常见的“长鸣”是内存没插好/坏了；显卡问题多为“一长两短”；CPU/电源故障表现不同。｜💡 解题思路：题干“长鸣+不能进系统”是经典内存报警特征，选内存条。｜🧠 记忆口诀：“开机长鸣进不去，先查内存条。”", ""], ["18", "显示器的分辨率决定于()。", "A.决定于显卡　B.决定于内存　C.决定于显示器　D.既决定于显示器，又决定于显卡", "D", "🎯 答案解析：选 <b>D</b>。实际显示分辨率＝显示器物理分辨率与显卡输出能力二者取小，共同决定。｜📚 知识点讲解：显示器有最大物理像素（如 1920×1080）；显卡有最大输出能力。最终画面分辨率不能超过任一方——所以“既决定于显示器，又决定于显卡”。内存只影响系统整体性能，不直接定分辨率。｜💡 解题思路：分辨率是“显示器”和“显卡”双方约束的结果，排除只说一边的 A/C 和无关的 B。｜🧠 记忆口诀：“分辨率看两边：显示器加显卡。”", ""], ["19", "使用图像扫描仪以 300DPI 的分辨率扫描一幅 3×3 英寸的图片，可以得到()像素的数字图像。", "A.100×100　B.300×300　C.600×600　D.900×900", "D", "🎯 答案解析：选 <b>D</b>。300DPI×3英寸＝900，两边都是 900 → 900×900。本题与 Q1 重复。｜📚 知识点讲解：同 Q1，像素＝DPI×英寸尺寸，横向纵向都算。属跨文档重复题。｜💡 解题思路：同 Q1，算“300×3＝900”选 D。｜🧠 记忆口诀：“DPI 乘英寸，长宽都相乘。”", "dup"], ["20", "通常所说的“媒体”有两重含义，一是指()等存储信息的实体；二是指图像、声音等表达与传递信息的载体。", "A.文字、图形、磁带、半导体存储器　B.磁盘、光盘、磁带、半导体存储器　C.声卡、U 盘、磁带、半导体存储器　D.视频卡、磁带、光盘、半导体存储器", "B", "🎯 答案解析：选 <b>B</b>。媒体第一重含义是存储介质：磁盘、光盘、磁带、半导体存储器。本题与 Q2 重复。｜📚 知识点讲解：同 Q2，媒体＝存储实体＋信息载体。属跨文档重复题。｜💡 解题思路：同 Q2，找全为存储介质的 B。｜🧠 记忆口诀：“媒体两层：介质装、载体传。”", "dup"], ["21", "声音信号的数字化过程包括采样、()和编码。", "A.合成　B.转换　C.量化　D.压缩", "C", "🎯 答案解析：选 <b>C</b>。声音数字化三步：采样→量化→编码。本题与 Q3 重复。｜📚 知识点讲解：同 Q3，量化是采样与编码之间把样本值转数字的环节。属跨文档重复题。｜💡 解题思路：同 Q3，中间缺量化。｜🧠 记忆口诀：“采样量化再编码，声音变数字。”", "dup"], ["22", "音频信号经计算机系统处理后传到扬声器的信号是()信号。", "A.数字　B.模拟　C.采样　D.量化", "B", "🎯 答案解析：选 <b>B</b>。扬声器是模拟设备，需数模转换后输出模拟信号。本题与 Q4 重复。｜📚 知识点讲解：同 Q4，计算机内部数字、喇叭认模拟波形。属跨文档重复题。｜💡 解题思路：同 Q4，喇叭只认模拟。｜🧠 记忆口诀：“数字进、模拟出，喇叭只认波形。”", "dup"]];
+
+const box=document.getElementById('items');
+QA.forEach((q)=>{
+  const num=q[0], stem=q[1], opts=q[2], ans=q[3];
+  const analysisRaw = q[4];
+  const tag = (q.length===6) ? q[5] : '';
+  const isSpecial = analysisRaw.indexOf('⚠')===0 || ans.indexOf('题库标注')>=0;
+  let tagHtml = tag==='dup' ? '<span class="dup">（与前面重复）</span>'
+              : tag==='edge' ? '<span class="edge">（了解即可）</span>'
+              : tag==='dupedge' ? '<span class="dup">（与前面重复）</span><span class="edge">（了解即可）</span>'
+              : isSpecial ? '<span class="edge">（存疑·见解析）</span>' : '';
+  const ansHtml = '<span class="ans">答案：'+ans+'</span>';
+  let ana;
+  if(isSpecial){
+    ana = '<div class="analysis"><span class="b a2">'+analysisRaw+'</span></div>';
+  } else {
+    const parts = analysisRaw.split('｜');
+    const cls=['a1','a2','a3','a4'];
+    ana = '<div class="analysis">'+parts.map((p,k)=>'<span class="b '+cls[k]+'">'+(p||'')+'</span>').join('')+'</div>';
+  }
+  const div=document.createElement('div');
+  div.className='item';
+  div.innerHTML='<div class="q">'+num+'. '+stem+'</div>'
+    +'<div class="meta">'+tagHtml+'</div>'
+    +'<div style="font-size:13.5px;color:#556">选项：'+opts.replace(/｜.*/,'')+'</div>'
+    + ansHtml
+    +'<div class="toggle" onclick="this.nextElementSibling.classList.toggle(\'open\')">▸ 显示解析</div>'
+    + ana;
+  box.appendChild(div);
+});
+function expandAll(){document.querySelectorAll('.item .analysis').forEach(e=>e.classList.add('open'));}
+function collapseAll(){document.querySelectorAll('.item .analysis').forEach(e=>e.classList.remove('open'));}
+</script>
+</body>
+</html>
