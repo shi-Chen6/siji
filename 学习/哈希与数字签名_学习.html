@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>哈希与数字签名</title>
+<style>
+:root{--bg:#f5f7fa;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--blue:#2563eb;--blue2:#1e40af;--green:#059669;--red:#dc2626;--amber:#d97706;--purple:#7c3aed;}
+*{box-sizing:border-box;}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.7;}
+header{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;padding:34px 22px 26px;}
+header h1{margin:0 0 6px;font-size:25px;}
+header p{margin:0;opacity:.92;font-size:14.5px;}
+.wrap{display:flex;max-width:1180px;margin:0 auto;gap:0;}
+nav{position:sticky;top:0;align-self:flex-start;width:218px;flex:none;height:100vh;overflow:auto;background:#0f2747;color:#cdd9ec;padding:18px 12px;font-size:13.5px;}
+nav b{color:#fff;display:block;margin:14px 6px 8px;font-size:12.5px;letter-spacing:.5px;}
+nav a{display:block;color:#b9c8df;text-decoration:none;padding:6px 9px;border-radius:7px;margin:2px 0;}
+nav a:hover{background:#1c3a63;color:#fff;}
+main{flex:1;min-width:0;padding:26px 30px 80px;}
+.story{background:#eef4ff;border:1px solid #cfe0ff;border-radius:12px;padding:16px 18px;margin:0 0 26px;font-size:14px;color:#274472;}
+.story b{color:var(--blue2);}
+.mod{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;margin:0 0 24px;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+.mod h2{margin:0 0 12px;font-size:19px;color:var(--blue2);border-left:5px solid var(--blue);padding-left:12px;}
+.mod p{margin:10px 0;font-size:14.5px;}
+.mod .trap{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:9px;padding:10px 13px;font-size:13.5px;margin:12px 0;}
+table.knowledge-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px;}
+table.knowledge-table th,table.knowledge-table td{border:1px solid var(--line);padding:8px 10px;text-align:left;}
+table.knowledge-table th{background:#eef2ff;color:var(--blue2);}
+.speed{background:linear-gradient(135deg,#ecfdf5,#f0fdfa);border:1px solid #a7f3d0;border-radius:14px;padding:18px 22px;margin:0 0 24px;}
+.speed h2{margin:0 0 10px;color:var(--green);font-size:18px;}
+.speed table{width:100%;border-collapse:collapse;font-size:13.5px;}
+.speed td{padding:6px 8px;border-bottom:1px dashed #bbf7d0;}
+.speed td:first-child{color:var(--green);font-weight:600;white-space:nowrap;}
+#items{margin-top:6px;}
+.item{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:14px 0;box-shadow:0 1px 2px rgba(0,0,0,.03);}
+.item .q{font-size:15.5px;font-weight:600;margin-bottom:6px;}
+.item .meta{font-size:12.5px;margin-bottom:4px;}
+.item .ans{display:inline-block;background:#dcfce7;color:#166534;font-weight:700;padding:2px 10px;border-radius:6px;font-size:13.5px;margin:6px 0;}
+.dup{color:var(--amber);background:#fef3c7;padding:1px 7px;border-radius:5px;font-size:12px;}
+.edge{color:#475569;background:#e2e8f0;padding:1px 7px;border-radius:5px;font-size:12px;}
+.toggle{cursor:pointer;color:var(--blue);font-size:13.5px;margin-top:8px;user-select:none;}
+.toggle:hover{text-decoration:underline;}
+.analysis{display:none;margin-top:10px;border-top:1px dashed var(--line);padding-top:10px;font-size:13.5px;}
+.analysis.open{display:block;}
+.analysis .b{display:block;margin:5px 0;padding:7px 10px;border-radius:8px;}
+.a1{background:#fef2f2;color:#991b1b;}
+.a2{background:#eff6ff;color:#1e40af;}
+.a3{background:#f0fdf4;color:#166534;}
+.a4{background:#faf5ff;color:#6b21a8;}
+.bar{display:flex;gap:10px;margin:18px 0;}
+.bar button{flex:1;background:var(--blue);color:#fff;border:none;padding:9px;border-radius:8px;cursor:pointer;font-size:13.5px;}
+.bar button:hover{background:var(--blue2);}
+footer{text-align:center;color:var(--sub);font-size:12.5px;padding:20px;}
+@media(max-width:860px){.wrap{flex-direction:column;}nav{width:100%;height:auto;position:relative;top:auto;}}
+</style></head>
+<body>
+<header><h1>哈希与数字签名</h1><p>零基础通关 · 从数字指纹到可靠签名</p></header>
+<div class="wrap">
+<nav><b>目录</b><a href="#m1">① 哈希 / 报文摘要是什么</a><a href="#m2">② RSA 与数字签名</a><a href="#m3">③ 哈希在密码存储中的实战</a><a href="#m4">④ 哈希 / 签名的边界与网络防护</a><a href="#m5">⑤ 速查与辨析</a></nav>
+<main>
+<div class="story"><b>故事线：</b>怎么证明文件没被改？→ 哈希做「数字指纹」（MD5 128位 / SHA-1 160位，定长不可逆）→ RSA 用私钥对指纹「盖章」= 数字签名 → 真实案例 LinkedIn 用不安全 SHA-1 存密码被破，暴露「不安全的加密存储」→ 分清边界：网络入侵靠防火墙，内容可信靠签名。</div>
+<section class="mod" id="m1"><h2>① 哈希 / 报文摘要是什么</h2><p><b>哈希（Hash）</b>也叫<b>报文摘要</b>或<b>数字指纹</b>。打个比方：你有一篇 10 万字的小说，快递给别人前先自己算一个「指纹」——把全文喂进一台特殊的碎纸机，吐出来一串固定长度的字（比如 128 位）。只要原文改了一个标点，这个指纹就完全变样；但无论原文多长，指纹长度永远不变。</p>
+<p>它的三个特点要记牢：① <b>定长输出</b>（MD5 永远 128 位、SHA-1 永远 160 位）；② <b>单向</b>（有指纹推不出原文，像碎纸机不能还原）；③ <b>雪崩效应</b>（改一字符指纹全变）。它<b>不是加密</b>——加密能解密，哈希不能反解。</p>
+<p class="trap">⚠ 易混：MD5 = 128 位、SHA-1 = 160 位，这两个数字要分别钉死，别张冠李戴。</p></section><section class="mod" id="m2"><h2>② RSA 与数字签名</h2><p><b>数字签名</b>解决的是「这东西确实是我发的、且没被改过」。类比：纸质合同上盖章——别人看到章就知道是你签的，且合同内容被改了章就对不上。</p>
+<p>计算机里用<b>非对称加密（RSA）</b>来盖章：你用<b>自己的私钥</b>对文件的哈希值加密，这就是「签名」；别人用你的公钥解密，比对哈希，就能验证「确是你签的 + 内容没被改」。</p>
+<p><b>RSA 通常用作数字签名</b>（也用于加密，但题库考的是签名用途）。注意分工：<b>产生摘要/指纹是哈希干的</b>，不是 RSA——RSA 是「盖章」那一步。</p>
+<p><b>可靠的电子签名</b>有四要件（全选）：① 签名制作数据归签名人专有；② 签署时仅由签名人控制；③ 签署后对任意改动能被发现；④ 签署后数据电文内容和形式的改动能被发现。</p></section><section class="mod" id="m3"><h2>③ 哈希在密码存储中的实战</h2><p>网站存用户密码，<b>绝不能存明文</b>，也不能用「已被破解的不安全算法」哈希后存。正常做法：用<b>慢哈希 + 加盐</b>（如 bcrypt、scrypt）。</p>
+<p><b>真实案例（LinkedIn，2012）</b>：它用 <b>SHA-1</b> 哈希密码存储，而 SHA-1 已被证明不安全（快、易撞库），结果 650 万条哈希密码泄露，30 多万被破解。这暴露的漏洞是<b>「不安全的加密存储」</b>——不是配置错、也不是传输层没保护，是「存密码的方式本身不安全」。</p>
+<p class="trap">⚠ 考点：看到「用 SHA-1/MD5 这类已被攻破的算法存密码被破解」→ 选「不安全的加密存储」，不是「安全配置错误」也不是「传输层保护不足」。</p></section><section class="mod" id="m4"><h2>④ 哈希 / 签名的边界与网络防护</h2><p>哈希和签名是「内容层面」的技术；而「网络边界防御」是另一回事。两者别混。</p>
+<p><b>防火墙</b>：防止外部网侵犯内部网，是在网络边界设的一道墙（选防火墙），<b>不是数字签名、也不是密码认证</b>——签名解决不了「外部入侵」这种网络层问题。</p>
+<p><b>Samba 安全级别</b>（文件共享服务）：提供四种安全级别——<b>share、server、user、domain</b>（全选 ABCD）。这属于服务配置基础，和哈希/签名核心关联弱，了解即可。</p></section><section class="mod" id="m5"><h2>⑤ 速查与辨析</h2><p>把本章易错点集中钉死：</p>
+<table class="knowledge-table">
+<tr><th>易混点</th><th>正确结论</th><th>陷阱</th></tr>
+<tr><td>MD5 摘要长度</td><td><b>128 位</b></td><td>别和 SHA-1 的 160 位搞混</td></tr>
+<tr><td>SHA-1 输出位数</td><td><b>160 位</b></td><td>判断题常考</td></tr>
+<tr><td>RSA 通常用途</td><td><b>数字签名</b></td><td>产生摘要/指纹是哈希的活，不是 RSA</td></tr>
+<tr><td>报文摘要算法</td><td><b>MD5</b></td><td>EDS/RSA/AES 都不是摘要算法</td></tr>
+<tr><td>LinkedIn 漏洞</td><td><b>不安全的加密存储</b></td><td>不是配置错误/传输层问题</td></tr>
+<tr><td>可靠电子签名</td><td><b>ABCD 全选</b></td><td>专有+仅控+两可发现</td></tr>
+<tr><td>Samba 安全级别</td><td><b>ABCD 全选</b></td><td>share/server/user/domain</td></tr>
+</table></section>
+<section class="speed"><h2>🚀 速查卡（口诀汇总）</h2><table><tr><td>MD5 摘要长度</td><td>128 位（16 字节）</td></tr><tr><td>SHA-1 输出位数</td><td>160 位（20 字节）</td></tr><tr><td>RSA 通常用途</td><td>数字签名（不是产生摘要）</td></tr><tr><td>报文摘要算法</td><td>MD5（RSA/AES/EDS 都不是）</td></tr><tr><td>LinkedIn 漏洞</td><td>不安全的加密存储（SHA-1 存密码）</td></tr><tr><td>可靠电子签名</td><td>ABCD 全选（专有+仅控+两可发现）</td></tr><tr><td>Samba 安全级别</td><td>ABCD 全选（share/server/user/domain）</td></tr><tr><td>内外网边界防护</td><td>防火墙（不是签名/认证）</td></tr></table></section>
+<div class="bar"><button onclick="expandAll()">展开全部解析</button><button onclick="collapseAll()">收起全部解析</button></div>
+<div id="items"></div>
+</main></div>
+<footer>共 10 题 · 零基础学习页 · 答案解析点击展开</footer>
+<script>
+const box=document.getElementById('items');
+QA.forEach((q)=>{
+  const num=q[0], stem=q[1], opts=q[2], ans=q[3];
+  const analysisRaw = q[4];
+  const tag = (q.length===6) ? q[5] : '';
+  const isSpecial = analysisRaw.indexOf('⚠')===0 || ans.indexOf('题库标注')>=0;
+  let tagHtml = tag==='dup' ? '<span class="dup">（与前面重复）</span>'
+              : tag==='edge' ? '<span class="edge">（了解即可）</span>'
+              : tag==='dupedge' ? '<span class="dup">（与前面重复）</span><span class="edge">（了解即可）</span>'
+              : isSpecial ? '<span class="edge">（存疑·见解析）</span>' : '';
+  const ansHtml = '<span class="ans">答案：'+ans+'</span>';
+  let ana;
+  if(isSpecial){ ana = '<div class="analysis"><span class="b a2">'+analysisRaw+'</span></div>'; }
+  else {
+    const parts = analysisRaw.split('｜');
+    const cls=['a1','a2','a3','a4'];
+    ana = '<div class="analysis">'+parts.map((p,k)=>'<span class="b '+cls[k]+'">'+(p||'')+'</span>').join('')+'</div>';
+  }
+  const div=document.createElement('div');
+  div.className='item';
+  div.innerHTML='<div class="q">'+num+'. '+stem+'</div>'
+    +'<div class="meta">'+tagHtml+'</div>'
+    +'<div style="font-size:13.5px;color:#556">选项：'+opts.replace(/｜.*/,'')+'</div>'
+    + ansHtml
+    +'<div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div>'
+    + ana;
+  box.appendChild(div);
+});
+function expandAll(){document.querySelectorAll('.item .analysis').forEach(e=>e.classList.add('open'));}
+function collapseAll(){document.querySelectorAll('.item .analysis').forEach(e=>e.classList.remove('open'));}
+
+const QA=[["1", "RSA 通常用作（ ）。", "A.数字签名｜B.产生数字指纹｜C.生成摘要｜D.产生大的随机数", "A", "🎯答案解析：本题选 A（数字签名）。RSA 是一种非对称加密算法，考试中它最常见的用途是「数字签名」（也用于加密，但本题四个选项里签名最贴切）。｜📚知识点讲解：RSA 用私钥对文件哈希值加密 = 签名；公钥验证。产生数字指纹/生成摘要是哈希（如 MD5/SHA）的活，不是 RSA；产生大的随机数是随机数发生器的事。｜💡解题思路：问 RSA 用途，排除 B/C（那是哈希），D 无关，剩 A 数字签名。｜🧠记忆口诀：RSA 干啥用？签名它最行；摘要归哈希，莫把活儿混。", ""], ["2", "以下算法中属于报文摘要算法的是（ ）。", "A.MD5｜B.EDS｜C.RSA｜D.AES", "A", "🎯答案解析：本题选 A（MD5）。报文摘要算法 = 哈希算法，MD5 是典型代表。｜📚知识点讲解：报文摘要（哈希）算法把任意长度消息压缩成定长指纹：MD5（128位）、SHA-1（160位）。EDS 不是标准算法；RSA 是非对称加密；AES 是对称加密——三者都不是摘要算法。｜💡解题思路：找「哈希/摘要」家族，只有 MD5 是；其余 RSA/AES 是加密、EDS 是干扰项。｜🧠记忆口诀：摘要算法 MD5，RSA/AES 靠边站；EDS 凑数莫上当，定长指纹它来算。", ""], ["3", "哈希算法 MD5 的摘要长度为（ ）。", "A.64位｜B.128位｜C.256位｜D.512位", "B", "🎯答案解析：本题选 B（128 位）。MD5 输出固定 128 位（16 字节）摘要。｜📚知识点讲解：MD5 无论输入多长，都生成 128 位哈希值。注意和 SHA-1（160位）、SHA-256（256位）区分，别记串。｜💡解题思路：MD5 = 128 位是固定考点，直接选 B。｜🧠记忆口诀：MD5 摘要一百二八，SHA-1 才是一六零；长度钉死莫混淆，考试常挖这坑。", ""], ["4", "samba 所提供的安全级别包括（ ）。", "A.share｜B.server｜C.user｜D.domain", "ABCD", "🎯答案解析：本题选 ABCD（全选）。Samba 文件共享服务的安全级别有四种：share、server、user、domain。｜📚知识点讲解：Samba 是 Linux/Unix 上实现 Windows 文件共享的服务。四种安全级别：share（按共享匿名/密码）、user（按用户验证，最常用）、server（由另一台服务器验证）、domain（加入 Windows 域验证）。｜💡解题思路：四种级别都属 Samba 标准配置，全选。｜🧠记忆口诀：（了解即可）Samba 四级：share、server、user、domain；文件共享靠它管，哈希签名不相关。", "edge"], ["5", "什么是可靠的电子签名（ ）。", "A.签署后对电子签名的任何改动能够被发现｜B.电子签名制作数据用于电子签名时，属于电子签名人专有｜C.签署后对数据电文内容和形式的任何改动能够被发现｜D.签署时电子签名制作数据仅由电子签名人控制", "ABCD", "🎯答案解析：本题选 ABCD（全选）。可靠电子签名的四个要件在《电子签名法》里都规定死了，四条全中。｜📚知识点讲解：可靠电子签名四要件：① 制作数据归签名人专有（B）；② 签署时仅由签名人控制（D）；③ 签署后对签名本身的改动能发现（A）；④ 签署后对数据电文内容和形式的改动能发现（C）。四条缺一不可。｜💡解题思路：四条描述全都符合法律规定，全选。｜🧠记忆口诀：可靠签名四要件：专有、仅控、两可发现（签名改+内容改）；ABCD 一把抓，少一条都不算。", ""], ["6", "LinkedIn 公司发生安全事件，650 万条哈希密码被上传，30 多万密码被破解，原因是使用了哈希算法 SHA1。这暴露了（ ）安全漏洞。", "A.不安全的加密存储｜B.安全配置错误｜C.不安全的直接对象引用｜D.传输层保护不足", "A", "🎯答案解析：本题选 A（不安全的加密存储）。用已被攻破的 SHA-1 哈希存密码，属于「存储密码的方式本身不安全」。｜📚知识点讲解：存密码该用慢哈希+加盐（bcrypt 等）。SHA-1 快且已被证明不安全，用来存密码易被暴力/字典破解。这是「加密存储」环节的问题，不是网络配置、也不是传输过程。｜💡解题思路：关键词「用 SHA-1 存密码被破解」→ 存储环节不安全 → 选 A。B 是配置、D 是传输，都不对。｜🧠记忆口诀：SHA-1 存密码，被破不冤枉；漏洞在存储，不选配置/传输。", ""], ["7", "为了保障网络安全，防止外部网对内部网的侵犯，多在内部网络与外部网络之间设置（ ）。", "A.数字签名｜B.时间戳｜C.防火墙｜D.密码认证", "C", "🎯答案解析：本题选 C（防火墙）。内外网之间设防火墙，是一道网络边界的墙。｜📚知识点讲解：防火墙工作在网络层/边界，过滤进出流量、挡外部入侵。数字签名解决「内容可信」、密码认证解决「你是谁」、时间戳解决「何时」，都挡不了「外部网侵犯内部网」这种网络边界攻击。｜💡解题思路：「外部入侵内部」→ 边界防御 → 防火墙（C）。｜🧠记忆口诀：（了解即可）外侵内、设防火墙；签名管内容，认证管身份，边界问题墙来挡。", "edge"], ["8", "RSA 通常用作（ ）。", "A.数字签名｜B.产生数字指纹｜C.生成摘要｜D.产生大的随机数", "A", "🎯答案解析：本题选 A（数字签名）。与第 1 题完全相同：RSA 最常见用途是数字签名。｜📚知识点讲解：同 Q1：RSA 是非对称算法，用于签名（私钥签、公钥验）；产生指纹/摘要是哈希的活。｜💡解题思路：同 Q1，选 A。｜🧠记忆口诀：（与前面重复）RSA 干啥用？签名它最行；摘要归哈希，莫把活儿混。", "dup"], ["9", "以下算法中属于报文摘要算法的是（ ）。", "A.MD5｜B.EDS｜C.RSA｜D.AES", "A", "🎯答案解析：本题选 A（MD5）。与第 2 题完全相同：MD5 是报文摘要（哈希）算法。｜📚知识点讲解：同 Q2：报文摘要算法产出定长指纹，MD5 是代表；RSA 是非对称、AES 是对称、EDS 是干扰项。｜💡解题思路：同 Q2，选 A。｜🧠记忆口诀：（与前面重复）摘要算法 MD5，RSA/AES 靠边站；EDS 凑数莫上当。", "dup"], ["10", "报文摘要算法 SHA-1 输出的位数是 160 位。", "A.正确｜B.错误", "正确", "🎯答案解析：本题选 A（正确）。SHA-1 输出固定 160 位（20 字节）摘要。｜📚知识点讲解：SHA-1 是哈希算法，摘要长度 160 位；区别于 MD5 的 128 位。虽然 SHA-1 已被认为不安全（碰撞攻击），但「输出 160 位」这个事实不变。｜💡解题思路：SHA-1 = 160 位，判断题直接判正确。｜🧠记忆口诀：SHA-1 输出一百六零，MD5 才是一二八；位数判断要果断，正确打钩别犹豫。", ""]];
+</script>
+</body></html>
