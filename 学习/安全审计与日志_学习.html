@@ -1,0 +1,130 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>安全审计与日志</title><style>:root{--bg:#f5f7fa;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--blue:#2563eb;--blue2:#1e40af;--green:#059669;--red:#dc2626;--amber:#d97706;--purple:#7c3aed;}
+*{box-sizing:border-box;}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.7;}
+header{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;padding:34px 22px 26px;}
+header h1{margin:0 0 6px;font-size:25px;}
+header p{margin:0;opacity:.92;font-size:14.5px;}
+.wrap{display:flex;max-width:1180px;margin:0 auto;gap:0;}
+nav{position:sticky;top:0;align-self:flex-start;width:218px;flex:none;height:100vh;overflow:auto;background:#0f2747;color:#cdd9ec;padding:18px 12px;font-size:13.5px;}
+nav b{color:#fff;display:block;margin:14px 6px 8px;font-size:12.5px;letter-spacing:.5px;}
+nav a{display:block;color:#b9c8df;text-decoration:none;padding:6px 9px;border-radius:7px;margin:2px 0;}
+nav a:hover{background:#1c3a63;color:#fff;}
+main{flex:1;min-width:0;padding:26px 30px 80px;}
+.story{background:#eef4ff;border:1px solid #cfe0ff;border-radius:12px;padding:16px 18px;margin:0 0 26px;font-size:14px;color:#274472;}
+.story b{color:var(--blue2);}
+.mod{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;margin:0 0 24px;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+.mod h2{margin:0 0 12px;font-size:19px;color:var(--blue2);border-left:5px solid var(--blue);padding-left:12px;}
+.mod p{margin:10px 0;font-size:14.5px;}
+.mod .trap{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:9px;padding:10px 13px;font-size:13.5px;margin:12px 0;}
+table.knowledge-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px;}
+table.knowledge-table th,table.knowledge-table td{border:1px solid var(--line);padding:8px 10px;text-align:left;}
+table.knowledge-table th{background:#eef2ff;color:var(--blue2);}
+.speed{background:linear-gradient(135deg,#ecfdf5,#f0fdfa);border:1px solid #a7f3d0;border-radius:14px;padding:18px 22px;margin:0 0 24px;}
+.speed h2{margin:0 0 10px;color:var(--green);font-size:18px;}
+.speed table{width:100%;border-collapse:collapse;font-size:13.5px;}
+.speed td{padding:6px 8px;border-bottom:1px dashed #bbf7d0;}
+.speed td:first-child{color:var(--green);font-weight:600;white-space:nowrap;}
+#items{margin-top:6px;}
+.item{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:14px 0;box-shadow:0 1px 2px rgba(0,0,0,.03);}
+.item .q{font-size:15.5px;font-weight:600;margin-bottom:6px;}
+.item .meta{font-size:12.5px;margin-bottom:4px;}
+.item .ans{display:inline-block;background:#dcfce7;color:#166534;font-weight:700;padding:2px 10px;border-radius:6px;font-size:13.5px;margin:6px 0;}
+.dup{color:var(--amber);background:#fef3c7;padding:1px 7px;border-radius:5px;font-size:12px;}
+.edge{color:#475569;background:#e2e8f0;padding:1px 7px;border-radius:5px;font-size:12px;}
+.toggle{cursor:pointer;color:var(--blue);font-size:13.5px;margin-top:8px;user-select:none;}
+.toggle:hover{text-decoration:underline;}
+.analysis{display:none;margin-top:10px;border-top:1px dashed var(--line);padding-top:10px;font-size:13.5px;}
+.analysis.open{display:block;}
+.analysis .b{display:block;margin:5px 0;padding:7px 10px;border-radius:8px;}
+.a1{background:#fef2f2;color:#991b1b;}
+.a2{background:#eff6ff;color:#1e40af;}
+.a3{background:#f0fdf4;color:#166534;}
+.a4{background:#faf5ff;color:#6b21a8;}
+.bar{display:flex;gap:10px;margin:18px 0;}
+.bar button{flex:1;background:var(--blue);color:#fff;border:none;padding:9px;border-radius:8px;cursor:pointer;font-size:13.5px;}
+.bar button:hover{background:var(--blue2);}
+footer{text-align:center;color:var(--sub);font-size:12.5px;padding:20px;}
+@media(max-width:860px){.wrap{flex-direction:column;}nav{width:100%;height:auto;position:relative;top:auto;}}</style></head><body><header><h1>安全审计与日志</h1><p>零基础通关 · 从审计基础概念到日志设计、留存期限、运维审计系统与等保层面</p></header><div class="wrap"><nav><b>目录</b>
+<a href="#m1">① 安全审计基础概念与价值</a>
+<a href="#m2">② 审计日志的设计与内容</a>
+<a href="#m3">③ 日志留存期限（合规）</a>
+<a href="#m4">④ 运维审计系统与日常运维</a>
+<a href="#m5">⑤ 等保层面与相关拓展</a>
+<a href="#sp">🚀 速查卡</a></nav><main><div class="story"><b>故事线：</b>从“什么是安全审计”入门（作用＝发现入侵/滥用/检测入侵，但不管保证不外泄、追溯系统定义、审计员职责、特权用户不含日志审计员）→ 审计日志设计与内容（含谁/何时/何事、应用审计全维度、开启并归档）→ 日志留存期限（上网行为90天、运维半年、网贷5年、网吧60天）→ 运维审计系统 HAC 与日常运维（堡垒机四作用、服务器维护不含异常日志、备份防丢失）→ 等保层面与相关拓展（网络层面、ITIL问题经理、Oracle SGA、网吧终止）。一张速查卡钉死所有易错点。</div>
+<section class="mod" id="m1"><h2>① 安全审计基础概念与价值</h2>
+<p><b>安全审计是什么</b>：对系统操作、安全事件、人员行为进行全面记录与审查，目的是事后<b>追溯</b>、发现入侵与滥用。类比：小区监控摄像头＋门禁记录，出了事能回放查谁进过、干了啥。</p>
+<p><b>审计的作用边界</b>：能发现入侵行为/潜在漏洞（A）、发现计算机滥用（B）、检测对系统的入侵（D）；但<b>不能“保证可信网络内部信息不外泄”</b>——那是保密/加密的职责，审计只记录发现（题 8 选 C 为“不包括”）。</p>
+<p><b>审计追溯系统</b>：统一远程运维入口、记录所有操作、意外后场景回放以“追溯”事件起源（题 7 选 A）。</p>
+<p><b>安全审计员职责</b>：对系统安全事件和各类人员操作行为进行审计和监督（题 19 判正确）。<b>特权用户不含日志审计员</b>：特权用户＝超级用户/安全管理/DBA，日志审计员是审计岗非特权操作类型（题 5 选 B）。</p>
+<p class="trap">⚠ 易混：审计是“事后发现与威慑”，不是“保证不外泄”。问“作用不包括”必选“保证内部信息不外泄”；审计员/日志审计员是监督岗，不属特权用户类型。</p></section>
+
+<section class="mod" id="m2"><h2>② 审计日志的设计与内容</h2>
+<p><b>审计日志设计要素</b>：应包含用户 ID/进程 ID（A）、时间戳（B）、事件类型与内容（D）；<b>不应包含用户完整交易信息</b>（过度收集＋隐私，题 2 选 ABD）。</p>
+<p><b>应用系统审计内容</b>：管理员授权操作日志、重要业务操作、用户登录/登出/失败登录日志、创建删除（注销）用户操作日志——全维度留痕才能追责（题 11 全选 ABCD）。</p>
+<p><b>操作规范</b>：过程中应开启日志并进行归档，这是审计闭环第一步（题 15 判正确）。</p>
+<p class="trap">⚠ 审计日志三要素＝“谁＋何时＋何事”，完整交易信息属业务数据，别塞进审计日志。</p></section>
+
+<section class="mod" id="m3"><h2>③ 日志留存期限（合规）</h2>
+<p><b>上网行为管理日志</b>：保存 <b>90 天</b>（题 4 选 D）。</p>
+<p><b>远程运维审计日志</b>：至少保存 <b>半年</b>（题 9 选 A）。</p>
+<p><b>网贷日志</b>：自借贷合同到期起留存 <b>5 年</b>（题 16 选 A，偏题）。</p>
+<p><b>网吧上网记录</b>：依法留存不少于 <b>60 天</b>（题 18 判正确，偏题）。</p>
+<p class="trap">⚠ 不同系统期限不同：上网行为 90 天、运维审计半年、网贷 5 年、网吧 60 天。莫混为一谈。</p></section>
+
+<section class="mod" id="m4"><h2>④ 运维审计系统与日常运维</h2>
+<p><b>IT 运维审计系统（HAC/堡垒机）</b>：四大作用——统一入口（D）、访问服务器（A）、操作监控（B）、运维日志（C），全选 ABCD（题 10）。</p>
+<p><b>服务器软件维护不含异常日志</b>：维护＝数据库/网络服务/用户数据；异常日志归安全审计，不属维护（题 1 选 D）。</p>
+<p><b>防数据丢失最重要＝备份服务</b>：误操作/硬件故障丢数据，备份能恢复；安全审计只记录不防丢（题 12 选 B）。</p>
+<p class="trap">⚠ 备份防丢失、审计记行为——二者职责不同。问“防重要数据文件丢失最重要”必选备份服务。</p></section>
+
+<section class="mod" id="m5"><h2>⑤ 等保层面与相关拓展（偏题区）</h2>
+<p><b>等保层面</b>：结构安全、访问控制、安全审计是<b>网络层面</b>要求（题 13 选 C）。</p>
+<p><b>ITIL 问题经理职责</b>（南方电网办法）：审核监控协调资源、分派、跨流程协调、定期回顾——全选 ABCD（题 3，偏 IT 运维流程）。</p>
+<p><b>Oracle SGA 内存</b>：SGA 包括数据高速缓冲区/共享池/重做日志缓冲区（题 6 选 ABC，偏数据库）；其中<b>日志缓冲区可循环使用</b>，数据缓冲区/共享池/大池不能循环（题 14 选 ACD，偏数据库）。</p>
+<p><b>网吧终止经营</b>：清理债权债务、履责、工商审清算报告、注销登记——全选 ABCD（题 17，偏网吧法规；转让证照非要件）。</p>
+<p class="trap">⚠ 本章混入较多跨主题题（SGA/ITIL/网吧/网贷），已标 edge 了解即可。SGA 两题易混：题 6 考“包含哪些”（ABC），题 14 考“哪些不能循环”（ACD，可循环的是日志缓冲区）。</p></section>
+
+<section class="speed" id="sp"><h2>🚀 速查卡（口诀与要点汇总）</h2><table>
+<tr><td>审计作用不包括</td><td>保证内部信息不外泄（C）</td></tr>
+<tr><td>审计追溯系统</td><td>统一入口+记录+回放，追溯起源（A）</td></tr>
+<tr><td>安全审计员职责</td><td>审计监督安全事件与人员行为（正确）</td></tr>
+<tr><td>特权用户类型</td><td>超级/安全/DBA；不含日志审计员（B）</td></tr>
+<tr><td>审计日志要素</td><td>谁/何时/何事（ABD；不含完整交易）</td></tr>
+<tr><td>应用审计内容</td><td>管理员/业务/登录/增删（ABCD）</td></tr>
+<tr><td>操作规范</td><td>开启日志并归档（正确）</td></tr>
+<tr><td>上网行为日志</td><td>90 天（D）</td></tr>
+<tr><td>运维审计日志</td><td>至少半年（A）</td></tr>
+<tr><td>网贷日志</td><td>合同到期起 5 年（A，偏题）</td></tr>
+<tr><td>网吧记录</td><td>≥60 天（正确，偏题）</td></tr>
+<tr><td>HAC 堡垒机作用</td><td>统一入口/访问/监控/日志（ABCD）</td></tr>
+<tr><td>服务器维护不含</td><td>异常日志（D，归审计）</td></tr>
+<tr><td>防数据丢失最重要</td><td>备份服务（B）</td></tr>
+<tr><td>结构/访问/审计层面</td><td>网络层面（C）</td></tr>
+<tr><td>SGA 包括</td><td>数据缓冲/共享池/重做日志缓冲（ABC，偏题）</td></tr>
+<tr><td>SGA 不能循环</td><td>数据缓冲/共享池/大池（ACD，偏题）</td></tr>
+<tr><td>网吧终止经营</td><td>清算/履责/审报告/注销（ABCD，偏题）</td></tr>
+</table></section><div class="bar"><button onclick="expandAll()">展开全部解析</button><button onclick="collapseAll()">收起全部解析</button></div><div id="items"></div></main></div><footer>共 19 题 · 零基础学习页 · 答案解析点击展开</footer><script>const QA=[["1", "以下不属于服务器软件维护的是()。", "A.数据库维护｜B.网络服务的维护｜C.用户数据｜D.异常日志", "D", "🎯答案解析：本题选 <b>D</b>（异常日志）。服务器软件维护通常包括数据库维护、网络服务维护、用户数据维护等；<b>异常日志属于安全审计范畴</b>，不是服务器软件维护的内容，故选 D。｜📚知识点讲解：服务器软件维护聚焦“让软件正常运行”——数据库、网络服务、用户数据都在其内。而异常日志是记录/审计系统异常的安全产物，归安全审计职责，不属日常软件维护。｜💡解题思路：找“不属于维护”的→ 异常日志是审计对象而非维护动作，选 D。｜🧠记忆口诀：服务器维护三件套，库网用户都管到；异常日志归审计，不属于维护错不了。", ""], ["2", "审计日志设计应包括()", "A.用户ID 或引起这个事件的处理程序ID｜B.事件的日期、时间(时间戳)｜C.用户完整交易信息｜D.事件类型与内容", "ABD", "🎯答案解析：本题选 <b>ABD</b>。审计日志设计应包含：用户 ID 或引发事件的处理程序 ID（A）、事件日期时间即时间戳（B）、事件类型与内容（D）。<b>C“用户完整交易信息”不应纳入</b>——过度收集且有隐私风险，故不选。｜📚知识点讲解：审计日志要素＝“谁（用户/进程ID）+ 何时（时间戳）+ 发生了什么（类型与内容）”。完整交易信息属于业务数据，不该塞进审计日志（既冗余又涉密）。｜💡解题思路：三项标准审计要素→ ABD；C 过度收集排除。｜🧠记忆口诀：审计日志三要素，谁做何时与何事；完整交易莫塞入，ABD 选无误。", ""], ["3", "根据《中国南方电网有限责任公司 IT 服务管理办法(2014年)》 ,IT 服务管理问题经理职责：()。", "A.负责问题的审核与监控，负责协调所需资源｜B.负责问题的分派｜C.负责与其它流程经理的沟通与协调｜D.负责定期召开会议回顾问题", "ABCD", "🎯答案解析：本题选 <b>ABCD</b>（全选）。按《南方电网 IT 服务管理办法》，问题经理职责包括：审核监控并协调资源（A）、问题分派（B）、与其他流程经理沟通协调（C）、定期开会回顾问题（D）。｜📚知识点讲解：这是 IT 服务管理（ITIL）中“问题管理”流程的角色职责，属运维管理范畴，与“安全审计与日志”主题关联较弱，标记为偏题了解即可。｜💡解题思路：问题经理四项职责均属其责，全选 ABCD。｜🧠记忆口诀：问题经理四职责，审核分派协调顾；偏题了解即可，ABCD 全选住。", "edge"], ["4", "上网行为管理系统中日志保存()天。", "A.15｜B.30｜C.60｜D.90", "D", "🎯答案解析：本题选 <b>D</b>（90 天）。上网行为管理系统中日志应保存 <b>90 天</b>。｜📚知识点讲解：上网行为管理系统记录用户上网轨迹，监管/等保要求其日志留存一定期限，本题明确为 90 天。对比：远程运维审计日志至少半年（题 9），网贷日志 5 年（题 16），不同系统期限不同。｜💡解题思路：上网行为管理日志保存期→ 90 天，选 D。｜🧠记忆口诀：上网行为日志存，九十天期记心间；不同系统期限异，莫与半年五年混。", ""], ["5", "对于软件的普通用户进程，应该禁止赋予进程特权用户权限。特权用户类型不包括()。", "A.超级用户｜B.日志审计员用户｜C.安全管理用户｜D.数据库管理员用户", "B", "🎯答案解析：本题选 <b>B</b>（日志审计员用户）。普通用户进程应禁止赋予特权权限；特权用户类型包括超级用户、安全管理用户、数据库管理员用户，<b>“日志审计员”是审计角色，不属于特权操作类型</b>，故选 B。｜📚知识点讲解：特权用户（如 root、DBA、安全管理员）拥有高权限，普通进程绝不能被赋予。日志审计员是“监督者”角色，其本身不是特权操作账号类型，故不在特权用户之列。｜💡解题思路：找“不属于特权用户类型”→ 日志审计员是审计岗非特权操作，选 B。｜🧠记忆口诀：特权用户三类型，超级安全数据库；日志审计监督岗，不属特权莫混淆。", ""], ["6", "SGA区包括", "A.数据高速缓冲区｜B.共享池｜C.重做日志缓冲区｜D.PGA", "ABC", "🎯答案解析：本题选 <b>ABC</b>。SGA（系统全局区）包括：数据高速缓冲区（A）、共享池（B）、重做日志缓冲区（C）。<b>D“PGA”是程序全局区，不在 SGA 内</b>。｜📚知识点讲解：SGA 是 Oracle 数据库实例的共享内存区，含数据缓冲区、共享池、重做日志缓冲区等；PGA 是每个进程私有的，独立于 SGA。此题偏 Oracle 数据库内存结构，与“安全审计与日志”主题关联弱，标为偏题。｜💡解题思路：SGA 三成员→ ABC；PGA 独立排除。｜🧠记忆口诀：SGA 三块要记牢，数据共享重做日志；PGA 独立在外头，偏题了解就好。", "edge"], ["7", "指为了实现信息系统及网络安全设备远程运维操作平台和途径的统一，对所有操作进行记录审计，保证在意外事件发生后能够及时场景回放，()事件发生起源的系统。", "A.追溯｜B.查看｜C.查寻｜D.调查", "A", "🎯答案解析：本题选 <b>A</b>（追溯）。题干描述的是“安全审计追溯系统”——统一远程运维入口、记录所有操作、意外后能场景回放，从而<b>追溯事件发生的起源</b>。｜📚知识点讲解：审计追溯（Traceability）指通过完整日志记录，在事件发生后回溯“谁、何时、做了什么、怎么发生的”。统一运维审计平台正是为实现可追溯而建。｜💡解题思路：关键词“场景回放、起源”→ 追溯，选 A。｜🧠记忆口诀：运维操作全记录，意外回放溯源流；追溯系统记起源，选 A 不用愁。", ""], ["8", "安全审计是保障信息系统安全的重要手段之一，其作用不包括()。", "A.发现系统入侵行为和潜在的漏洞｜B.发现计算机的滥用情况｜C.保证可信网络内部信息不外泄｜D.检测对系统的入侵", "C", "🎯答案解析：本题选 <b>C</b>。安全审计的作用包括发现入侵行为与潜在漏洞（A）、发现计算机滥用（B）、检测对系统的入侵（D）；<b>“保证可信网络内部信息不外泄”不是审计的作用</b>——那是保密/加密的职责，审计只能记录发现，不能保证不外泄。｜📚知识点讲解：安全审计是“事后发现与威慑”手段，能发现入侵、滥用、漏洞，但无法直接“保证信息不外泄”（那需加密、访问控制等）。所以 C 是作用不包括的项。｜💡解题思路：找“审计做不到”的→ 保证不外泄是保密职责，选 C。｜🧠记忆口诀：审计作用三发现，入侵滥用漏洞见；保证不外泄非它，C 项排除莫选偏。", ""], ["9", "远程运维审计系统中运维日志应至少保存(),系统配置数据每个月备份一次。", "A.半年｜B.三年｜C.一年｜D.三个月", "A", "🎯答案解析：本题选 <b>A</b>（半年）。远程运维审计系统中，运维日志应至少保存 <b>半年</b>，系统配置数据每月备份一次。｜📚知识点讲解：运维审计（如堡垒机）日志留存要求通常不少于半年，以便事后追溯。对比：上网行为日志 90 天（题 4）、网贷日志 5 年（题 16）。｜💡解题思路：运维审计日志保存期→ 半年，选 A。｜🧠记忆口诀：运维审计日志存，至少半年要记真；配置数据月备份，A 项半年莫忘跟。", ""], ["10", "IT 运维审计系统(HAC)主要有以下作用()", "A.访问服务器｜B.操作监控｜C.运维日志｜D.统一入口", "ABCD", "🎯答案解析：本题选 <b>ABCD</b>（全选）。IT 运维审计系统（HAC，如堡垒机）作用包括：统一入口（D）、访问服务器（A）、操作监控（B）、运维日志（C）。｜📚知识点讲解：HAC/堡垒机核心能力就是“统一入口 + 代理访问 + 实时监控 + 全程日志”，四者缺一不可，故全选。｜💡解题思路：堡垒机四大作用→ 统一入口/访问/监控/日志，全选 ABCD。｜🧠记忆口诀：运维审计 HAC，四用齐备莫落下；统一入口加监控，访问日志 ABCD。", ""], ["11", "应用系统是否包括安全日志记录功能，审计内容应包括以下内容：()", "A.管理员授权操作日志；｜B.重要业务操作。｜C.用户登录、登出、失败登陆日志；｜D.创建、删除(注销)用户操作日志；", "ABCD", "🎯答案解析：本题选 <b>ABCD</b>（全选）。应用系统的安全审计内容应包括：管理员授权操作日志（A）、重要业务操作（B）、用户登录/登出/失败登录日志（C）、创建删除（注销）用户操作日志（D）。｜📚知识点讲解：应用层审计要覆盖“人”（登录登出、增删用户）与“事”（管理员操作、关键业务），全维度留痕才能追责，故全选。｜💡解题思路：从登录到操作到用户管理全涵盖→ ABCD。｜🧠记忆口诀：应用审计内容全，登录操作用户管；管理业务与增删，ABCD 选一遍。", ""], ["12", "为避免由于误操作或硬件故障造成的重要数据文件丢失，在日常工作中哪个网络管理服务最重要?", "A.监测服务｜B.备份服务｜C.硬件诊断服务｜D.安全审计服务", "B", "🎯答案解析：本题选 <b>B</b>（备份服务）。为避免误操作或硬件故障导致重要数据文件丢失，日常最重要的网络管理服务是<b>备份服务</b>——它能恢复丢失的数据。｜📚知识点讲解：监测/诊断/审计都重要，但“防数据丢失”最直接靠备份（数据冗余副本）。安全审计服务是记录行为，不能防丢失，故 D 是干扰项。｜💡解题思路：问“防数据丢失最重要”→ 备份，选 B。｜🧠记忆口诀：误删故障数据丢，备份服务是首选；审计只记不防丢，B 项稳当莫偏。", ""], ["13", "结构安全、访问控制、安全审计是()层面的要求。", "A.物理｜B.主机｜C.网络｜D.系统", "C", "🎯答案解析：本题选 <b>C</b>（网络）。结构安全、访问控制、安全审计是<b>网络层面</b>的安全要求（等保中对应“安全通信网络”等网络层控制）。｜📚知识点讲解：在等保/安全体系分层中，结构安全（网络拓扑）、访问控制、安全审计常作为网络层面的基础要求，区别于物理、主机、系统层面。｜💡解题思路：结构/访问/审计三者归网络层→ 选 C。｜🧠记忆口诀：结构访问加审计，网络层面三要求；物理主机系统分，C 项网络记心头。", ""], ["14", "在全局存储区SGA中，哪部分内存区域不能循环使用?", "A.数据缓冲区｜B.日志缓冲区｜C.共享池｜D.大池", "ACD", "🎯答案解析：本题选 <b>ACD</b>。在 SGA 中，<b>日志缓冲区（B）可以循环使用</b>（重做日志缓冲可被覆盖重写），而数据缓冲区（A）、共享池（C）、大池（D）不能循环使用，故选 ACD。｜📚知识点讲解：SGA 各组件中，重做日志缓冲区按环形方式循环覆写；数据缓冲区、共享池、大池等一般不循环。此题偏 Oracle 内存管理，与审计日志主题弱相关，标为偏题。注意与题 6（SGA 包括 ABC）区分：题 6 考“包含哪些”，本题考“哪些不能循环”。｜💡解题思路：能循环的是日志缓冲区→ 排除 B，选 ACD。｜🧠记忆口诀：SGA 循环看日志，缓冲能覆其他否；大池数据加共享，ACD 不选 B 走。", "edge"], ["15", "操作过程中应开启日志记录，并进行归档。", "A.正确｜B.错误", "正确", "🎯答案解析：本题选 <b>A（正确）</b>。操作过程中应开启日志记录并进行归档——这是基本运维规范，便于事后审计与追溯。｜📚知识点讲解：开启日志+归档是审计闭环的第一步：实时记录操作、定期归档留存，才能支撑后续追溯与合规检查。｜💡解题思路：开启日志并归档是规范要求→ 正确，选 A。｜🧠记忆口诀：操作过程开日志，归档留存莫迟疑；正确规范记心间，A 项无疑。", ""], ["16", "网络借贷信息中介机构应当记录并留存借贷双方上网日志信息，信息交互内容等数据，留存期限为自借贷合同()到期起。", "A.5 年｜B.3 年｜C.2 年｜D.4年", "A", "🎯答案解析：本题选 <b>A</b>（5 年）。网络借贷信息中介机构应记录并留存借贷双方上网日志、交互内容等数据，留存期限自借贷合同<b>到期起 5 年</b>。｜📚知识点讲解：这是网贷行业监管对日志留存的特定期限要求（5 年），属特定行业法规，与通用安全审计主题关联较弱，标为偏题了解即可。｜💡解题思路：网贷日志留存期→ 5 年，选 A。｜🧠记忆口诀：网贷日志要留存，合同到期五年整；偏题了解记期限，A 项五年莫忘形。", "edge"], ["17", "网吧终止经营活动，应当()网吧才算终止经营。", "A.清理债权、债务｜B.履行应尽的法定义务｜C.经工商行政管理部门审核其清算报告｜D.依法办理注销登记手续｜E.转让相关证照", "ABCD", "🎯答案解析：本题选 <b>ABCD</b>。网吧终止经营，应当：清理债权债务（A）、履行法定义务（B）、经工商审核清算报告（C）、依法办理注销登记（D）。E“转让相关证照”不是终止要件（且证照一般不得转让），故不选。｜📚知识点讲解：网吧终止是法定程序——清算债权债务、履责、工商审报告、注销登记，才算真正终止。此题偏网吧管理法规，与审计日志主题弱相关，标为偏题。｜💡解题思路：终止四要件→ 清算/履责/审报告/注销，全选 ABCD；E 转让证照错。｜🧠记忆口诀：网吧终止四步走，清算履责审注销；转让证照非要件，ABCD 选记熟。", "edge"], ["18", "对网吧上网信息历史记录，可检查存放日志记录有无保存60天以上。", "A.正确｜B.错误", "正确", "🎯答案解析：本题选 <b>A（正确）</b>。对网吧上网信息历史记录，可检查其日志记录是否保存 60 天以上——网吧上网记录依法须留存不少于 60 天。｜📚知识点讲解：网吧上网日志留存是网安监管要求（≥60 天），属特定行业规定，与通用审计日志主题关联弱，标为偏题。对比：上网行为管理 90 天（题 4）、运维审计半年（题 9）、网贷 5 年（题 16）。｜💡解题思路：网吧记录保存 60 天以上→ 正确，选 A。｜🧠记忆口诀：网吧记录六十天，检查留存是规范；偏题了解记期限，正确 A 项心安然。", "edge"], ["19", "关于信息安全管理人员职责，安全审计员负责对涉及系统安全的事件和各类操作人员的行为进行审计和监督。", "A.正确｜B.错误", "正确", "🎯答案解析：本题选 <b>A（正确）</b>。安全审计员的职责正是对涉及系统安全的事件和各类操作人员的行为进行审计和监督。｜📚知识点讲解：安全审计员是专职监督角色，负责审计系统安全事件与人员操作行为，是审计职能的执行者（对应题 5 中“日志审计员”属审计岗）。｜💡解题思路：审计员职责描述正确→ 选 A。｜🧠记忆口诀：安全审计员职责明，事件行为审计清；监督专职是其任，正确 A 项记心。", ""]];
+const box=document.getElementById('items');
+QA.forEach((q)=>{
+  const num=q[0], stem=q[1], opts=q[2], ans=q[3];
+  const analysisRaw=q[4];
+  const tag=(q.length===6)?q[5]:'';
+  let tagHtml = tag==='dup' ? '<span class="dup">（与前面重复·同题不同源）</span>'
+             : tag==='edge' ? '<span class="edge">（偏题·了解即可）</span>' : '';
+  const ansHtml='<span class="ans">答案：'+ans+'</span>';
+  const parts=analysisRaw.split('｜');
+  const cls=['a1','a2','a3','a4'];
+  const ana='<div class="analysis">'+parts.map((p,k)=>'<span class="b '+cls[k]+'">'+(p||'')+'</span>').join('')+'</div>';
+  const div=document.createElement('div');
+  div.className='item';
+  div.innerHTML='<div class="q">'+num+'. '+stem+'</div>'
+    +'<div class="meta">'+tagHtml+'</div>'
+    +'<div style="font-size:13.5px;color:#475569;margin:6px 0;">选项：'+opts.replace(/｜/g,'　')+'</div>'
+    + ansHtml
+    +'<div class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">▸ 显示解析</div>'
+    + ana;
+  box.appendChild(div);
+});
+function expandAll(){document.querySelectorAll('.item .analysis').forEach(e=>e.classList.add('open'));}
+function collapseAll(){document.querySelectorAll('.item .analysis').forEach(e=>e.classList.remove('open'));}
+</script></body></html>
